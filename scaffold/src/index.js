@@ -20,7 +20,8 @@ domReady(() => {
 
   Promise.all([
     './data/delay_counts.json',
-    './data/delays_by_airport.json'
+    './data/delays_by_airport.json',
+    './data/delays_by_airline.json'
   ].map(filename => fetch(filename).then(response => response.json())))
   .then(arrayofDataBlobs => myVis(arrayofDataBlobs))
 });
@@ -207,13 +208,13 @@ function drawRadial(container, data, rVar) {
                   '#5574a6',
                   '#3b3eac'];
 
-  container.append('rect')
-    .attr('width', width)
-    .attr('height', height)
-    .attr('x', 0)
-    .attr('y', 0)
-    .attr('fill', 'black')
-    .attr('fill-opacity', 0.05);
+  // container.append('rect')
+  //   .attr('width', width)
+  //   .attr('height', height)
+  //   .attr('x', 0)
+  //   .attr('y', 0)
+  //   .attr('fill', 'black')
+  //   .attr('fill-opacity', 0.05);
 
   const numLevels = 8;
   const numHours = 24;
@@ -342,10 +343,42 @@ function drawRadial(container, data, rVar) {
 }
 
 
+function drawBar(container, data, barVar) {
+  // container.append('rect')
+  //   .attr('width', container.attr('width'))
+  //   .attr('height', container.attr('height'))
+  //   .attr('x', 0)
+  //   .attr('y', 0)
+  //   .attr('fill', 'None')
+  //   .attr('stroke', 'black');
+}
+
+
+function makeContainer(vis, width, height, x, y) {
+  const container = vis.append('g')
+    .attr('width', width)
+    .attr('height', height)
+    .attr('transform', `translate(${x}, ${y})`);
+
+  container.append('rect')
+    .attr('width', width)
+    .attr('height', height)
+    .attr('x', 0)
+    .attr('y', 0)
+    .attr('fill', 'None')
+    .attr('stroke', 'black');
+
+  return container;
+}
+
+
 function myVis(data) {
   // The posters will all be 24 inches by 36 inches
   // Your graphic can either be portrait or landscape, up to you
   // the important thing is to make sure the aspect ratio is correct.
+
+  // Eggshell
+  const backgroundColor = '#EFF1ED';
 
   const height = 5000; // was 5000, changed to 500 for viewing in browser
   const width = 36 / 24 * height;
@@ -360,29 +393,24 @@ function myVis(data) {
     .attr('height', height)
     .attr('x', 0)
     .attr('y', 0)
-    .attr('fill', 'black')
-    .attr('fill-opacity', 0.05);
+    .attr('fill', backgroundColor);
 
-  const airportAverageContainer = vis.append('g')
-    .attr('width', width/4)
-    .attr('height', height/3)
-    .attr('transform', `translate(0, ${height/2})`);
 
-  const radialContainer = vis.append('g')
-    .attr('width', 0.4 * height)
-    .attr('height', 0.3 * height )
-    .attr('transform', `translate(${width / 8}, ${height / 15})`);
+  const airportAverageContainer = makeContainer(vis, width / 4, height / 3, width / 2, height / 2);
 
-  const radialAvgContainer = vis.append('g')
-    .attr('width', 0.4 * height)
-    .attr('height', 0.3 * height)
-    .attr('transform', `translate(${width / 8}, ${2 * height / 5})`);
+  const radialContainer = makeContainer(vis, 0.4 * height, 0.3 * height, width / 8, height / 15);
+
+  const radialAvgContainer = makeContainer(vis, 0.4 * height, 0.3 * height, width / 8, 0.4 * height)
+
+  const barContainer = makeContainer(vis, 0.4 * height, 0.3 * height, 0.6 * width, 0.1 * height);
 
 
   drawRadial(radialContainer, data[0], 'percent');
   drawRadial(radialAvgContainer, data[0], 'average');
-
   scatterPlot(airportAverageContainer, data[1], 'total', 'percent', 'Total Outbound Flights', 'Proportion of Delayed Flights', true);
+  drawBar(barContainer, data[2], 'percent');
+
+
   // scatterPlot(data.slice(0,150), 'total', 'percent', 'Total Outbound Flights', 'Proportion of Delayed Flights', true);
   
   // scatterPlot(data, 'total', 'average', 'Total Outbound Flights', 'Average Delay Time (min)', false);
