@@ -1,0 +1,2586 @@
+[
+    {
+        "airport": "ATL",
+        "delayed": 139519.0,
+        "total": 379424.0,
+        "percent": 0.36771263810407356,
+        "average": 28.748378357069647,
+        "median": 13.0
+    },
+    {
+        "airport": "ORD",
+        "delayed": 130240.0,
+        "total": 313536.0,
+        "percent": 0.41539089610124513,
+        "average": 36.35416922604423,
+        "median": 17.0
+    },
+    {
+        "airport": "DFW",
+        "delayed": 102583.0,
+        "total": 260595.0,
+        "percent": 0.39364914906272186,
+        "average": 33.507520739303786,
+        "median": 16.0
+    },
+    {
+        "airport": "DEN",
+        "delayed": 95870.0,
+        "total": 214191.0,
+        "percent": 0.44759116862986775,
+        "average": 29.985386460832377,
+        "median": 14.0
+    },
+    {
+        "airport": "LAX",
+        "delayed": 87717.0,
+        "total": 212401.0,
+        "percent": 0.41297828164650824,
+        "average": 30.05987436870846,
+        "median": 14.0
+    },
+    {
+        "airport": "SFO",
+        "delayed": 63303.0,
+        "total": 162178.0,
+        "percent": 0.3903303777331081,
+        "average": 33.79358008309243,
+        "median": 15.0
+    },
+    {
+        "airport": "IAH",
+        "delayed": 65691.0,
+        "total": 159833.0,
+        "percent": 0.410997728879518,
+        "average": 32.91179918101414,
+        "median": 15.0
+    },
+    {
+        "airport": "PHX",
+        "delayed": 64237.0,
+        "total": 159736.0,
+        "percent": 0.4021447889016878,
+        "average": 26.438703550913026,
+        "median": 12.0
+    },
+    {
+        "airport": "LAS",
+        "delayed": 61356.0,
+        "total": 145869.0,
+        "percent": 0.42062398453406824,
+        "average": 30.66407523306604,
+        "median": 14.0
+    },
+    {
+        "airport": "MSP",
+        "delayed": 37841.0,
+        "total": 122701.0,
+        "percent": 0.30840009453875683,
+        "average": 30.203588700087206,
+        "median": 13.0
+    },
+    {
+        "airport": "SEA",
+        "delayed": 44088.0,
+        "total": 121287.0,
+        "percent": 0.3635014469811274,
+        "average": 24.924060968971148,
+        "median": 11.0
+    },
+    {
+        "airport": "MCO",
+        "delayed": 46778.0,
+        "total": 120029.0,
+        "percent": 0.3897224837330978,
+        "average": 35.77147376972081,
+        "median": 15.0
+    },
+    {
+        "airport": "DTW",
+        "delayed": 38930.0,
+        "total": 118425.0,
+        "percent": 0.3287312645134051,
+        "average": 34.15620344207552,
+        "median": 14.0
+    },
+    {
+        "airport": "BOS",
+        "delayed": 42391.0,
+        "total": 118011.0,
+        "percent": 0.35921227682165224,
+        "average": 32.598995069708195,
+        "median": 14.0
+    },
+    {
+        "airport": "EWR",
+        "delayed": 48179.0,
+        "total": 111394.0,
+        "percent": 0.432509829972889,
+        "average": 34.96222420556674,
+        "median": 16.0
+    },
+    {
+        "airport": "CLT",
+        "delayed": 40063.0,
+        "total": 109896.0,
+        "percent": 0.3645537599184684,
+        "average": 28.394403813992962,
+        "median": 12.0
+    },
+    {
+        "airport": "LGA",
+        "delayed": 38874.0,
+        "total": 108195.0,
+        "percent": 0.3592957160682102,
+        "average": 41.8671862941812,
+        "median": 20.0
+    },
+    {
+        "airport": "SLC",
+        "delayed": 29280.0,
+        "total": 105973.0,
+        "percent": 0.2762967925792419,
+        "average": 27.885177595628416,
+        "median": 12.0
+    },
+    {
+        "airport": "JFK",
+        "delayed": 38172.0,
+        "total": 102114.0,
+        "percent": 0.37381749809036957,
+        "average": 37.27488735198575,
+        "median": 17.0
+    },
+    {
+        "airport": "BWI",
+        "delayed": 45326.0,
+        "total": 94101.0,
+        "percent": 0.48167394607921277,
+        "average": 29.969664210386973,
+        "median": 14.0
+    },
+    {
+        "airport": "MDW",
+        "delayed": 43925.0,
+        "total": 88503.0,
+        "percent": 0.49631085951888637,
+        "average": 26.947546955036994,
+        "median": 13.0
+    },
+    {
+        "airport": "DCA",
+        "delayed": 24667.0,
+        "total": 80613.0,
+        "percent": 0.3059928299405803,
+        "average": 34.96282482669153,
+        "median": 15.0
+    },
+    {
+        "airport": "FLL",
+        "delayed": 30127.0,
+        "total": 79436.0,
+        "percent": 0.37926129210937104,
+        "average": 34.37667208816012,
+        "median": 16.0
+    },
+    {
+        "airport": "SAN",
+        "delayed": 28389.0,
+        "total": 76416.0,
+        "percent": 0.3715059673366834,
+        "average": 28.660114833210045,
+        "median": 13.0
+    },
+    {
+        "airport": "MIA",
+        "delayed": 30892.0,
+        "total": 75299.0,
+        "percent": 0.4102577723475743,
+        "average": 34.56487116405542,
+        "median": 17.0
+    },
+    {
+        "airport": "PHL",
+        "delayed": 26416.0,
+        "total": 72115.0,
+        "percent": 0.3663038202870415,
+        "average": 34.253217746820106,
+        "median": 15.0
+    },
+    {
+        "airport": "TPA",
+        "delayed": 24816.0,
+        "total": 69049.0,
+        "percent": 0.35939694999203464,
+        "average": 34.36597356544165,
+        "median": 15.0
+    },
+    {
+        "airport": "DAL",
+        "delayed": 33725.0,
+        "total": 65629.0,
+        "percent": 0.51387344009508,
+        "average": 25.45028910303929,
+        "median": 12.0
+    },
+    {
+        "airport": "HOU",
+        "delayed": 27265.0,
+        "total": 56760.0,
+        "percent": 0.48035588442565186,
+        "average": 27.475371355217312,
+        "median": 13.0
+    },
+    {
+        "airport": "BNA",
+        "delayed": 18904.0,
+        "total": 52057.0,
+        "percent": 0.36314040378815526,
+        "average": 32.08479686838764,
+        "median": 14.0
+    },
+    {
+        "airport": "PDX",
+        "delayed": 14961.0,
+        "total": 51635.0,
+        "percent": 0.28974532778154355,
+        "average": 29.07265557115166,
+        "median": 12.0
+    },
+    {
+        "airport": "STL",
+        "delayed": 19605.0,
+        "total": 51277.0,
+        "percent": 0.3823351600132613,
+        "average": 30.44111196123438,
+        "median": 14.0
+    },
+    {
+        "airport": "HNL",
+        "delayed": 13352.0,
+        "total": 46952.0,
+        "percent": 0.2843755324586812,
+        "average": 21.938511084481725,
+        "median": 8.0
+    },
+    {
+        "airport": "OAK",
+        "delayed": 20500.0,
+        "total": 46332.0,
+        "percent": 0.4424587757921091,
+        "average": 24.788243902439024,
+        "median": 12.0
+    },
+    {
+        "airport": "MSY",
+        "delayed": 14442.0,
+        "total": 42467.0,
+        "percent": 0.34007582358066263,
+        "average": 32.761736601578725,
+        "median": 14.0
+    },
+    {
+        "airport": "MCI",
+        "delayed": 14363.0,
+        "total": 42220.0,
+        "percent": 0.34019422074846045,
+        "average": 31.471906983220777,
+        "median": 13.0
+    },
+    {
+        "airport": "AUS",
+        "delayed": 16239.0,
+        "total": 42067.0,
+        "percent": 0.38602705208358096,
+        "average": 32.25568076852023,
+        "median": 12.0
+    },
+    {
+        "airport": "SJC",
+        "delayed": 14756.0,
+        "total": 41681.0,
+        "percent": 0.35402221635757297,
+        "average": 27.57251287611819,
+        "median": 13.0
+    },
+    {
+        "airport": "SMF",
+        "delayed": 15526.0,
+        "total": 40830.0,
+        "percent": 0.38025961302963507,
+        "average": 26.531366739662502,
+        "median": 12.0
+    },
+    {
+        "airport": "SNA",
+        "delayed": 14692.0,
+        "total": 40729.0,
+        "percent": 0.3607257727908861,
+        "average": 25.265314456847264,
+        "median": 11.0
+    },
+    {
+        "airport": "CLE",
+        "delayed": 11435.0,
+        "total": 37813.0,
+        "percent": 0.30240922434083517,
+        "average": 37.957411456055965,
+        "median": 15.0
+    },
+    {
+        "airport": "IAD",
+        "delayed": 15511.0,
+        "total": 37301.0,
+        "percent": 0.4158333556741106,
+        "average": 34.51021855457417,
+        "median": 13.0
+    },
+    {
+        "airport": "RDU",
+        "delayed": 12196.0,
+        "total": 34898.0,
+        "percent": 0.34947561464840393,
+        "average": 33.33010823220728,
+        "median": 13.0
+    },
+    {
+        "airport": "MKE",
+        "delayed": 9838.0,
+        "total": 32467.0,
+        "percent": 0.30301536945205904,
+        "average": 34.9049603577963,
+        "median": 15.0
+    },
+    {
+        "airport": "SAT",
+        "delayed": 10692.0,
+        "total": 32412.0,
+        "percent": 0.32987782302850793,
+        "average": 31.227927422371867,
+        "median": 14.0
+    },
+    {
+        "airport": "RSW",
+        "delayed": 9598.0,
+        "total": 29116.0,
+        "percent": 0.32964692952328617,
+        "average": 35.855699103979994,
+        "median": 16.0
+    },
+    {
+        "airport": "IND",
+        "delayed": 8591.0,
+        "total": 27931.0,
+        "percent": 0.3075793920733235,
+        "average": 35.29309742754045,
+        "median": 14.0
+    },
+    {
+        "airport": "SJU",
+        "delayed": 9766.0,
+        "total": 26524.0,
+        "percent": 0.3681948424068768,
+        "average": 35.209399959041576,
+        "median": 16.0
+    },
+    {
+        "airport": "CMH",
+        "delayed": 8286.0,
+        "total": 26375.0,
+        "percent": 0.3141611374407583,
+        "average": 38.23642288196959,
+        "median": 16.0
+    },
+    {
+        "airport": "PIT",
+        "delayed": 8009.0,
+        "total": 26249.0,
+        "percent": 0.30511638538610997,
+        "average": 30.04182794356349,
+        "median": 12.0
+    },
+    {
+        "airport": "PBI",
+        "delayed": 9595.0,
+        "total": 24315.0,
+        "percent": 0.3946123791898005,
+        "average": 36.634497133923915,
+        "median": 17.0
+    },
+    {
+        "airport": "OGG",
+        "delayed": 7443.0,
+        "total": 22450.0,
+        "percent": 0.3315367483296214,
+        "average": 22.30820905548838,
+        "median": 9.0
+    },
+    {
+        "airport": "CVG",
+        "delayed": 6288.0,
+        "total": 21950.0,
+        "percent": 0.2864692482915718,
+        "average": 41.649650127226465,
+        "median": 18.0
+    },
+    {
+        "airport": "ABQ",
+        "delayed": 7678.0,
+        "total": 21008.0,
+        "percent": 0.36547981721249045,
+        "average": 31.197317009637928,
+        "median": 14.0
+    },
+    {
+        "airport": "BUR",
+        "delayed": 6345.0,
+        "total": 20657.0,
+        "percent": 0.30715980055187103,
+        "average": 28.225847123719465,
+        "median": 12.0
+    },
+    {
+        "airport": "BDL",
+        "delayed": 6551.0,
+        "total": 20513.0,
+        "percent": 0.3193584556135134,
+        "average": 31.16943978018623,
+        "median": 12.0
+    },
+    {
+        "airport": "JAX",
+        "delayed": 6140.0,
+        "total": 19750.0,
+        "percent": 0.31088607594936707,
+        "average": 36.00195439739414,
+        "median": 15.0
+    },
+    {
+        "airport": "ONT",
+        "delayed": 7098.0,
+        "total": 19720.0,
+        "percent": 0.3599391480730223,
+        "average": 30.70808678500986,
+        "median": 14.0
+    },
+    {
+        "airport": "BUF",
+        "delayed": 5180.0,
+        "total": 18417.0,
+        "percent": 0.28126187761307486,
+        "average": 36.16795366795367,
+        "median": 16.0
+    },
+    {
+        "airport": "OMA",
+        "delayed": 5631.0,
+        "total": 18254.0,
+        "percent": 0.3084803330776816,
+        "average": 34.872136387852954,
+        "median": 14.0
+    },
+    {
+        "airport": "OKC",
+        "delayed": 5413.0,
+        "total": 17785.0,
+        "percent": 0.30435760472308127,
+        "average": 37.91058562719379,
+        "median": 16.0
+    },
+    {
+        "airport": "ANC",
+        "delayed": 4783.0,
+        "total": 17239.0,
+        "percent": 0.2774522884158014,
+        "average": 26.916370478779008,
+        "median": 11.0
+    },
+    {
+        "airport": "RIC",
+        "delayed": 5297.0,
+        "total": 17002.0,
+        "percent": 0.3115515821668039,
+        "average": 41.56277138002643,
+        "median": 17.0
+    },
+    {
+        "airport": "TUS",
+        "delayed": 4496.0,
+        "total": 16428.0,
+        "percent": 0.2736790844898953,
+        "average": 35.03847864768683,
+        "median": 16.0
+    },
+    {
+        "airport": "MEM",
+        "delayed": 4832.0,
+        "total": 16290.0,
+        "percent": 0.29662369551872314,
+        "average": 39.80256622516556,
+        "median": 16.0
+    },
+    {
+        "airport": "TUL",
+        "delayed": 4619.0,
+        "total": 15289.0,
+        "percent": 0.30211262999542154,
+        "average": 35.77376055423252,
+        "median": 15.0
+    },
+    {
+        "airport": "RNO",
+        "delayed": 4717.0,
+        "total": 14155.0,
+        "percent": 0.33323913811374073,
+        "average": 31.780792876828492,
+        "median": 15.0
+    },
+    {
+        "airport": "BHM",
+        "delayed": 4234.0,
+        "total": 13660.0,
+        "percent": 0.30995607613469983,
+        "average": 37.894189891355694,
+        "median": 15.0
+    },
+    {
+        "airport": "CHS",
+        "delayed": 3682.0,
+        "total": 13024.0,
+        "percent": 0.2827088452088452,
+        "average": 40.33541553503531,
+        "median": 17.0
+    },
+    {
+        "airport": "ELP",
+        "delayed": 4240.0,
+        "total": 13018.0,
+        "percent": 0.3257028729451529,
+        "average": 33.323584905660375,
+        "median": 14.0
+    },
+    {
+        "airport": "BOI",
+        "delayed": 3690.0,
+        "total": 12815.0,
+        "percent": 0.2879438158408115,
+        "average": 40.75880758807588,
+        "median": 16.0
+    },
+    {
+        "airport": "PVD",
+        "delayed": 3911.0,
+        "total": 12156.0,
+        "percent": 0.32173412306679827,
+        "average": 30.558680644336487,
+        "median": 12.0
+    },
+    {
+        "airport": "KOA",
+        "delayed": 3202.0,
+        "total": 12081.0,
+        "percent": 0.26504428441354194,
+        "average": 22.577139287945034,
+        "median": 8.0
+    },
+    {
+        "airport": "GRR",
+        "delayed": 3245.0,
+        "total": 11773.0,
+        "percent": 0.2756306803703389,
+        "average": 39.284437596302006,
+        "median": 16.0
+    },
+    {
+        "airport": "LIT",
+        "delayed": 3590.0,
+        "total": 11470.0,
+        "percent": 0.3129904097646033,
+        "average": 38.463231197771584,
+        "median": 15.5
+    },
+    {
+        "airport": "LIH",
+        "delayed": 2888.0,
+        "total": 11426.0,
+        "percent": 0.25275687029581656,
+        "average": 22.347991689750693,
+        "median": 8.0
+    },
+    {
+        "airport": "SDF",
+        "delayed": 3553.0,
+        "total": 11047.0,
+        "percent": 0.32162578075495607,
+        "average": 35.31832254432874,
+        "median": 14.0
+    },
+    {
+        "airport": "GEG",
+        "delayed": 2552.0,
+        "total": 10333.0,
+        "percent": 0.24697570889383527,
+        "average": 35.961598746081506,
+        "median": 14.0
+    },
+    {
+        "airport": "ORF",
+        "delayed": 3401.0,
+        "total": 10288.0,
+        "percent": 0.3305793157076205,
+        "average": 36.09114966186416,
+        "median": 13.0
+    },
+    {
+        "airport": "XNA",
+        "delayed": 2980.0,
+        "total": 10224.0,
+        "percent": 0.291471048513302,
+        "average": 50.448657718120806,
+        "median": 23.0
+    },
+    {
+        "airport": "MSN",
+        "delayed": 2219.0,
+        "total": 9973.0,
+        "percent": 0.2225007520304823,
+        "average": 44.16493916178459,
+        "median": 19.0
+    },
+    {
+        "airport": "PSP",
+        "delayed": 2789.0,
+        "total": 9660.0,
+        "percent": 0.28871635610766044,
+        "average": 43.347077805665116,
+        "median": 19.0
+    },
+    {
+        "airport": "LGB",
+        "delayed": 2803.0,
+        "total": 9551.0,
+        "percent": 0.293477122814365,
+        "average": 36.07670353193007,
+        "median": 19.0
+    },
+    {
+        "airport": "DAY",
+        "delayed": 2639.0,
+        "total": 9429.0,
+        "percent": 0.2798812175204157,
+        "average": 37.537324744221294,
+        "median": 16.0
+    },
+    {
+        "airport": "DSM",
+        "delayed": 2743.0,
+        "total": 9095.0,
+        "percent": 0.3015942825728422,
+        "average": 44.60517681370762,
+        "median": 19.0
+    },
+    {
+        "airport": "ICT",
+        "delayed": 2722.0,
+        "total": 8794.0,
+        "percent": 0.3095292244712304,
+        "average": 41.5852314474651,
+        "median": 17.0
+    },
+    {
+        "airport": "SAV",
+        "delayed": 2980.0,
+        "total": 8203.0,
+        "percent": 0.3632817261977325,
+        "average": 35.915771812080536,
+        "median": 14.0
+    },
+    {
+        "airport": "ALB",
+        "delayed": 2353.0,
+        "total": 8193.0,
+        "percent": 0.2871963871597705,
+        "average": 32.53591160220994,
+        "median": 13.0
+    },
+    {
+        "airport": "ROC",
+        "delayed": 2287.0,
+        "total": 8185.0,
+        "percent": 0.27941356139279167,
+        "average": 40.787494534324445,
+        "median": 16.0
+    },
+    {
+        "airport": "HPN",
+        "delayed": 2804.0,
+        "total": 8164.0,
+        "percent": 0.34345908868201863,
+        "average": 43.89514978601997,
+        "median": 20.0
+    },
+    {
+        "airport": "MAF",
+        "delayed": 2258.0,
+        "total": 8127.0,
+        "percent": 0.27783930109511507,
+        "average": 39.132860938883965,
+        "median": 18.0
+    },
+    {
+        "airport": "BTR",
+        "delayed": 2538.0,
+        "total": 7825.0,
+        "percent": 0.3243450479233227,
+        "average": 44.37352245862884,
+        "median": 18.0
+    },
+    {
+        "airport": "JAN",
+        "delayed": 1984.0,
+        "total": 7751.0,
+        "percent": 0.25596697200361246,
+        "average": 41.41129032258065,
+        "median": 17.0
+    },
+    {
+        "airport": "FAT",
+        "delayed": 2266.0,
+        "total": 7674.0,
+        "percent": 0.2952827729997394,
+        "average": 45.27096204766108,
+        "median": 19.0
+    },
+    {
+        "airport": "TYS",
+        "delayed": 2412.0,
+        "total": 7592.0,
+        "percent": 0.3177028451001054,
+        "average": 43.22014925373134,
+        "median": 18.0
+    },
+    {
+        "airport": "COS",
+        "delayed": 1901.0,
+        "total": 7491.0,
+        "percent": 0.2537711920971833,
+        "average": 49.97001578116781,
+        "median": 20.0
+    },
+    {
+        "airport": "CID",
+        "delayed": 2105.0,
+        "total": 7364.0,
+        "percent": 0.2858500814774579,
+        "average": 46.96579572446556,
+        "median": 20.0
+    },
+    {
+        "airport": "GSO",
+        "delayed": 2060.0,
+        "total": 7335.0,
+        "percent": 0.28084526244035446,
+        "average": 45.428155339805826,
+        "median": 20.0
+    },
+    {
+        "airport": "GSP",
+        "delayed": 1980.0,
+        "total": 7173.0,
+        "percent": 0.27603513174404015,
+        "average": 35.13535353535354,
+        "median": 15.0
+    },
+    {
+        "airport": "PNS",
+        "delayed": 2065.0,
+        "total": 7012.0,
+        "percent": 0.2944951511694238,
+        "average": 36.55786924939467,
+        "median": 16.0
+    },
+    {
+        "airport": "MHT",
+        "delayed": 1951.0,
+        "total": 6869.0,
+        "percent": 0.2840296986460911,
+        "average": 35.35366478728857,
+        "median": 14.0
+    },
+    {
+        "airport": "SGF",
+        "delayed": 1908.0,
+        "total": 6767.0,
+        "percent": 0.28195655386434165,
+        "average": 47.05083857442348,
+        "median": 20.0
+    },
+    {
+        "airport": "SHV",
+        "delayed": 1910.0,
+        "total": 6655.0,
+        "percent": 0.2870022539444027,
+        "average": 48.240314136125654,
+        "median": 21.0
+    },
+    {
+        "airport": "CAK",
+        "delayed": 1584.0,
+        "total": 6591.0,
+        "percent": 0.24032771961766045,
+        "average": 38.47664141414141,
+        "median": 15.0
+    },
+    {
+        "airport": "SBA",
+        "delayed": 1595.0,
+        "total": 6582.0,
+        "percent": 0.24232756001215436,
+        "average": 48.095924764890285,
+        "median": 28.0
+    },
+    {
+        "airport": "LEX",
+        "delayed": 1595.0,
+        "total": 6566.0,
+        "percent": 0.24291806274748706,
+        "average": 42.90470219435737,
+        "median": 17.0
+    },
+    {
+        "airport": "SYR",
+        "delayed": 1470.0,
+        "total": 6248.0,
+        "percent": 0.2352752880921895,
+        "average": 45.423809523809524,
+        "median": 19.0
+    },
+    {
+        "airport": "ITO",
+        "delayed": 1475.0,
+        "total": 6226.0,
+        "percent": 0.23690973337616447,
+        "average": 16.546440677966103,
+        "median": 7.0
+    },
+    {
+        "airport": "FAR",
+        "delayed": 1655.0,
+        "total": 6220.0,
+        "percent": 0.26607717041800644,
+        "average": 41.370392749244715,
+        "median": 16.0
+    },
+    {
+        "airport": "FSD",
+        "delayed": 1645.0,
+        "total": 5776.0,
+        "percent": 0.28479916897506924,
+        "average": 45.72158054711246,
+        "median": 19.0
+    },
+    {
+        "airport": "FWA",
+        "delayed": 1454.0,
+        "total": 5772.0,
+        "percent": 0.25190575190575193,
+        "average": 49.560522696011006,
+        "median": 21.0
+    },
+    {
+        "airport": "CAE",
+        "delayed": 1614.0,
+        "total": 5585.0,
+        "percent": 0.2889883616830797,
+        "average": 45.62453531598513,
+        "median": 18.0
+    },
+    {
+        "airport": "LFT",
+        "delayed": 1519.0,
+        "total": 5580.0,
+        "percent": 0.2722222222222222,
+        "average": 43.67412771560237,
+        "median": 17.0
+    },
+    {
+        "airport": "MOB",
+        "delayed": 1458.0,
+        "total": 5455.0,
+        "percent": 0.2672777268560953,
+        "average": 38.98559670781893,
+        "median": 17.0
+    },
+    {
+        "airport": "GRB",
+        "delayed": 1078.0,
+        "total": 5370.0,
+        "percent": 0.20074487895716947,
+        "average": 42.990723562152134,
+        "median": 22.0
+    },
+    {
+        "airport": "MYR",
+        "delayed": 1791.0,
+        "total": 5338.0,
+        "percent": 0.33551892094417385,
+        "average": 40.0965940815187,
+        "median": 21.0
+    },
+    {
+        "airport": "VPS",
+        "delayed": 1431.0,
+        "total": 5283.0,
+        "percent": 0.2708688245315162,
+        "average": 46.492662473794546,
+        "median": 19.0
+    },
+    {
+        "airport": "CRP",
+        "delayed": 1513.0,
+        "total": 5254.0,
+        "percent": 0.2879710696612105,
+        "average": 41.71910112359551,
+        "median": 19.0
+    },
+    {
+        "airport": "FNT",
+        "delayed": 1175.0,
+        "total": 5159.0,
+        "percent": 0.22775731730955612,
+        "average": 35.15659574468085,
+        "median": 14.0
+    },
+    {
+        "airport": "PWM",
+        "delayed": 1493.0,
+        "total": 5158.0,
+        "percent": 0.28945327646374563,
+        "average": 43.48760884125921,
+        "median": 18.0
+    },
+    {
+        "airport": "PIA",
+        "delayed": 1380.0,
+        "total": 5140.0,
+        "percent": 0.26848249027237353,
+        "average": 42.80434782608695,
+        "median": 17.0
+    },
+    {
+        "airport": "LBB",
+        "delayed": 1360.0,
+        "total": 5073.0,
+        "percent": 0.26808594520007883,
+        "average": 41.36323529411764,
+        "median": 17.0
+    },
+    {
+        "airport": "HSV",
+        "delayed": 1229.0,
+        "total": 4909.0,
+        "percent": 0.25035648808311267,
+        "average": 42.03091944670464,
+        "median": 17.0
+    },
+    {
+        "airport": "SBN",
+        "delayed": 1438.0,
+        "total": 4869.0,
+        "percent": 0.2953378517149312,
+        "average": 49.508344923504865,
+        "median": 16.0
+    },
+    {
+        "airport": "ISP",
+        "delayed": 1874.0,
+        "total": 4758.0,
+        "percent": 0.39386296763345946,
+        "average": 29.93436499466382,
+        "median": 12.0
+    },
+    {
+        "airport": "CHA",
+        "delayed": 1327.0,
+        "total": 4619.0,
+        "percent": 0.2872916215631089,
+        "average": 38.30444611906556,
+        "median": 16.0
+    },
+    {
+        "airport": "STT",
+        "delayed": 1581.0,
+        "total": 4585.0,
+        "percent": 0.34482006543075244,
+        "average": 45.299810246679314,
+        "median": 18.0
+    },
+    {
+        "airport": "ECP",
+        "delayed": 1024.0,
+        "total": 4545.0,
+        "percent": 0.2253025302530253,
+        "average": 39.8681640625,
+        "median": 16.0
+    },
+    {
+        "airport": "AMA",
+        "delayed": 1280.0,
+        "total": 4521.0,
+        "percent": 0.28312320283123205,
+        "average": 36.91171875,
+        "median": 15.0
+    },
+    {
+        "airport": "JNU",
+        "delayed": 1302.0,
+        "total": 4430.0,
+        "percent": 0.29390519187358916,
+        "average": 36.01996927803379,
+        "median": 14.0
+    },
+    {
+        "airport": "GRK",
+        "delayed": 999.0,
+        "total": 4404.0,
+        "percent": 0.2268392370572207,
+        "average": 49.46146146146146,
+        "median": 21.0
+    },
+    {
+        "airport": "EVV",
+        "delayed": 1048.0,
+        "total": 4233.0,
+        "percent": 0.247578549492086,
+        "average": 49.579198473282446,
+        "median": 20.0
+    },
+    {
+        "airport": "MLI",
+        "delayed": 1136.0,
+        "total": 4085.0,
+        "percent": 0.2780905752753978,
+        "average": 41.89172535211268,
+        "median": 19.0
+    },
+    {
+        "airport": "BSM",
+        "delayed": 1306.0,
+        "total": 4021.0,
+        "percent": 0.3247948271574235,
+        "average": 30.830781010719754,
+        "median": 10.0
+    },
+    {
+        "airport": "EUG",
+        "delayed": 949.0,
+        "total": 3960.0,
+        "percent": 0.23964646464646464,
+        "average": 48.50790305584826,
+        "median": 26.0
+    },
+    {
+        "airport": "BZN",
+        "delayed": 976.0,
+        "total": 3939.0,
+        "percent": 0.24777862401624778,
+        "average": 38.74180327868852,
+        "median": 14.0
+    },
+    {
+        "airport": "GPT",
+        "delayed": 911.0,
+        "total": 3909.0,
+        "percent": 0.23305193144026606,
+        "average": 39.182217343578486,
+        "median": 16.0
+    },
+    {
+        "airport": "ACY",
+        "delayed": 1258.0,
+        "total": 3820.0,
+        "percent": 0.32931937172774867,
+        "average": 40.45786963434022,
+        "median": 18.0
+    },
+    {
+        "airport": "BIS",
+        "delayed": 905.0,
+        "total": 3792.0,
+        "percent": 0.23866033755274263,
+        "average": 46.62541436464088,
+        "median": 18.0
+    },
+    {
+        "airport": "SRQ",
+        "delayed": 1174.0,
+        "total": 3675.0,
+        "percent": 0.31945578231292515,
+        "average": 39.38500851788756,
+        "median": 16.0
+    },
+    {
+        "airport": "JAC",
+        "delayed": 938.0,
+        "total": 3669.0,
+        "percent": 0.25565549195966203,
+        "average": 50.24840085287846,
+        "median": 20.5
+    },
+    {
+        "airport": "MFE",
+        "delayed": 861.0,
+        "total": 3649.0,
+        "percent": 0.23595505617977527,
+        "average": 49.343786295005806,
+        "median": 20.0
+    },
+    {
+        "airport": "ASE",
+        "delayed": 1353.0,
+        "total": 3621.0,
+        "percent": 0.3736536868268434,
+        "average": 52.300813008130085,
+        "median": 29.0
+    },
+    {
+        "airport": "MDT",
+        "delayed": 878.0,
+        "total": 3570.0,
+        "percent": 0.24593837535014004,
+        "average": 48.239179954441916,
+        "median": 17.0
+    },
+    {
+        "airport": "RAP",
+        "delayed": 926.0,
+        "total": 3501.0,
+        "percent": 0.2644958583261925,
+        "average": 37.904967602591796,
+        "median": 16.0
+    },
+    {
+        "airport": "MGM",
+        "delayed": 1020.0,
+        "total": 3480.0,
+        "percent": 0.29310344827586204,
+        "average": 40.002941176470586,
+        "median": 19.0
+    },
+    {
+        "airport": "TLH",
+        "delayed": 855.0,
+        "total": 3473.0,
+        "percent": 0.24618485459257125,
+        "average": 41.150877192982456,
+        "median": 17.0
+    },
+    {
+        "airport": "GJT",
+        "delayed": 615.0,
+        "total": 3450.0,
+        "percent": 0.1782608695652174,
+        "average": 46.426016260162605,
+        "median": 18.0
+    },
+    {
+        "airport": "AEX",
+        "delayed": 879.0,
+        "total": 3428.0,
+        "percent": 0.2564177362893816,
+        "average": 50.72696245733788,
+        "median": 21.0
+    },
+    {
+        "airport": "SBP",
+        "delayed": 881.0,
+        "total": 3383.0,
+        "percent": 0.26041974578776234,
+        "average": 43.70034052213394,
+        "median": 25.0
+    },
+    {
+        "airport": "HRL",
+        "delayed": 730.0,
+        "total": 3366.0,
+        "percent": 0.21687462863933452,
+        "average": 35.78493150684932,
+        "median": 15.0
+    },
+    {
+        "airport": "BTV",
+        "delayed": 919.0,
+        "total": 3326.0,
+        "percent": 0.2763078773301263,
+        "average": 49.22198041349293,
+        "median": 23.0
+    },
+    {
+        "airport": "MLU",
+        "delayed": 873.0,
+        "total": 3240.0,
+        "percent": 0.26944444444444443,
+        "average": 43.828178694158076,
+        "median": 17.0
+    },
+    {
+        "airport": "MRY",
+        "delayed": 815.0,
+        "total": 3215.0,
+        "percent": 0.2534992223950233,
+        "average": 45.06871165644172,
+        "median": 20.0
+    },
+    {
+        "airport": "BIL",
+        "delayed": 496.0,
+        "total": 3130.0,
+        "percent": 0.1584664536741214,
+        "average": 37.66129032258065,
+        "median": 17.0
+    },
+    {
+        "airport": "ATW",
+        "delayed": 776.0,
+        "total": 3108.0,
+        "percent": 0.24967824967824967,
+        "average": 39.22422680412371,
+        "median": 17.0
+    },
+    {
+        "airport": "TTN",
+        "delayed": 1042.0,
+        "total": 3107.0,
+        "percent": 0.3353717412294818,
+        "average": 53.33397312859885,
+        "median": 22.0
+    },
+    {
+        "airport": "AVL",
+        "delayed": 867.0,
+        "total": 3029.0,
+        "percent": 0.28623308022449656,
+        "average": 43.200692041522494,
+        "median": 15.0
+    },
+    {
+        "airport": "BMI",
+        "delayed": 629.0,
+        "total": 2968.0,
+        "percent": 0.21192722371967654,
+        "average": 52.213036565977745,
+        "median": 23.0
+    },
+    {
+        "airport": "TVC",
+        "delayed": 656.0,
+        "total": 2964.0,
+        "percent": 0.2213225371120108,
+        "average": 43.176829268292686,
+        "median": 18.0
+    },
+    {
+        "airport": "LNK",
+        "delayed": 668.0,
+        "total": 2924.0,
+        "percent": 0.22845417236662108,
+        "average": 43.877245508982035,
+        "median": 15.0
+    },
+    {
+        "airport": "GNV",
+        "delayed": 776.0,
+        "total": 2917.0,
+        "percent": 0.2660267398011656,
+        "average": 45.577319587628864,
+        "median": 22.0
+    },
+    {
+        "airport": "BFL",
+        "delayed": 612.0,
+        "total": 2820.0,
+        "percent": 0.2170212765957447,
+        "average": 51.279411764705884,
+        "median": 27.0
+    },
+    {
+        "airport": "ISN",
+        "delayed": 529.0,
+        "total": 2763.0,
+        "percent": 0.19145855953673543,
+        "average": 55.136105860113425,
+        "median": 22.0
+    },
+    {
+        "airport": "MFR",
+        "delayed": 629.0,
+        "total": 2719.0,
+        "percent": 0.23133504965060683,
+        "average": 51.26391096979332,
+        "median": 27.0
+    },
+    {
+        "airport": "PSC",
+        "delayed": 490.0,
+        "total": 2643.0,
+        "percent": 0.1853953840332955,
+        "average": 41.34285714285714,
+        "median": 16.0
+    },
+    {
+        "airport": "CRW",
+        "delayed": 948.0,
+        "total": 2609.0,
+        "percent": 0.3633576082790341,
+        "average": 38.56434599156118,
+        "median": 15.0
+    },
+    {
+        "airport": "AGS",
+        "delayed": 742.0,
+        "total": 2584.0,
+        "percent": 0.2871517027863777,
+        "average": 38.91644204851752,
+        "median": 16.0
+    },
+    {
+        "airport": "BRO",
+        "delayed": 524.0,
+        "total": 2566.0,
+        "percent": 0.20420888542478566,
+        "average": 49.215648854961835,
+        "median": 19.5
+    },
+    {
+        "airport": "CLL",
+        "delayed": 479.0,
+        "total": 2534.0,
+        "percent": 0.18902920284135755,
+        "average": 44.16283924843424,
+        "median": 18.0
+    },
+    {
+        "airport": "ABI",
+        "delayed": 596.0,
+        "total": 2530.0,
+        "percent": 0.23557312252964427,
+        "average": 44.62919463087248,
+        "median": 19.0
+    },
+    {
+        "airport": "TYR",
+        "delayed": 652.0,
+        "total": 2527.0,
+        "percent": 0.258013454689355,
+        "average": 45.076687116564415,
+        "median": 19.0
+    },
+    {
+        "airport": "ABE",
+        "delayed": 679.0,
+        "total": 2513.0,
+        "percent": 0.27019498607242337,
+        "average": 44.43298969072165,
+        "median": 16.0
+    },
+    {
+        "airport": "KTN",
+        "delayed": 719.0,
+        "total": 2505.0,
+        "percent": 0.2870259481037924,
+        "average": 34.37273991655076,
+        "median": 16.0
+    },
+    {
+        "airport": "ROA",
+        "delayed": 739.0,
+        "total": 2505.0,
+        "percent": 0.2950099800399202,
+        "average": 43.51420838971583,
+        "median": 17.0
+    },
+    {
+        "airport": "IDA",
+        "delayed": 421.0,
+        "total": 2448.0,
+        "percent": 0.17197712418300654,
+        "average": 36.63182897862233,
+        "median": 13.0
+    },
+    {
+        "airport": "CHO",
+        "delayed": 697.0,
+        "total": 2441.0,
+        "percent": 0.28553871364195005,
+        "average": 53.15208034433285,
+        "median": 22.0
+    },
+    {
+        "airport": "LRD",
+        "delayed": 486.0,
+        "total": 2405.0,
+        "percent": 0.2020790020790021,
+        "average": 46.01851851851852,
+        "median": 19.0
+    },
+    {
+        "airport": "FAI",
+        "delayed": 592.0,
+        "total": 2360.0,
+        "percent": 0.25084745762711863,
+        "average": 35.60304054054054,
+        "median": 13.5
+    },
+    {
+        "airport": "RDM",
+        "delayed": 476.0,
+        "total": 2352.0,
+        "percent": 0.20238095238095238,
+        "average": 49.6890756302521,
+        "median": 20.0
+    },
+    {
+        "airport": "CMI",
+        "delayed": 450.0,
+        "total": 2322.0,
+        "percent": 0.1937984496124031,
+        "average": 59.52444444444444,
+        "median": 31.0
+    },
+    {
+        "airport": "MSO",
+        "delayed": 468.0,
+        "total": 2248.0,
+        "percent": 0.20818505338078291,
+        "average": 32.36752136752137,
+        "median": 12.0
+    },
+    {
+        "airport": "ELM",
+        "delayed": 499.0,
+        "total": 2246.0,
+        "percent": 0.22217275155832591,
+        "average": 45.9939879759519,
+        "median": 20.0
+    },
+    {
+        "airport": "DRO",
+        "delayed": 530.0,
+        "total": 2246.0,
+        "percent": 0.23597506678539626,
+        "average": 48.4811320754717,
+        "median": 21.0
+    },
+    {
+        "airport": "RST",
+        "delayed": 495.0,
+        "total": 2239.0,
+        "percent": 0.22108083966056274,
+        "average": 51.987878787878785,
+        "median": 26.0
+    },
+    {
+        "airport": "GTF",
+        "delayed": 309.0,
+        "total": 2156.0,
+        "percent": 0.14332096474953618,
+        "average": 46.773462783171524,
+        "median": 13.0
+    },
+    {
+        "airport": "FSM",
+        "delayed": 499.0,
+        "total": 2151.0,
+        "percent": 0.23198512319851233,
+        "average": 50.452905811623246,
+        "median": 23.0
+    },
+    {
+        "airport": "FCA",
+        "delayed": 386.0,
+        "total": 2148.0,
+        "percent": 0.17970204841713222,
+        "average": 39.067357512953365,
+        "median": 16.5
+    },
+    {
+        "airport": "EYW",
+        "delayed": 514.0,
+        "total": 2124.0,
+        "percent": 0.24199623352165725,
+        "average": 42.795719844357976,
+        "median": 16.0
+    },
+    {
+        "airport": "TRI",
+        "delayed": 528.0,
+        "total": 2087.0,
+        "percent": 0.25299472927647343,
+        "average": 38.90719696969697,
+        "median": 16.0
+    },
+    {
+        "airport": "ILM",
+        "delayed": 434.0,
+        "total": 2075.0,
+        "percent": 0.2091566265060241,
+        "average": 46.57834101382488,
+        "median": 19.5
+    },
+    {
+        "airport": "LAN",
+        "delayed": 489.0,
+        "total": 2071.0,
+        "percent": 0.23611781747947852,
+        "average": 45.212678936605315,
+        "median": 17.0
+    },
+    {
+        "airport": "MOT",
+        "delayed": 446.0,
+        "total": 2068.0,
+        "percent": 0.21566731141199227,
+        "average": 49.54708520179372,
+        "median": 18.0
+    },
+    {
+        "airport": "LCH",
+        "delayed": 381.0,
+        "total": 2058.0,
+        "percent": 0.18513119533527697,
+        "average": 45.650918635170605,
+        "median": 18.0
+    },
+    {
+        "airport": "YUM",
+        "delayed": 378.0,
+        "total": 2054.0,
+        "percent": 0.18403115871470302,
+        "average": 38.492063492063494,
+        "median": 11.0
+    },
+    {
+        "airport": "SGU",
+        "delayed": 474.0,
+        "total": 1980.0,
+        "percent": 0.23939393939393938,
+        "average": 31.578059071729957,
+        "median": 11.0
+    },
+    {
+        "airport": "AZO",
+        "delayed": 344.0,
+        "total": 1966.0,
+        "percent": 0.17497456765005087,
+        "average": 50.57848837209303,
+        "median": 29.0
+    },
+    {
+        "airport": "DLH",
+        "delayed": 506.0,
+        "total": 1942.0,
+        "percent": 0.26055612770339853,
+        "average": 44.519762845849804,
+        "median": 19.0
+    },
+    {
+        "airport": "CPR",
+        "delayed": 344.0,
+        "total": 1912.0,
+        "percent": 0.1799163179916318,
+        "average": 35.56104651162791,
+        "median": 16.0
+    },
+    {
+        "airport": "MBS",
+        "delayed": 464.0,
+        "total": 1863.0,
+        "percent": 0.2490606548577563,
+        "average": 52.79956896551724,
+        "median": 27.0
+    },
+    {
+        "airport": "FLG",
+        "delayed": 397.0,
+        "total": 1818.0,
+        "percent": 0.21837183718371836,
+        "average": 42.07052896725441,
+        "median": 18.0
+    },
+    {
+        "airport": "LSE",
+        "delayed": 310.0,
+        "total": 1811.0,
+        "percent": 0.17117614577581447,
+        "average": 61.6,
+        "median": 27.0
+    },
+    {
+        "airport": "MHK",
+        "delayed": 338.0,
+        "total": 1785.0,
+        "percent": 0.18935574229691876,
+        "average": 46.67455621301775,
+        "median": 20.0
+    },
+    {
+        "airport": "FAY",
+        "delayed": 550.0,
+        "total": 1783.0,
+        "percent": 0.30846887268648343,
+        "average": 39.86727272727273,
+        "median": 14.0
+    },
+    {
+        "airport": "SJT",
+        "delayed": 469.0,
+        "total": 1777.0,
+        "percent": 0.2639279684862127,
+        "average": 44.05756929637526,
+        "median": 21.0
+    },
+    {
+        "airport": "ACT",
+        "delayed": 411.0,
+        "total": 1760.0,
+        "percent": 0.23352272727272727,
+        "average": 49.54014598540146,
+        "median": 23.0
+    },
+    {
+        "airport": "SPI",
+        "delayed": 412.0,
+        "total": 1737.0,
+        "percent": 0.23719055843408174,
+        "average": 54.398058252427184,
+        "median": 21.0
+    },
+    {
+        "airport": "DAB",
+        "delayed": 368.0,
+        "total": 1613.0,
+        "percent": 0.22814631122132673,
+        "average": 35.14945652173913,
+        "median": 15.0
+    },
+    {
+        "airport": "SAF",
+        "delayed": 453.0,
+        "total": 1597.0,
+        "percent": 0.2836568566061365,
+        "average": 47.209713024282564,
+        "median": 19.0
+    },
+    {
+        "airport": "HLN",
+        "delayed": 191.0,
+        "total": 1576.0,
+        "percent": 0.12119289340101523,
+        "average": 43.78534031413613,
+        "median": 12.0
+    },
+    {
+        "airport": "CWA",
+        "delayed": 308.0,
+        "total": 1565.0,
+        "percent": 0.19680511182108626,
+        "average": 49.78896103896104,
+        "median": 21.0
+    },
+    {
+        "airport": "AVP",
+        "delayed": 396.0,
+        "total": 1472.0,
+        "percent": 0.26902173913043476,
+        "average": 45.88131313131313,
+        "median": 15.0
+    },
+    {
+        "airport": "LAW",
+        "delayed": 315.0,
+        "total": 1455.0,
+        "percent": 0.21649484536082475,
+        "average": 55.073015873015876,
+        "median": 26.0
+    },
+    {
+        "airport": "MLB",
+        "delayed": 415.0,
+        "total": 1448.0,
+        "percent": 0.2866022099447514,
+        "average": 37.3566265060241,
+        "median": 13.0
+    },
+    {
+        "airport": "ACV",
+        "delayed": 438.0,
+        "total": 1442.0,
+        "percent": 0.30374479889042993,
+        "average": 52.12328767123287,
+        "median": 35.0
+    },
+    {
+        "airport": "BQN",
+        "delayed": 596.0,
+        "total": 1439.0,
+        "percent": 0.414176511466296,
+        "average": 38.600671140939596,
+        "median": 18.0
+    },
+    {
+        "airport": "SIT",
+        "delayed": 341.0,
+        "total": 1435.0,
+        "percent": 0.23763066202090594,
+        "average": 32.733137829912025,
+        "median": 14.0
+    },
+    {
+        "airport": "COU",
+        "delayed": 400.0,
+        "total": 1431.0,
+        "percent": 0.27952480782669464,
+        "average": 61.815,
+        "median": 22.0
+    },
+    {
+        "airport": "LBE",
+        "delayed": 460.0,
+        "total": 1398.0,
+        "percent": 0.3290414878397711,
+        "average": 46.280434782608694,
+        "median": 25.0
+    },
+    {
+        "airport": "DHN",
+        "delayed": 322.0,
+        "total": 1378.0,
+        "percent": 0.23367198838896952,
+        "average": 45.869565217391305,
+        "median": 24.0
+    },
+    {
+        "airport": "PHF",
+        "delayed": 436.0,
+        "total": 1377.0,
+        "percent": 0.3166303558460421,
+        "average": 41.75917431192661,
+        "median": 15.5
+    },
+    {
+        "airport": "SPS",
+        "delayed": 346.0,
+        "total": 1356.0,
+        "percent": 0.2551622418879056,
+        "average": 44.76011560693642,
+        "median": 20.0
+    },
+    {
+        "airport": "OAJ",
+        "delayed": 326.0,
+        "total": 1248.0,
+        "percent": 0.26121794871794873,
+        "average": 53.09815950920245,
+        "median": 20.5
+    },
+    {
+        "airport": "EGE",
+        "delayed": 405.0,
+        "total": 1245.0,
+        "percent": 0.3253012048192771,
+        "average": 61.89135802469136,
+        "median": 27.0
+    },
+    {
+        "airport": "CSG",
+        "delayed": 320.0,
+        "total": 1180.0,
+        "percent": 0.2711864406779661,
+        "average": 34.38125,
+        "median": 15.0
+    },
+    {
+        "airport": "GCC",
+        "delayed": 215.0,
+        "total": 1085.0,
+        "percent": 0.19815668202764977,
+        "average": 32.83720930232558,
+        "median": 12.0
+    },
+    {
+        "airport": "TXK",
+        "delayed": 264.0,
+        "total": 1066.0,
+        "percent": 0.24765478424015008,
+        "average": 39.515151515151516,
+        "median": 16.5
+    },
+    {
+        "airport": "ROW",
+        "delayed": 264.0,
+        "total": 1066.0,
+        "percent": 0.24765478424015008,
+        "average": 47.54545454545455,
+        "median": 23.0
+    },
+    {
+        "airport": "BPT",
+        "delayed": 331.0,
+        "total": 1060.0,
+        "percent": 0.3122641509433962,
+        "average": 58.4441087613293,
+        "median": 26.0
+    },
+    {
+        "airport": "TOL",
+        "delayed": 176.0,
+        "total": 1050.0,
+        "percent": 0.1676190476190476,
+        "average": 45.6875,
+        "median": 24.0
+    },
+    {
+        "airport": "RHI",
+        "delayed": 173.0,
+        "total": 1042.0,
+        "percent": 0.16602687140115163,
+        "average": 52.410404624277454,
+        "median": 27.0
+    },
+    {
+        "airport": "VLD",
+        "delayed": 225.0,
+        "total": 1023.0,
+        "percent": 0.21994134897360704,
+        "average": 45.19111111111111,
+        "median": 19.0
+    },
+    {
+        "airport": "SUN",
+        "delayed": 205.0,
+        "total": 1018.0,
+        "percent": 0.2013752455795678,
+        "average": 43.985365853658536,
+        "median": 19.0
+    },
+    {
+        "airport": "GTR",
+        "delayed": 202.0,
+        "total": 1015.0,
+        "percent": 0.19901477832512315,
+        "average": 51.07425742574257,
+        "median": 23.5
+    },
+    {
+        "airport": "DBQ",
+        "delayed": 195.0,
+        "total": 1015.0,
+        "percent": 0.1921182266009852,
+        "average": 51.03589743589744,
+        "median": 25.0
+    },
+    {
+        "airport": "STX",
+        "delayed": 368.0,
+        "total": 1007.0,
+        "percent": 0.365441906653426,
+        "average": 33.97010869565217,
+        "median": 15.0
+    },
+    {
+        "airport": "MTJ",
+        "delayed": 250.0,
+        "total": 1007.0,
+        "percent": 0.24826216484607747,
+        "average": 45.044,
+        "median": 24.0
+    },
+    {
+        "airport": "DIK",
+        "delayed": 122.0,
+        "total": 999.0,
+        "percent": 0.12212212212212212,
+        "average": 67.00819672131148,
+        "median": 27.5
+    },
+    {
+        "airport": "MEI",
+        "delayed": 306.0,
+        "total": 991.0,
+        "percent": 0.3087790110998991,
+        "average": 51.07843137254902,
+        "median": 20.0
+    },
+    {
+        "airport": "HIB",
+        "delayed": 187.0,
+        "total": 982.0,
+        "percent": 0.19042769857433808,
+        "average": 47.8235294117647,
+        "median": 14.0
+    },
+    {
+        "airport": "BET",
+        "delayed": 279.0,
+        "total": 980.0,
+        "percent": 0.28469387755102044,
+        "average": 28.372759856630825,
+        "median": 12.0
+    },
+    {
+        "airport": "SCE",
+        "delayed": 242.0,
+        "total": 973.0,
+        "percent": 0.24871531346351491,
+        "average": 50.413223140495866,
+        "median": 17.0
+    },
+    {
+        "airport": "BQK",
+        "delayed": 221.0,
+        "total": 963.0,
+        "percent": 0.22949117341640707,
+        "average": 47.93665158371041,
+        "median": 25.0
+    },
+    {
+        "airport": "ABY",
+        "delayed": 224.0,
+        "total": 963.0,
+        "percent": 0.23260643821391486,
+        "average": 52.03125,
+        "median": 27.0
+    },
+    {
+        "airport": "BRW",
+        "delayed": 270.0,
+        "total": 936.0,
+        "percent": 0.28846153846153844,
+        "average": 29.055555555555557,
+        "median": 12.5
+    },
+    {
+        "airport": "SCC",
+        "delayed": 246.0,
+        "total": 936.0,
+        "percent": 0.26282051282051283,
+        "average": 29.804878048780488,
+        "median": 12.0
+    },
+    {
+        "airport": "TWF",
+        "delayed": 156.0,
+        "total": 902.0,
+        "percent": 0.1729490022172949,
+        "average": 25.91025641025641,
+        "median": 9.0
+    },
+    {
+        "airport": "JMS",
+        "delayed": 212.0,
+        "total": 887.0,
+        "percent": 0.23900789177001128,
+        "average": 47.54245283018868,
+        "median": 20.0
+    },
+    {
+        "airport": "PLN",
+        "delayed": 118.0,
+        "total": 815.0,
+        "percent": 0.14478527607361963,
+        "average": 89.22033898305085,
+        "median": 54.5
+    },
+    {
+        "airport": "PSE",
+        "delayed": 188.0,
+        "total": 811.0,
+        "percent": 0.2318125770653514,
+        "average": 39.601063829787236,
+        "median": 24.0
+    },
+    {
+        "airport": "GFK",
+        "delayed": 149.0,
+        "total": 807.0,
+        "percent": 0.18463444857496902,
+        "average": 41.50335570469799,
+        "median": 20.0
+    },
+    {
+        "airport": "ERI",
+        "delayed": 194.0,
+        "total": 803.0,
+        "percent": 0.24159402241594022,
+        "average": 45.0360824742268,
+        "median": 15.5
+    },
+    {
+        "airport": "RDD",
+        "delayed": 191.0,
+        "total": 789.0,
+        "percent": 0.2420785804816223,
+        "average": 48.49738219895288,
+        "median": 27.0
+    },
+    {
+        "airport": "SWF",
+        "delayed": 230.0,
+        "total": 757.0,
+        "percent": 0.3038309114927345,
+        "average": 46.982608695652175,
+        "median": 21.5
+    },
+    {
+        "airport": "RKS",
+        "delayed": 123.0,
+        "total": 747.0,
+        "percent": 0.1646586345381526,
+        "average": 59.292682926829265,
+        "median": 21.0
+    },
+    {
+        "airport": "ABR",
+        "delayed": 156.0,
+        "total": 742.0,
+        "percent": 0.21024258760107817,
+        "average": 58.67948717948718,
+        "median": 18.0
+    },
+    {
+        "airport": "CMX",
+        "delayed": 144.0,
+        "total": 730.0,
+        "percent": 0.19726027397260273,
+        "average": 53.55555555555556,
+        "median": 17.5
+    },
+    {
+        "airport": "EAU",
+        "delayed": 170.0,
+        "total": 730.0,
+        "percent": 0.2328767123287671,
+        "average": 57.12352941176471,
+        "median": 28.0
+    },
+    {
+        "airport": "BJI",
+        "delayed": 82.0,
+        "total": 729.0,
+        "percent": 0.11248285322359397,
+        "average": 78.0,
+        "median": 24.5
+    },
+    {
+        "airport": "BTM",
+        "delayed": 89.0,
+        "total": 729.0,
+        "percent": 0.12208504801097393,
+        "average": 51.168539325842694,
+        "median": 13.0
+    },
+    {
+        "airport": "MKG",
+        "delayed": 207.0,
+        "total": 729.0,
+        "percent": 0.2839506172839506,
+        "average": 47.15458937198068,
+        "median": 28.0
+    },
+    {
+        "airport": "PAH",
+        "delayed": 148.0,
+        "total": 728.0,
+        "percent": 0.2032967032967033,
+        "average": 54.82432432432432,
+        "median": 16.5
+    },
+    {
+        "airport": "PSG",
+        "delayed": 241.0,
+        "total": 726.0,
+        "percent": 0.3319559228650138,
+        "average": 38.37344398340249,
+        "median": 18.0
+    },
+    {
+        "airport": "SMX",
+        "delayed": 171.0,
+        "total": 726.0,
+        "percent": 0.23553719008264462,
+        "average": 57.35672514619883,
+        "median": 30.0
+    },
+    {
+        "airport": "WRG",
+        "delayed": 218.0,
+        "total": 726.0,
+        "percent": 0.3002754820936639,
+        "average": 36.096330275229356,
+        "median": 17.0
+    },
+    {
+        "airport": "OME",
+        "delayed": 269.0,
+        "total": 725.0,
+        "percent": 0.37103448275862067,
+        "average": 28.743494423791823,
+        "median": 14.0
+    },
+    {
+        "airport": "ORH",
+        "delayed": 192.0,
+        "total": 725.0,
+        "percent": 0.26482758620689656,
+        "average": 38.854166666666664,
+        "median": 16.5
+    },
+    {
+        "airport": "OTZ",
+        "delayed": 276.0,
+        "total": 725.0,
+        "percent": 0.38068965517241377,
+        "average": 28.52173913043478,
+        "median": 12.5
+    },
+    {
+        "airport": "GCK",
+        "delayed": 138.0,
+        "total": 725.0,
+        "percent": 0.19034482758620688,
+        "average": 56.98550724637681,
+        "median": 21.5
+    },
+    {
+        "airport": "JLN",
+        "delayed": 176.0,
+        "total": 724.0,
+        "percent": 0.2430939226519337,
+        "average": 52.79545454545455,
+        "median": 23.0
+    },
+    {
+        "airport": "CDV",
+        "delayed": 191.0,
+        "total": 724.0,
+        "percent": 0.2638121546961326,
+        "average": 27.848167539267017,
+        "median": 15.0
+    },
+    {
+        "airport": "YAK",
+        "delayed": 137.0,
+        "total": 724.0,
+        "percent": 0.18922651933701656,
+        "average": 32.693430656934304,
+        "median": 19.0
+    },
+    {
+        "airport": "HDN",
+        "delayed": 239.0,
+        "total": 723.0,
+        "percent": 0.330567081604426,
+        "average": 49.12970711297071,
+        "median": 25.0
+    },
+    {
+        "airport": "PIH",
+        "delayed": 76.0,
+        "total": 711.0,
+        "percent": 0.10689170182841069,
+        "average": 54.38157894736842,
+        "median": 9.0
+    },
+    {
+        "airport": "BLI",
+        "delayed": 136.0,
+        "total": 711.0,
+        "percent": 0.19127988748241911,
+        "average": 33.51470588235294,
+        "median": 7.0
+    },
+    {
+        "airport": "GGG",
+        "delayed": 194.0,
+        "total": 702.0,
+        "percent": 0.27635327635327633,
+        "average": 41.94845360824742,
+        "median": 18.0
+    },
+    {
+        "airport": "COD",
+        "delayed": 221.0,
+        "total": 696.0,
+        "percent": 0.3175287356321839,
+        "average": 34.990950226244344,
+        "median": 14.0
+    },
+    {
+        "airport": "GRI",
+        "delayed": 132.0,
+        "total": 691.0,
+        "percent": 0.191027496382055,
+        "average": 49.43181818181818,
+        "median": 19.0
+    },
+    {
+        "airport": "IMT",
+        "delayed": 94.0,
+        "total": 678.0,
+        "percent": 0.13864306784660768,
+        "average": 64.19148936170212,
+        "median": 24.0
+    },
+    {
+        "airport": "SUX",
+        "delayed": 159.0,
+        "total": 677.0,
+        "percent": 0.23485967503692762,
+        "average": 54.528301886792455,
+        "median": 27.0
+    },
+    {
+        "airport": "ALO",
+        "delayed": 125.0,
+        "total": 674.0,
+        "percent": 0.18545994065281898,
+        "average": 48.44,
+        "median": 27.0
+    },
+    {
+        "airport": "CIU",
+        "delayed": 154.0,
+        "total": 670.0,
+        "percent": 0.2298507462686567,
+        "average": 52.8051948051948,
+        "median": 20.0
+    },
+    {
+        "airport": "BRD",
+        "delayed": 75.0,
+        "total": 642.0,
+        "percent": 0.11682242990654206,
+        "average": 44.12,
+        "median": 15.0
+    },
+    {
+        "airport": "LWS",
+        "delayed": 58.0,
+        "total": 641.0,
+        "percent": 0.0904836193447738,
+        "average": 26.56896551724138,
+        "median": 8.0
+    },
+    {
+        "airport": "CLD",
+        "delayed": 159.0,
+        "total": 641.0,
+        "percent": 0.24804992199687986,
+        "average": 35.119496855345915,
+        "median": 12.0
+    },
+    {
+        "airport": "LAR",
+        "delayed": 126.0,
+        "total": 634.0,
+        "percent": 0.19873817034700317,
+        "average": 35.507936507936506,
+        "median": 13.0
+    },
+    {
+        "airport": "EWN",
+        "delayed": 133.0,
+        "total": 630.0,
+        "percent": 0.2111111111111111,
+        "average": 44.4812030075188,
+        "median": 24.0
+    },
+    {
+        "airport": "INL",
+        "delayed": 85.0,
+        "total": 627.0,
+        "percent": 0.13556618819776714,
+        "average": 86.16470588235295,
+        "median": 34.0
+    },
+    {
+        "airport": "ESC",
+        "delayed": 74.0,
+        "total": 626.0,
+        "percent": 0.1182108626198083,
+        "average": 95.64864864864865,
+        "median": 40.0
+    },
+    {
+        "airport": "HYS",
+        "delayed": 126.0,
+        "total": 626.0,
+        "percent": 0.2012779552715655,
+        "average": 37.76984126984127,
+        "median": 25.5
+    },
+    {
+        "airport": "PIB",
+        "delayed": 136.0,
+        "total": 626.0,
+        "percent": 0.21725239616613418,
+        "average": 55.88235294117647,
+        "median": 21.5
+    },
+    {
+        "airport": "CDC",
+        "delayed": 147.0,
+        "total": 626.0,
+        "percent": 0.23482428115015974,
+        "average": 33.10884353741496,
+        "median": 9.0
+    },
+    {
+        "airport": "APN",
+        "delayed": 97.0,
+        "total": 626.0,
+        "percent": 0.15495207667731628,
+        "average": 69.08247422680412,
+        "median": 39.0
+    },
+    {
+        "airport": "HOB",
+        "delayed": 91.0,
+        "total": 624.0,
+        "percent": 0.14583333333333334,
+        "average": 71.52747252747253,
+        "median": 25.0
+    },
+    {
+        "airport": "EKO",
+        "delayed": 49.0,
+        "total": 584.0,
+        "percent": 0.0839041095890411,
+        "average": 50.857142857142854,
+        "median": 19.0
+    },
+    {
+        "airport": "DVL",
+        "delayed": 106.0,
+        "total": 574.0,
+        "percent": 0.18466898954703834,
+        "average": 55.216981132075475,
+        "median": 20.0
+    },
+    {
+        "airport": "ACK",
+        "delayed": 220.0,
+        "total": 520.0,
+        "percent": 0.4230769230769231,
+        "average": 46.88181818181818,
+        "median": 18.5
+    },
+    {
+        "airport": "GUC",
+        "delayed": 167.0,
+        "total": 497.0,
+        "percent": 0.33601609657947684,
+        "average": 45.58083832335329,
+        "median": 18.0
+    },
+    {
+        "airport": "ADQ",
+        "delayed": 133.0,
+        "total": 491.0,
+        "percent": 0.2708757637474542,
+        "average": 24.481203007518797,
+        "median": 10.0
+    },
+    {
+        "airport": "BGR",
+        "delayed": 87.0,
+        "total": 393.0,
+        "percent": 0.22137404580152673,
+        "average": 47.89655172413793,
+        "median": 11.0
+    },
+    {
+        "airport": "GUM",
+        "delayed": 234.0,
+        "total": 365.0,
+        "percent": 0.6410958904109589,
+        "average": 26.085470085470085,
+        "median": 12.0
+    },
+    {
+        "airport": "IAG",
+        "delayed": 106.0,
+        "total": 344.0,
+        "percent": 0.3081395348837209,
+        "average": 39.386792452830186,
+        "median": 15.0
+    },
+    {
+        "airport": "MQT",
+        "delayed": 73.0,
+        "total": 330.0,
+        "percent": 0.22121212121212122,
+        "average": 57.205479452054796,
+        "median": 25.0
+    },
+    {
+        "airport": "BGM",
+        "delayed": 65.0,
+        "total": 324.0,
+        "percent": 0.2006172839506173,
+        "average": 74.95384615384616,
+        "median": 29.0
+    },
+    {
+        "airport": "OTH",
+        "delayed": 126.0,
+        "total": 311.0,
+        "percent": 0.40514469453376206,
+        "average": 53.88095238095238,
+        "median": 29.5
+    },
+    {
+        "airport": "PBG",
+        "delayed": 134.0,
+        "total": 294.0,
+        "percent": 0.4557823129251701,
+        "average": 38.440298507462686,
+        "median": 23.0
+    },
+    {
+        "airport": "PUB",
+        "delayed": 49.0,
+        "total": 264.0,
+        "percent": 0.1856060606060606,
+        "average": 44.83673469387755,
+        "median": 31.0
+    },
+    {
+        "airport": "MVY",
+        "delayed": 116.0,
+        "total": 216.0,
+        "percent": 0.5370370370370371,
+        "average": 49.827586206896555,
+        "median": 19.0
+    },
+    {
+        "airport": "WYS",
+        "delayed": 41.0,
+        "total": 208.0,
+        "percent": 0.1971153846153846,
+        "average": 24.24390243902439,
+        "median": 8.0
+    },
+    {
+        "airport": "CNY",
+        "delayed": 11.0,
+        "total": 206.0,
+        "percent": 0.05339805825242718,
+        "average": 23.90909090909091,
+        "median": 16.0
+    },
+    {
+        "airport": "VEL",
+        "delayed": 10.0,
+        "total": 206.0,
+        "percent": 0.04854368932038835,
+        "average": 133.6,
+        "median": 20.0
+    },
+    {
+        "airport": "CEC",
+        "delayed": 59.0,
+        "total": 190.0,
+        "percent": 0.3105263157894737,
+        "average": 65.47457627118644,
+        "median": 40.0
+    },
+    {
+        "airport": "UST",
+        "delayed": 76.0,
+        "total": 169.0,
+        "percent": 0.44970414201183434,
+        "average": 39.026315789473685,
+        "median": 22.0
+    },
+    {
+        "airport": "MMH",
+        "delayed": 49.0,
+        "total": 156.0,
+        "percent": 0.3141025641025641,
+        "average": 43.183673469387756,
+        "median": 36.0
+    },
+    {
+        "airport": "PPG",
+        "delayed": 50.0,
+        "total": 116.0,
+        "percent": 0.43103448275862066,
+        "average": 58.32,
+        "median": 13.5
+    },
+    {
+        "airport": "ADK",
+        "delayed": 60.0,
+        "total": 105.0,
+        "percent": 0.5714285714285714,
+        "average": 28.25,
+        "median": 20.5
+    },
+    {
+        "airport": "ILG",
+        "delayed": 55.0,
+        "total": 100.0,
+        "percent": 0.55,
+        "average": 58.345454545454544,
+        "median": 30.0
+    },
+    {
+        "airport": "STC",
+        "delayed": 28.0,
+        "total": 83.0,
+        "percent": 0.3373493975903614,
+        "average": 65.21428571428571,
+        "median": 50.0
+    },
+    {
+        "airport": "HYA",
+        "delayed": 36.0,
+        "total": 83.0,
+        "percent": 0.43373493975903615,
+        "average": 59.333333333333336,
+        "median": 15.5
+    },
+    {
+        "airport": "DLG",
+        "delayed": 25.0,
+        "total": 77.0,
+        "percent": 0.3246753246753247,
+        "average": 20.96,
+        "median": 12.0
+    },
+    {
+        "airport": "GST",
+        "delayed": 45.0,
+        "total": 77.0,
+        "percent": 0.5844155844155844,
+        "average": 35.13333333333333,
+        "median": 22.0
+    },
+    {
+        "airport": "AKN",
+        "delayed": 30.0,
+        "total": 63.0,
+        "percent": 0.47619047619047616,
+        "average": 13.8,
+        "median": 10.0
+    },
+    {
+        "airport": "ITH",
+        "delayed": 11.0,
+        "total": 34.0,
+        "percent": 0.3235294117647059,
+        "average": 45.63636363636363,
+        "median": 26.0
+    }
+]

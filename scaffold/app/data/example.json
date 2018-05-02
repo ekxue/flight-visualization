@@ -1,0 +1,9 @@
+[
+  {"day": "Monday", "freq": 23},
+  {"day": "Tuesday", "freq": 123},
+  {"day": "Wednesday", "freq": 73},
+  {"day": "Thursday", "freq": 63},
+  {"day": "Friday", "freq": 43},
+  {"day": "Saturday", "freq": 93},
+  {"day": "Sunday", "freq": 52}
+]

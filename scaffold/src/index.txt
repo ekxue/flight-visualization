@@ -1,0 +1,157 @@
+// if the data you are going to import is small, then you can import it using es6 import
+// import MY_DATA from './app/data/example.json'
+// (I tend to think it's best to use screaming snake case for imported json)
+
+// import from: https://github.com/d3/d3/blob/master/API.md
+import {select} from 'd3-selection';
+import {scaleBand, scaleLinear, bandwidth} from 'd3-scale';
+import {max} from 'd3-array';
+import {axisBottom, axisLeft} from 'd3-axis';
+
+const domReady = require('domready');
+domReady(() => {
+  // this is just one example of how to import data. there are lots of ways to do it!
+  fetch('./data/delays_by_airport.json')
+    .then(response => response.json())
+    .then(data => myVis(data));
+
+});
+
+function scatterPlot(data, xVar, yVar, xLabel, yLabel, text) {
+  // The posters will all be 24 inches by 36 inches
+  // Your graphic can either be portrait or landscape, up to you
+  // the important thing is to make sure the aspect ratio is correct.
+
+  const height = 700; // was 5000, changed to 500 for viewing in browser
+  const width = 36 / 24 * height;
+  const margin = 70;
+  const days = data.map(d => d.day);
+
+  // data = data.slice(0, 50);
+
+  const xScale = scaleLinear()
+    .domain([0, Math.max(...data.map(d => d[xVar]))])
+    .range([margin, width - margin]);
+
+  const yScale = scaleLinear()
+    // .domain([Math.min(...data.map(d => d[yVar])), Math.max(...data.map(d => d[yVar]))])
+    .domain([0, Math.max(...data.map(d => d[yVar]))])
+    .range([height - margin, margin]);
+
+  const vis = select('.vis-container')
+    .attr('width', width)
+    .attr('height', height);
+
+  vis.append('g')
+    .attr('transform', `translate(0, ${height - margin})`)
+    .call(axisBottom(xScale));
+
+  vis.append('g')
+    .attr('transform', `translate(${margin}, 0)`)
+    .call(axisLeft(yScale));
+
+  vis.append('text')
+    .attr('transform', 'rotate(-90)')
+    .attr('x', -height / 2)
+    .attr('y', margin / 2)
+    .attr('text-anchor', 'middle')
+    .text(yLabel);
+
+  vis.append('text')
+    .attr('x', width / 2)
+    .attr('y', height - margin / 4)
+    .attr('text-anchor', 'middle')
+    .text(xLabel);
+
+  vis.selectAll('.dot')
+    .data(data)
+    .enter().append('circle')
+    .attr('class', 'dot')
+    .attr('r', 2)
+    .attr('cx', d => xScale(d[xVar]))
+    .attr('cy', d => yScale(d[yVar]));
+
+  if (text) {
+    vis.selectAll('.text')
+    .data(data)
+    .enter().append('text')
+    .attr('x', d => xScale(d[xVar]))
+    .attr('y', d => yScale(d[yVar]))
+    .attr('text-anchor', 'start')
+    .attr('font-size', '10px')
+    .text(d => d.airport);
+  }
+}
+
+function myVis(data) {
+  // The posters will all be 24 inches by 36 inches
+  // Your graphic can either be portrait or landscape, up to you
+  // the important thing is to make sure the aspect ratio is correct.
+  
+  scatterPlot(data, 'total', 'percent', 'Total Outbound Flights', 'Proportion of Delayed Flights', false);
+  // scatterPlot(data.slice(0,150), 'total', 'percent', 'Total Outbound Flights', 'Proportion of Delayed Flights', true);
+  
+  // scatterPlot(data, 'total', 'average', 'Total Outbound Flights', 'Average Delay Time (min)', false);
+  // scatterPlot(data.slice(0,150), 'total', 'average', 'Total Outbound Flights', 'Average Delay Time (min)', true);
+  
+  // scatterPlot(data, 'total', 'median', 'Total Outbound Flights', 'Median Delay Time (min)', false);
+  // scatterPlot(data.slice(0,150), 'total', 'median', 'Total Outbound Flights', 'Median Delay Time (min)', true);
+  
+
+  // const height = 700; // was 5000, changed to 500 for viewing in browser
+  // const width = 36 / 24 * height;
+  // const margin = 70;
+  // const days = data.map(d => d.day);
+
+  // // data = data.slice(0, 50);
+
+  // const sizeScale = scaleLinear()
+  //   .domain([0, Math.max(...data.map(d => d.total))])
+  //   .range([margin, width - margin]);
+
+  // const delayScale = scaleLinear()
+  //   .domain([Math.min(...data.map(d => d.percent)), Math.max(...data.map(d => d.percent))])
+  //   .range([height - margin, margin]);
+
+  // const vis = select('.vis-container')
+  //   .attr('width', width)
+  //   .attr('height', height);
+
+  // vis.append('g')
+  //   .attr('transform', `translate(0, ${height - margin})`)
+  //   .call(axisBottom(sizeScale));
+
+  // vis.append('g')
+  //   .attr('transform', `translate(${margin}, 0)`)
+  //   .call(axisLeft(delayScale));
+
+  // vis.append('text')
+  //   .attr('transform', 'rotate(-90)')
+  //   .attr('x', -height / 2)
+  //   .attr('y', margin / 2)
+  //   .attr('text-anchor', 'middle')
+  //   .text('Proportion of Delayed Flights (%)');
+
+  // vis.append('text')
+  //   .attr('x', width / 2)
+  //   .attr('y', height - margin / 4)
+  //   .attr('text-anchor', 'middle')
+  //   .text('Total Outbound Flights');
+
+  // vis.selectAll('.dot')
+  //   .data(data)
+  //   .enter().append('circle')
+  //   .attr('class', 'dot')
+  //   .attr('r', 2)
+  //   .attr('cx', d => sizeScale(d.total))
+  //   .attr('cy', d => delayScale(d.percent));
+
+  // vis.selectAll('.text')
+  //   .data(data)
+  //   .enter().append('text')
+  //   .attr('x', d => sizeScale(d.total))
+  //   .attr('y', d => delayScale(d.percent))
+  //   .attr('text-anchor', 'start')
+  //   .attr('font-size', '10px')
+  //   .text(d => d.airport);
+}
