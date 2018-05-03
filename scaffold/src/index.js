@@ -440,15 +440,15 @@ function drawRadial(container, data, rVar, numLevels) {
 }
 
 
-function drawBar(container, data, barVar, yVar, xAxis, yAxis) {
+function drawBar(container, data, barVar, yVar, xLabel, yLabel, title) {
 
   const height = container.attr('height');
   const width = container.attr('width');
   const margin = 70;
-  const airlines = data.map(d => d.airline)
+  const airlines = data.map(d => d[barVar])
 
   const xScale = scaleBand()
-    .domain(days)
+    .domain(airlines)
     .range([margin, width - margin])
     .paddingInner(0.1)
     .paddingOuter(0.1);
@@ -466,33 +466,48 @@ function drawBar(container, data, barVar, yVar, xAxis, yAxis) {
     .data(data)
     .enter().append('rect')
     .attr('width', xScale.bandwidth())
-    .attr('height', d => height - margin - yScale(d.percent))
-    .attr('x', d => xScale(d.percent))
-    .attr('y', d => yScale(d.percent))
+    .attr('height', d => height - margin - yScale(d.percent * 100))
+    .attr('x', d => xScale(d.airline))
+    .attr('y', d => yScale(d.percent * 100))
     .attr('fill', 'steelblue');
   container.append('text')
     .attr('x', width / 2)
     .attr('y', 1.25 * margin)
     .attr('font', 'sans-serif')
-    .attr('font-size', '20px')
+    .attr('font-size', '80px')
     .attr('text-anchor', 'middle')
-    .text('Plot of Delay Frequency for Days in the Week');
+    .text(title);
+  container.append('text')
+    .attr('x', width / 2)
+    .attr('y', height - margin / 8)
+    .attr('font', 'sans-serif')
+    .attr('font-size', '40px')
+    .attr('text-anchor', 'middle')
+    .text(xLabel);
+ container.append('text')
+    .attr('transform', `translate(${margin / 2}, ${height / 2})rotate(-90)`)
+    .attr('font', 'sans-serif')
+    .attr('font-size', '40px')
+    .attr('text-anchor', 'middle')
+    .text(yLabel);
 }
 
 
-function makeContainer(vis, width, height, x, y) {
+function makeContainer(vis, width, height, x, y, border) {
   const container = vis.append('g')
     .attr('width', width)
     .attr('height', height)
     .attr('transform', `translate(${x}, ${y})`);
 
-  container.append('rect')
-    .attr('width', width)
-    .attr('height', height)
-    .attr('x', 0)
-    .attr('y', 0)
-    .attr('fill', 'None')
-    .attr('stroke', 'black');
+  if (border) {
+    container.append('rect')
+      .attr('width', width)
+      .attr('height', height)
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('fill', 'None')
+      .attr('stroke', 'black');
+  }
 
   return container;
 }
@@ -523,11 +538,11 @@ function myVis(data) {
     .attr('fill', backgroundColor);
 
 
-  const fullAirportAverageContainer = makeContainer(vis, width / 4, height / 3, width / 2, height / 2);
+  const fullAirportAverageContainer = makeContainer(vis, width / 4, height / 3, width / 2, height / 2, true);
 
-  const zoomAirportAverageContainer = makeContainer(vis, width / 4, height / 3, 3 * width / 4, height / 2);
+  const zoomAirportAverageContainer = makeContainer(vis, width / 4, height / 3, 3 * width / 4, height / 2, true);
 
-  const radialContainer = makeContainer(vis,  width, 0.4 * height, 0, 0);
+  const radialContainer = makeContainer(vis,  width, 0.4 * height, 0, 0, false);
 
   const rHeight = radialContainer.attr('height');
   const rWidth = radialContainer.attr('width');
@@ -540,7 +555,7 @@ function myVis(data) {
 
   // const radialAvgContainer = makeContainer(vis, 0.25 * width, 0.25 * height, width / 8, 0.4 * height)
 
-  const barContainer = makeContainer(vis, 0.4 * height, 0.3 * height, 0.6 * width, 0.1 * height);
+  const barContainer = makeContainer(vis, 0.3 * height, 0.3 * height, 0.02 * width, 0.5 * height, true);
 
   // console.log(data[0].slice(8, 11))
 
@@ -555,5 +570,6 @@ function myVis(data) {
   scatterPlot(fullAirportAverageContainer, data[1], 'total', 'percent', 'Total Outbound Flights (Airport Size)', 'Proportion of Delayed Flights', false);
   scatterPlot(zoomAirportAverageContainer, data[1], 'total', 'percent', 'Total Outbound Flights (Airport Size)', 'Proportion of Delayed Flights', true);
 
-  drawBar(barContainer, data[2], 'percent');
+  // drawBar(container, data, barVar, yVar, xLabel, yLabel, title)
+  drawBar(barContainer, data[2], 'airline', 'percent', 'Airlines', 'Percentage', 'Plot of Delays by Airlines');
 }
