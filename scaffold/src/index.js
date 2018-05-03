@@ -39,7 +39,7 @@ function scatterPlot(container, data, xVar, yVar, xLabel, yLabel, text) {
   const margin = 70;
 
   if (text) {
-    data = data.slice(0, 50);    
+    data = data.slice(0, 50);
   }
 
   const maxPow = Math.ceil(Math.log10(Math.max(...data.map(d => d[xVar]))));
@@ -440,14 +440,43 @@ function drawRadial(container, data, rVar, numLevels) {
 }
 
 
-function drawBar(container, data, barVar) {
-  // container.append('rect')
-  //   .attr('width', container.attr('width'))
-  //   .attr('height', container.attr('height'))
-  //   .attr('x', 0)
-  //   .attr('y', 0)
-  //   .attr('fill', 'None')
-  //   .attr('stroke', 'black');
+function drawBar(container, data, barVar, yVar, xAxis, yAxis) {
+
+  const height = container.attr('height');
+  const width = container.attr('width');
+  const margin = 70;
+  const airlines = data.map(d => d.airline)
+
+  const xScale = scaleBand()
+    .domain(days)
+    .range([margin, width - margin])
+    .paddingInner(0.1)
+    .paddingOuter(0.1);
+  const yScale = scaleLinear()
+    .domain([0, max(data, d => d.percent * 100)])
+    .range([height - margin, 2 * margin]);
+
+  container.append('g')
+    .attr('transform', `translate(0, ${height - margin})`)
+    .call(axisBottom(xScale));
+  container.append('g')
+    .attr('transform', `translate(${margin}, 0)`)
+    .call(axisLeft(yScale));
+  container.selectAll('.bar')
+    .data(data)
+    .enter().append('rect')
+    .attr('width', xScale.bandwidth())
+    .attr('height', d => height - margin - yScale(d.percent))
+    .attr('x', d => xScale(d.percent))
+    .attr('y', d => yScale(d.percent))
+    .attr('fill', 'steelblue');
+  container.append('text')
+    .attr('x', width / 2)
+    .attr('y', 1.25 * margin)
+    .attr('font', 'sans-serif')
+    .attr('font-size', '20px')
+    .attr('text-anchor', 'middle')
+    .text('Plot of Delay Frequency for Days in the Week');
 }
 
 
@@ -499,7 +528,7 @@ function myVis(data) {
   const zoomAirportAverageContainer = makeContainer(vis, width / 4, height / 3, 3 * width / 4, height / 2);
 
   const radialContainer = makeContainer(vis,  width, 0.4 * height, 0, 0);
-  
+
   const rHeight = radialContainer.attr('height');
   const rWidth = radialContainer.attr('width');
   const radialSeasons = makeContainer(radialContainer, 0.7 * rWidth, 0.7 * rHeight, 0.15 * rWidth, 0.15 * rHeight);
@@ -522,12 +551,9 @@ function myVis(data) {
   drawRadial(radialAutumn, data[0].slice(8, 11), 'percent', 8);
   // drawRadial(radialAvgContainer, data[3], 'average', 10);
   // drawRadial(radialContainer, data[3], 'percent', 8);
-  
+
   scatterPlot(fullAirportAverageContainer, data[1], 'total', 'percent', 'Total Outbound Flights (Airport Size)', 'Proportion of Delayed Flights', false);
   scatterPlot(zoomAirportAverageContainer, data[1], 'total', 'percent', 'Total Outbound Flights (Airport Size)', 'Proportion of Delayed Flights', true);
 
   drawBar(barContainer, data[2], 'percent');
-
-
-
 }
