@@ -1984,14 +1984,6 @@
         "median": 20.0
     },
     {
-        "airport": "PLN",
-        "delayed": 118.0,
-        "total": 815.0,
-        "percent": 0.14478527607361963,
-        "average": 89.22033898305085,
-        "median": 54.5
-    },
-    {
         "airport": "PSE",
         "delayed": 188.0,
         "total": 811.0,
