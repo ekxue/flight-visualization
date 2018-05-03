@@ -261,7 +261,7 @@ function scatterPlot(container, data, xVar, yVar, xLabel, yLabel, text) {
 }
 
 
-function drawRadial(container, data, rVar, numLevels) {
+function drawRadial(container, data, rVar, numLevels, season) {
   const height = container.attr('height');
   const width = container.attr('width');
   const xOffset = width / 2;
@@ -270,26 +270,41 @@ function drawRadial(container, data, rVar, numLevels) {
   const radius = 0.8 * Math.min(xOffset, yOffset);
   const maxThick = 0.03 * radius;
 
-  const colors = ['#3366cc',
-                  '#dc3912',
-                  '#ff9900',
-                  '#109618',
-                  '#990099',
-                  '#0099c6',
-                  '#dd4477',
-                  '#66aa00',
-                  '#b82e2e',
-                  '#316395',
-                  '#994499',
-                  '#22aa99',
-                  '#aaaa11',
-                  '#aaaa11',
-                  '#e67300',
-                  '#8b0707',
-                  '#651067',
-                  '#329262',
-                  '#5574a6',
-                  '#3b3eac'];
+  const seasonColors = ['#0b66f1', // winter
+                        '#1cd50a', // spring 
+                        '#fff60a', //summer 
+                        '#fd8308']; // fall
+
+  const winterColors = ['#17bbff',
+                        '#0b66f1',
+                        '#5d4fff'];
+
+  const springColors = ['#52d585',
+                        '#1cd50a',
+                        '#8fd646']
+
+  const summerColors = ['#cdff22',
+                        '#fff60a',
+                        '#f9da09'];
+
+  const fallColors = ['#f9b409',
+                      '#fd8308',
+                      '#f86607'];
+
+
+  function colorScheme(season){
+    if (season == 'season'){
+      return seasonColors;
+    } else if (season == 'winter'){
+      return winterColors;
+    } else if (season == 'spring'){
+      return springColors;
+    } else if (season == 'summer'){
+      return summerColors;
+    } else if (season == 'fall'){
+      return fallColors;
+    }
+  }
 
   const numHours = 24;
 
@@ -401,8 +416,8 @@ function drawRadial(container, data, rVar, numLevels) {
       d.total.length === 24 ? d.total.push(d.total[0]) : '';
       return areaFunction(d[rVar].map((e, i) => ({rVar: e, total: d.total[i]})));
     })
-    .attr('fill', (d, i) => colors[i])
-    .attr('stroke', (d, i) => colors[i])
+    .attr('fill', (d, i) => colorScheme(season)[i])
+    .attr('stroke', (d, i) => colorScheme(season)[i])
     .attr('stroke-width', '2px')
     .attr('transform', `translate(${xOffset}, ${yOffset})`)
 
@@ -515,11 +530,11 @@ function myVis(data) {
 
   // console.log(data[0].slice(8, 11))
 
-  drawRadial(radialSeasons, data[3], 'percent', 8);
-  drawRadial(radialWinter, data[0].slice(-1).concat(data[0].slice(0, 2)), 'percent', 8);
-  drawRadial(radialSpring, data[0].slice(2, 5), 'percent', 8);
-  drawRadial(radialSummer, data[0].slice(5, 8), 'percent', 8);
-  drawRadial(radialAutumn, data[0].slice(8, 11), 'percent', 8);
+  drawRadial(radialSeasons, data[3], 'percent', 8, 'season');
+  drawRadial(radialWinter, data[0].slice(-1).concat(data[0].slice(0, 2)), 'percent', 8, 'winter');
+  drawRadial(radialSpring, data[0].slice(2, 5), 'percent', 8, 'spring');
+  drawRadial(radialSummer, data[0].slice(5, 8), 'percent', 8, 'summer');
+  drawRadial(radialAutumn, data[0].slice(8, 11), 'percent', 8, 'autumn');
   // drawRadial(radialAvgContainer, data[3], 'average', 10);
   // drawRadial(radialContainer, data[3], 'percent', 8);
   
