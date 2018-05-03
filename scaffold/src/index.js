@@ -8,7 +8,7 @@ import {scaleBand, scaleLinear, bandwidth, scaleLog} from 'd3-scale';
 import {max} from 'd3-array';
 import {axisBottom, axisLeft, axisTop} from 'd3-axis';
 import {format} from 'd3-format';
-import {line} from 'd3-shape';
+import {line, radialArea, curveNatural, curveCardinalClosed} from 'd3-shape';
 import {interpolateRdBu, schemeRdBu} from 'd3-scale-chromatic';
 
 const domReady = require('domready');
@@ -21,7 +21,8 @@ domReady(() => {
   Promise.all([
     './data/delay_counts.json',
     './data/delays_by_airport.json',
-    './data/delays_by_airline.json'
+    './data/delays_by_airline.json',
+    './data/seasonal_delays.json'
   ].map(filename => fetch(filename).then(response => response.json())))
   .then(arrayofDataBlobs => myVis(arrayofDataBlobs))
 });
@@ -180,12 +181,14 @@ function scatterPlot(container, data, xVar, yVar, xLabel, yLabel, text) {
 }
 
 
-function drawRadial(container, data, rVar) {
+function drawRadial(container, data, rVar, numLevels) {
   const height = container.attr('height');
   const width = container.attr('width');
-  const centerOffset = Math.min(width, height) / 2;
-  const m = centerOffset / 20;
-  const radius = 0.8 * centerOffset;
+  const xOffset = width / 2;
+  const yOffset = height / 2
+  const m = Math.min(xOffset, yOffset) / 20;
+  const radius = 0.8 * Math.min(xOffset, yOffset);
+  const maxThick = 0.03 * radius;
 
   const colors = ['#3366cc',
                   '#dc3912',
@@ -208,15 +211,6 @@ function drawRadial(container, data, rVar) {
                   '#5574a6',
                   '#3b3eac'];
 
-  // container.append('rect')
-  //   .attr('width', width)
-  //   .attr('height', height)
-  //   .attr('x', 0)
-  //   .attr('y', 0)
-  //   .attr('fill', 'black')
-  //   .attr('fill-opacity', 0.05);
-
-  const numLevels = 8;
   const numHours = 24;
 
 
@@ -228,15 +222,20 @@ function drawRadial(container, data, rVar) {
     .range([0, radius]);
 
   const formatFunc = rVar === 'percent' ? format('.0%') : format('d');
-  // const formatInt = ;
-
-  console.log(Math.max(...data.map(d => Math.max(...d[rVar]))));
 
   const maxVal = Math.ceil(10 * Math.max(...data.map(d => Math.max(...d[rVar])))) / 10;
+  const maxRadius = rVar === 'percent' ? maxVal : 70;
 
   const rScale = scaleLinear()
-    .domain([0, maxVal])
+    .domain([0, maxRadius])
     .range([0, radius]);
+
+  const minTotal = Math.min(...data.map(d => Math.min(...d.total)));
+  const maxTotal = Math.max(...data.map(d => Math.max(...d.total)));
+
+  const thickScale = scaleLinear()
+    .domain([minTotal, maxTotal])
+    .range([0, maxThick]);
 
   const axisData = [...new Array(numHours * numLevels)].map((x, i) => ({
      hour: i % numHours,
@@ -255,7 +254,16 @@ function drawRadial(container, data, rVar) {
     .attr('stroke', 'grey')
     .attr('stroke-opacity', '0.75')
     .attr('stroke-width', '0.3px')
-    .attr('transform', `translate(${centerOffset}, ${centerOffset})`);
+    .attr('transform', `translate(${xOffset}, ${yOffset})`);
+
+
+  // container.append('clipPath')
+  //   .attr('id', 'graphClip')
+  //   .append('circle')
+  //   .attr('cx', xOffset)
+  //   .attr('cy', yOffset)
+  //   .attr('r', axisScale(numLevels));
+
 
   container.selectAll('.lines')
     .data(hours)
@@ -267,79 +275,88 @@ function drawRadial(container, data, rVar) {
     .attr('stroke-width', '1px')
     .attr('stroke-opacity', '0.75')
     .attr('stroke', 'grey')
-    .attr('transform', `translate(${centerOffset}, ${centerOffset})`);
+    .attr('transform', `translate(${xOffset}, ${yOffset})`);
 
   container.selectAll('.axis-text')
     .data(levels)
     .enter().append('text')
     .style('font-family', 'sans-serif')
-    .style('font-size', '11px')
+    .style('font-size', '22px')
     .attr('class', 'axis-text')
     .attr('x', 0)
     .attr('y', l => -axisScale(l + 1))
-    .attr('transform', `translate(${centerOffset}, ${centerOffset})`)
-    .text(l => formatFunc((l + 1)/ numLevels * maxVal));
+    .attr('transform', `translate(${xOffset}, ${yOffset})`)
+    .text(l => formatFunc((l + 1)/ numLevels * maxRadius));
 
   container.selectAll('.hours-text')
     .data(hours)
     .enter().append('text')
     .style('font-family', 'sans-serif')
-    .style('font-size', '11px')
+    .style('font-size', '22px')
     .attr('class', 'hours-text')
-    .attr('transform', `translate(${centerOffset}, ${centerOffset})`)
-    .attr('x', h => axisScale(numLevels + 1) * (-Math.sin(-h * 2 * Math.PI / numHours)))
-    .attr('y', h => axisScale(numLevels + 1) * (-Math.cos(-h * 2 * Math.PI / numHours)))
+    .attr('transform', `translate(${xOffset}, ${yOffset})`)
+    .attr('x', h => 1.05 * radius * (-Math.sin(-h * 2 * Math.PI / numHours)))
+    .attr('y', h => 1.05 * radius * (-Math.cos(-h * 2 * Math.PI / numHours)))
     .attr('text-anchor', 'middle')
     .text(h => `${h}:00`)
 
-  const lineFunction = line()
-    .x((d, i) => rScale(d) * (-Math.sin(-i * 2 * Math.PI / numHours)))
-    .y((d, i) => rScale(d) * (-Math.cos(-i * 2 * Math.PI / numHours)));
-    // .curve('linear');
 
-  container.selectAll('.graph')
+  const areaFunction = radialArea()
+  .angle((d, i) => i * 2 * Math.PI / numHours)
+  .innerRadius((d, i) => rScale(d.rVar) - thickScale(d.total))
+  .outerRadius((d, i) => rScale(d.rVar))
+  .curve(curveCardinalClosed.tension(0.55));
+
+  const graphContainer = container.append('g')
+    .attr('width', width)
+    .attr('height', height)
+    .attr('transform', `translate(${0}, ${0})`)
+    // .attr('clip-path', 'url(#graphClip)');
+
+  graphContainer.selectAll('.graph')
     .data(data)
     .enter().append('path')
     .attr('d', d => {
-      d[rVar].push(d[rVar][0])
-      return lineFunction(d[rVar]);
+      d[rVar].push(d[rVar][0]);
+      d.total.length === 24 ? d.total.push(d.total[0]) : '';
+      return areaFunction(d[rVar].map((e, i) => ({rVar: e, total: d.total[i]})));
     })
-    .attr('fill', 'none')
+    .attr('fill', (d, i) => colors[i])
     .attr('stroke', (d, i) => colors[i])
     .attr('stroke-width', '2px')
-    .attr('transform', `translate(${centerOffset}, ${centerOffset})`);
+    .attr('transform', `translate(${xOffset}, ${yOffset})`)
 
-  const legend = container.append('g')
-    .attr('height', centerOffset * 1.5)
-    .attr('width', centerOffset / 2)
-    .attr('transform', `translate(${ 2 * centerOffset}, ${0.25 * centerOffset})`)
+  // const legend = container.append('g')
+  //   .attr('height', yOffset * 1.5)
+  //   .attr('width', xOffset / 2)
+  //   .attr('transform', `translate(${ 2 * xOffset}, ${0.25 * yOffset})`)
 
-  legend.append('rect')
-    .attr('class', 'legend')
-    .attr('height', legend.attr('height'))
-    .attr('width', legend.attr('width'))
-    .attr('fill', 'None')
-    .attr('stroke', 'black')
-    .attr('stroke-width', '2px');
+  // legend.append('rect')
+  //   .attr('class', 'legend')
+  //   .attr('height', legend.attr('height'))
+  //   .attr('width', legend.attr('width'))
+  //   .attr('fill', 'None')
+  //   .attr('stroke', 'black')
+  //   .attr('stroke-width', '2px');
 
-  legend.selectAll('.box')
-    .data(data)
-    .enter()
-    .append('rect')
-    .attr('width', 0.7 * legend.attr('height') / 12)
-    .attr('height', 0.7 * legend.attr('height') / 12)
-    .attr('x', 0.05 * legend.attr('width'))
-    .attr('y', (d, i) => (i + 0.15) * legend.attr('height') / 12)
-    .attr('fill', (d, i) => colors[i]);
+  // legend.selectAll('.box')
+  //   .data(data)
+  //   .enter()
+  //   .append('rect')
+  //   .attr('width', 0.7 * legend.attr('height') / 12)
+  //   .attr('height', 0.7 * legend.attr('height') / 12)
+  //   .attr('x', 0.05 * legend.attr('width'))
+  //   .attr('y', (d, i) => (i + 0.15) * legend.attr('height') / 12)
+  //   .attr('fill', (d, i) => colors[i]);
 
-  legend.selectAll('.text')
-    .data(data)
-    .enter()
-    .append('text')
-    .attr('font-family', 'sans-serif')
-    .attr('x', 0.2 * legend.attr('width'))
-    .attr('y', (d, i) => (i + 0.15) * legend.attr('height') / 12)
-    .text(d => d.month)
+  // legend.selectAll('.text')
+  //   .data(data)
+  //   .enter()
+  //   .append('text')
+  //   .attr('font-family', 'sans-serif')
+  //   .attr('x', 0.2 * legend.attr('width'))
+  //   .attr('y', (d, i) => (i + 0.15) * legend.attr('height') / 12)
+  //   .text(d => d.month)
 }
 
 
@@ -380,8 +397,8 @@ function myVis(data) {
   // Eggshell
   const backgroundColor = '#EFF1ED';
 
-  const height = 5000; // was 5000, changed to 500 for viewing in browser
-  const width = 36 / 24 * height;
+  const width = 5000; // was 5000, changed to 500 for viewing in browser
+  const height = 36 / 24 * width;
   const margin = 70;
 
   const vis = select('.vis-container')
@@ -398,15 +415,30 @@ function myVis(data) {
 
   const airportAverageContainer = makeContainer(vis, width / 4, height / 3, width / 2, height / 2);
 
-  const radialContainer = makeContainer(vis, 0.4 * height, 0.3 * height, width / 8, height / 15);
+  const radialContainer = makeContainer(vis,  width, 0.4 * height, 0, 0);
+  
+  const rHeight = radialContainer.attr('height');
+  const rWidth = radialContainer.attr('width');
+  const radialSeasons = makeContainer(radialContainer, 0.7 * rWidth, 0.7 * rHeight, 0.15 * rWidth, 0.15 * rHeight);
+  const radialWinter = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0, 0);
+  const radialSpring = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0.6 * rWidth, 0);
+  const radialSummer = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0, 0.5 * rHeight);
+  const radialAutumn = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0.6 * rWidth, 0.5 * rHeight);
 
-  const radialAvgContainer = makeContainer(vis, 0.4 * height, 0.3 * height, width / 8, 0.4 * height)
+
+  // const radialAvgContainer = makeContainer(vis, 0.25 * width, 0.25 * height, width / 8, 0.4 * height)
 
   const barContainer = makeContainer(vis, 0.4 * height, 0.3 * height, 0.6 * width, 0.1 * height);
 
+  // console.log(data[0].slice(8, 11))
 
-  drawRadial(radialContainer, data[0], 'percent');
-  drawRadial(radialAvgContainer, data[0], 'average');
+  drawRadial(radialSeasons, data[3], 'percent', 8);
+  drawRadial(radialWinter, data[0].slice(-1).concat(data[0].slice(0, 2)), 'percent', 8);
+  drawRadial(radialSpring, data[0].slice(2, 5), 'percent', 8);
+  drawRadial(radialSummer, data[0].slice(5, 8), 'percent', 8);
+  drawRadial(radialAutumn, data[0].slice(8, 11), 'percent', 8);
+  // drawRadial(radialAvgContainer, data[3], 'average', 10);
+  // drawRadial(radialContainer, data[3], 'percent', 8);
   scatterPlot(airportAverageContainer, data[1], 'total', 'percent', 'Total Outbound Flights', 'Proportion of Delayed Flights', true);
   drawBar(barContainer, data[2], 'percent');
 
