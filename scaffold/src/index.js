@@ -5,12 +5,13 @@
 // import from: https://github.com/d3/d3/blob/master/API.md
 import {select, selectAll} from 'd3-selection';
 import {scaleBand, scaleLinear, bandwidth, scaleLog} from 'd3-scale';
-import {max} from 'd3-array';
+import {median} from 'd3-array';
 import {axisBottom, axisLeft, axisTop} from 'd3-axis';
 import {format} from 'd3-format';
 import {line, radialArea, curveNatural, curveCardinalClosed} from 'd3-shape';
 import {interpolateRdBu, schemeRdBu} from 'd3-scale-chromatic';
 import {bboxCollide} from 'd3-bboxCollide';
+import {hsl} from 'd3-color';
 import {forceSimulation, forceManyBody, forceX, forceY} from 'd3-force';
 
 const domReady = require('domready');
@@ -63,12 +64,19 @@ function scatterPlot(container, data, xVar, yVar, xLabel, yLabel, text) {
 
   const length = data.map(d => d.median);
 
+  const medianLength = median(length);
+  const dist = Math.max(medianLength - Math.min(...length), Math.max(...length) - medianLength);
+
+
   const incr = Math.max(...length) - Math.min(...length);
 
   // Scale for dot color
 
+  // const colorScale = scaleLinear()
+  //     .domain([Math.min(...length), Math.max(...length)])
+  //     .range([1,0]);
   const colorScale = scaleLinear()
-      .domain([Math.min(...length), Math.max(...length)])
+      .domain([medianLength - dist, medianLength + dist])
       .range([1,0]);
 
   const vis = container;
@@ -365,7 +373,7 @@ function drawRadial(container, data, rVar, numLevels, colors) {
   .angle((d, i) => i * 2 * Math.PI / numHours)
   .innerRadius((d, i) => rScale(d.rVar) - thickScale(d.total))
   .outerRadius((d, i) => rScale(d.rVar))
-  .curve(curveCardinalClosed.tension(0.55));
+  .curve(curveCardinalClosed.tension(1));
 
   const graphContainer = container.append('g')
     .attr('width', width)
@@ -453,20 +461,20 @@ function drawBar(container, data, barVar, yVar, xLabel, yLabel, title) {
   container.append('text')
     .attr('x', width / 2)
     .attr('y', 1.25 * margin)
-    .attr('font', 'sans-serif')
+    .attr('font-family', 'sans-serif')
     .attr('font-size', '80px')
     .attr('text-anchor', 'middle')
     .text(title);
   container.append('text')
     .attr('x', width / 2)
     .attr('y', height - margin / 8)
-    .attr('font', 'sans-serif')
+    .attr('font-family', 'sans-serif')
     .attr('font-size', '40px')
     .attr('text-anchor', 'middle')
     .text(xLabel);
  container.append('text')
     .attr('transform', `translate(${margin / 2}, ${height / 2})rotate(-90)`)
-    .attr('font', 'sans-serif')
+    .attr('font-family', 'sans-serif')
     .attr('font-size', '40px')
     .attr('text-anchor', 'middle')
     .text(yLabel);
@@ -502,26 +510,35 @@ function myVis(data) {
 
   const backgroundColor = '#EFF1ED';
 
-  const seasonColors = ['#0b66f1', // winter
-                        '#1cd50a', // spring 
-                        '#fff60a', //summer 
-                        '#fd8308']; // fall
+  // const seasonColors = ['#0b66f1', // winter
+  //                       '#1cd50a', // spring 
+  //                       '#fff60a', //summer 
+  //                       '#fd8308']; // fall
+  const seasonColors = ['#375E97', '#3F681C', '#FFBB00', '#FF300C'];
 
-  const winterColors = ['#17bbff',
-                        '#0b66f1',
-                        '#5d4fff'];
+  // const winterColors = ['#17bbff',
+  //                       '#0b66f1',
+  //                       '#5d4fff'];
+  // const winterColors = ['#39bedd', '#5c81cf', '#4c69db'];
+  const winterColors = ['#2A354E', '#375E97', '#008DFF']
 
-  const springColors = ['#52d585',
-                        '#1cd50a',
-                        '#8fd646']
+  // const springColors = ['#52d585',
+  //                       '#1cd50a',
+  //                       '#8fd646']
+  // const springColors = ['#58b87c', '#74b946', '#5a8339'];
+  const springColors = ['#26391C', '#3F681C', '#469E00']
+  // const summerColors = ['#cdff22',
+  //                       '#fff60a',
+  //                       '#f9da09'];
+  // const summerColors = ['#ac882c', '#dec36c', '#d9ce3a'];
+  const summerColors = ['#BE8E3B', '#FFBB00', '#FDEF00'];
 
-  const summerColors = ['#cdff22',
-                        '#fff60a',
-                        '#f9da09'];
-
-  const autumnColors = ['#f9b409',
-                      '#fd8308',
-                      '#f86607'];
+  // const autumnColors = ['#f9b409',
+  //                     '#fd8308',
+  //                     '#f86607'];
+  // const autumnColors = ['#ce8541', '#d5565e', '#dd502b'];
+  // const autumnColors = [hsl(351.82, 0.91, 0.55), hsl(7.90, 0.56, 0.55), hsl(12.66, 0.88, 0.55) ];
+  const autumnColors = ['#C30000', '#FF300C', '#FFA26C']
 
   const width = 5000; // was 5000, changed to 500 for viewing in browser
   const height = 36 / 24 * width;
@@ -538,12 +555,7 @@ function myVis(data) {
     .attr('y', 0)
     .attr('fill', backgroundColor);
 
-
-  const fullAirportAverageContainer = makeContainer(vis, width / 4, height / 3, width / 2, height / 2, true);
-
-  const zoomAirportAverageContainer = makeContainer(vis, width / 4, height / 3, 3 * width / 4, height / 2, true);
-
-  const radialContainer = makeContainer(vis,  width, 0.4 * height, 0, 0, false);
+  const radialContainer = makeContainer(vis,  width, 0.4 * height, 0, 0.06 * height, false);
 
   const rHeight = radialContainer.attr('height');
   const rWidth = radialContainer.attr('width');
@@ -553,10 +565,9 @@ function myVis(data) {
   const radialSummer = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0, 0.5 * rHeight);
   const radialAutumn = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0.6 * rWidth, 0.5 * rHeight);
 
-
-  // const radialAvgContainer = makeContainer(vis, 0.25 * width, 0.25 * height, width / 8, 0.4 * height)
-
-  const barContainer = makeContainer(vis, 0.3 * height, 0.3 * height, 0.02 * width, 0.5 * height, true);
+  const fullScatterContainer = makeContainer(vis, 0.4 * width, 0.2 * height, 0.05 * width, 0.58 * height, true);
+  const zoomScatterContainer = makeContainer(vis, 0.4 * width, 0.2 * height, 0.5 * width, 0.5 * height, true);
+  const barContainer = makeContainer(vis, 0.4 * width, 0.2 * height, 0.5 * width, 0.77 * height, true);
 
   // console.log(data[0].slice(8, 11))
 
@@ -568,8 +579,8 @@ function myVis(data) {
   // drawRadial(radialAvgContainer, data[3], 'average', 10);
   // drawRadial(radialContainer, data[3], 'percent', 8);
 
-  scatterPlot(fullAirportAverageContainer, data[1], 'total', 'percent', 'Total Outbound Flights (Airport Size)', 'Proportion of Delayed Flights', false);
-  scatterPlot(zoomAirportAverageContainer, data[1], 'total', 'percent', 'Total Outbound Flights (Airport Size)', 'Proportion of Delayed Flights', true);
+  scatterPlot(fullScatterContainer, data[1], 'total', 'percent', 'Total Outbound Flights (Airport Size)', 'Proportion of Delayed Flights', false);
+  scatterPlot(zoomScatterContainer, data[1], 'total', 'percent', 'Total Outbound Flights (Airport Size)', 'Proportion of Delayed Flights', true);
 
   // drawBar(container, data, barVar, yVar, xLabel, yLabel, title)
   drawBar(barContainer, data[2], 'airline', 'percent', 'Airlines', 'Percentage', 'Plot of Delays by Airlines');
