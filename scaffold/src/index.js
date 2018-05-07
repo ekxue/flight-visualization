@@ -12,6 +12,7 @@ import {line, radialArea, curveNatural, curveCardinalClosed} from 'd3-shape';
 import {interpolateRdBu, schemeRdBu} from 'd3-scale-chromatic';
 import {bboxCollide} from 'd3-bboxCollide';
 import {forceSimulation, forceManyBody, forceX, forceY} from 'd3-force';
+import {image} from 'd3-fetch';
 
 const domReady = require('domready');
 domReady(() => {
@@ -447,6 +448,7 @@ function drawBar(container, data, barVar, yVar, xLabel, yLabel, title) {
   const margin = 70;
   const airlines = data.map(d => d[barVar])
 
+  // use image from d3-fetch to get airline logo, stored under data[image]
   const xScale = scaleBand()
     .domain(airlines)
     .range([margin, width - margin])
