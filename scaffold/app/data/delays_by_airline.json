@@ -5,7 +5,8 @@
         "total": 515723.0,
         "percent": 0.49745696817865404,
         "average": 32.60218281036835,
-        "median": 13.0
+        "median": 13.0,
+        "image": "https://www.seeklogo.net/wp-content/uploads/2017/04/united-airlines-logo-01.png"
     },
     {
         "airline": "Southwest Airlines",
@@ -13,7 +14,8 @@
         "total": 1261855.0,
         "percent": 0.44918552448577687,
         "average": 26.95237708779179,
-        "median": 13.0
+        "median": 13.0,
+        "image": "https://cat-rails-production.s3.amazonaws.com/uploads/auction/item/image/13474/Southwest-Airlines-2014-Logo-vector-image.png"
     },
     {
         "airline": "Spirit Air Lines",
@@ -21,7 +23,8 @@
         "total": 117379.0,
         "percent": 0.4437676245324973,
         "average": 41.924149052583076,
-        "median": 21.0
+        "median": 21.0,
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Spirit_Airlines_logo.svg/2000px-Spirit_Airlines_logo.svg.png"
     },
     {
         "airline": "Frontier Airlines",
@@ -29,7 +32,8 @@
         "total": 90836.0,
         "percent": 0.3841318420009688,
         "average": 44.54076748918121,
-        "median": 20.0
+        "median": 20.0,
+        "image": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Frontier_airlines_logo14.png"
     },
     {
         "airline": "JetBlue Airways",
@@ -37,7 +41,8 @@
         "total": 267048.0,
         "percent": 0.3821822294119409,
         "average": 37.6171211334398,
-        "median": 18.0
+        "median": 18.0,
+        "image": "https://www.seeklogo.net/wp-content/uploads/2013/03/jetblue-airways-vector-logo.png"
     },
     {
         "airline": "Virgin America",
@@ -45,7 +50,8 @@
         "total": 61903.0,
         "percent": 0.3776715183432144,
         "average": 30.285983147268915,
-        "median": 13.0
+        "median": 13.0,
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Virgin_America_logo.svg/2000px-Virgin_America_logo.svg.png"
     },
     {
         "airline": "American Airlines",
@@ -53,7 +59,8 @@
         "total": 725984.0,
         "percent": 0.3387182086657557,
         "average": 34.370396577526186,
-        "median": 15.0
+        "median": 15.0,
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/American_Airlines_logo_2013.svg/2000px-American_Airlines_logo_2013.svg.png"
     },
     {
         "airline": "Delta Air Lines",
@@ -61,7 +68,8 @@
         "total": 875881.0,
         "percent": 0.32249015562616384,
         "average": 29.68744224907333,
-        "median": 12.0
+        "median": 12.0,
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Delta_logo.svg/2000px-Delta_logo.svg.png"
     },
     {
         "airline": "American Eagle Airlines",
@@ -69,7 +77,8 @@
         "total": 294632.0,
         "percent": 0.3181120855847294,
         "average": 40.16399931715853,
-        "median": 21.0
+        "median": 21.0,
+        "image": "http://www.envoyair.com/wp-content/uploads/2016/12/IMG_LOGO_American_Eagle.png"
     },
     {
         "airline": "US Airways",
@@ -77,7 +86,8 @@
         "total": 198715.0,
         "percent": 0.31484789774299876,
         "average": 28.500615360025574,
-        "median": 13.0
+        "median": 13.0,
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/US_Airways_Logo.svg/2000px-US_Airways_Logo.svg.png"
     },
     {
         "airline": "Atlantic Southeast Airlines",
@@ -85,7 +95,8 @@
         "total": 571977.0,
         "percent": 0.2970346709745322,
         "average": 40.840515135641006,
-        "median": 19.0
+        "median": 19.0,
+        "image": "http://logonoid.com/images/thumbs/atlantic-southeast-airlines-logo.png"
     },
     {
         "airline": "Skywest Airlines",
@@ -93,7 +104,8 @@
         "total": 588353.0,
         "percent": 0.2916140480289894,
         "average": 39.20327908982818,
-        "median": 19.0
+        "median": 19.0,
+        "image": "https://upload.wikimedia.org/wikipedia/en/thumb/4/45/SkyWest_Airlines_%28United_States%29_logo.svg/1280px-SkyWest_Airlines_%28United_States%29_logo.svg.png"
     },
     {
         "airline": "Hawaiian Airlines",
@@ -101,7 +113,8 @@
         "total": 76272.0,
         "percent": 0.2641336270190896,
         "average": 16.844038518812667,
-        "median": 7.0
+        "median": 7.0,
+        "image": "https://upload.wikimedia.org/wikipedia/vi/thumb/8/83/Hawaiian_Airlines_Logo.svg/1179px-Hawaiian_Airlines_Logo.svg.png"
     },
     {
         "airline": "Alaska Airlines",
@@ -109,6 +122,7 @@
         "total": 172521.0,
         "percent": 0.25252577947032534,
         "average": 26.045976219988063,
-        "median": 11.0
+        "median": 11.0,
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Alaska_Airlines_Logo.svg/2000px-Alaska_Airlines_Logo.svg.png"
     }
 ]
