@@ -5,13 +5,13 @@
 // import from: https://github.com/d3/d3/blob/master/API.md
 import {select, selectAll} from 'd3-selection';
 import {scaleBand, scaleLinear, bandwidth, scaleLog} from 'd3-scale';
-import {max} from 'd3-array';
+import {max, indexOf} from 'd3-array';
 import {axisBottom, axisLeft, axisTop} from 'd3-axis';
 import {format} from 'd3-format';
 import {line, radialArea, curveNatural, curveCardinalClosed} from 'd3-shape';
 import {interpolateRdBu, schemeRdBu} from 'd3-scale-chromatic';
 import {bboxCollide} from 'd3-bboxCollide';
-import {forceSimulation, forceManyBody, forceX, forceY} from 'd3-force';
+import {forceSimulation, forceManyBody, forceX, forceY, forceLink, forceCollide} from 'd3-force';
 
 const domReady = require('domready');
 domReady(() => {
@@ -125,48 +125,151 @@ function scatterPlot(container, data, xVar, yVar, xLabel, yLabel, text) {
 
   // }
 
+  // FORCE DIRECTED LABELS
+
+  // FORCE DIRECTED LABELS
+
+  // FORCE DIRECTED LABELS
+
   if (text) {
 
-    // force directing the labels so they don't collide.
+  //   // the points/nodes:
 
-    var forceXs = forceX(d => xScale(d[xVar]))
-      .strength(1)
+  //   const points = data.map(d => ({x: d.total, y: d.median, label: d.airport}));
+  //   console.log(points);
 
-    var forceYs = forceY(d => yScale(d[yVar]))
-      .strength(0.5)
+  //   // the labels:
+  //   const labels = [];
+  //   // const labelLinks = [];
 
-    window.collide = bboxCollide((d, i) =>
-          [[xScale(d[xVar]) - 5, xScale(d[xVar])],[yScale(d[yVar]) + 5, yScale(d[yVar])]])
+  //   for(var i = 0; i < points.length; i++) {
+  //   var node = {
+  //     label: points[i].label,
+  //     x: points[i].x,
+  //     y: points[i].y
+  //   };
+  //   labels.push({node : node }); labels.push({node : node }); // push twice
+  //   // labelLinks.push({ source : i * 2, target : i * 2 + 1, index: i });
+  // };
+  //   // const labels = points.map(d => ({node: {label: d.label, x: d.x, y: d.y}}, {node: {label: d.label, x: d.x, y: d.y}}));
+  //   const labelLinks = points.map((d, i) => ({ source : i * 2, target : i * 2 + 1, index: i }))
+
+  // make nodes: alternates between the 'node' dot and a text label.
+
+  const linkNodes = data.reduce((acc, row) => {
+    const dot = {id: `${row.airport}_source`, type: 'source'};
+    const label = {id: `${row.airport}_target`, type: 'target'};
+    acc.push(label, dot);
+    return acc;
+  }, []);
+
+  console.log(linkNodes);
+
+  // make links between the sources and targets
+
+  const links = data.map((d, i) => ({source: `${d.airport}_source`, target: `${d.airport}_target`, index: i}));
+  console.log(links);
+
+
+  //   console.log(labels);
+  //   console.log(labelLinks);
+
+    // var forceXs = forceX(d => xScale(d[xVar]))
+    //   .strength(1)
+
+    // var forceYs = forceY(d => yScale(d[yVar]))
+    //   .strength(1)
+
+    const collide = forceCollide()
+      .radius(100)
+      .iterations(200)
       .strength(1);
 
-    window.forceSim = forceSimulation()
-    .velocityDecay(0.6)
-    .force('charge', forceManyBody())
-    .force('x', forceXs)
-    .force('y', forceYs)
-    .force('collide', window.collide)
-    .nodes(data)
-    .on("tick", updateNetwork);
+    const charge = forceManyBody();
+      // .strength(-700);
+
+    const linkForce = forceLink(links)
+          .id(d => d.id)
+          .strength(1);
+
+    const forceSim = forceSimulation()
+      // .nodes(labels)
+       .nodes(linkNodes)
+      // .velocityDecay(0.6)
+      .force("link", linkForce)
+          // .charge(-10))
+          // .strength(.5)
+          // .distance(0))
+      .force('charge', charge)
+      // .force('x', forceXs)
+      // .force('y', forceYs)
+      .force('collide', collide)
+      // .on('tick', tick)
+      .on("tick", updateNetwork);
+
+
+    // var labelNode = graphContainer.selectAll("g")
+    //   .data(labels)
+    //   .enter().append("g")
+    //     .attr("class", "labelNode");
+
+    // labelNode.append("circle")
+    //     .attr("r", 0)
+    //     .style("fill", "red");
+
+    // labelNode.append("text")
+    //   .text(function(d, i) { return i % 2 == 0 ? "" : d.node.label })
+    //   .style("fill", "#555")
+    //   .style("font-size", 20);
+
+
+//     function tick() {
+//     labelNode.each(function(d, i) {
+//       if(i % 2 == 0) {
+//         d.x = d.node.x;
+//         d.y = d.node.y;
+//       } else {
+//         var b = this.childNodes[1].getBBox();
+//         var diffX = d.x - d.node.x,
+//             diffY = d.y - d.node.y;
+//         var dist = Math.sqrt(diffX * diffX + diffY * diffY);
+//         var shiftX = Math.min(0, b.width * (diffX - dist) / (dist * 2));
+//         var shiftY = 5;
+//         this.childNodes[1].setAttribute("transform", "translate(" + shiftX + "," + shiftY + ")");
+//       }
+//     });
+//     labelNode.call(updateNode);
+
+
+// // Update nodes
+//   function updateNode(){
+//     graphContainer.selectAll("labelNode").attr("transform", function(d) {
+//       return "translate(" + d.x + "," + d.y + ")";
+//     });
+//   }
+
+//   }
 
      var labelNodes = graphContainer
       .selectAll("g.node")
-      .data(data)
+      .data(linkNodes.filter(d => d.type = 'source'))
       .enter()
       .append("g")
       .attr("class", "node")
 
       labelNodes.append("text")
+        .data(data)
         .attr('text-anchor', 'start')
         .attr('font-family', 'Arial')
         .attr('font-size', '25px')
         .text(d => d.airport)
-        .attr("x", function (d) {return xScale(d[xVar]) - width / 4})
-        .attr("y", function (d) {return yScale(d[yVar]) + width / 300});
+        .attr("x", function (d) {return xScale(d[xVar])})
+        .attr("y", function (d) {return yScale(d[yVar])});
 
 
     function updateNetwork() {
       graphContainer.selectAll("g.node")
-        .attr("transform", function (d) {return "translate(" + d.x + "," + d.y + ")"})
+        .attr("transform", function (d) {return "translate(" + d.x / 50 + "," + d.y / 50 + ")"})
     }
   }
 
@@ -408,18 +511,18 @@ function drawRadial(container, data, rVar, numLevels, season) {
     .attr('transform', `translate(${0}, ${0})`)
     // .attr('clip-path', 'url(#graphClip)');
 
-  graphContainer.selectAll('.graph')
-    .data(data)
-    .enter().append('path')
-    .attr('d', d => {
-      d[rVar].push(d[rVar][0]);
-      d.total.length === 24 ? d.total.push(d.total[0]) : '';
-      return areaFunction(d[rVar].map((e, i) => ({rVar: e, total: d.total[i]})));
-    })
-    .attr('fill', (d, i) => colorScheme(season)[i])
-    .attr('stroke', (d, i) => colorScheme(season)[i])
-    .attr('stroke-width', '2px')
-    .attr('transform', `translate(${xOffset}, ${yOffset})`)
+  // graphContainer.selectAll('.graph')
+  //   .data(data)
+  //   .enter().append('path')
+  //   .attr('d', d => {
+  //     d[rVar].push(d[rVar][0]);
+  //     d.total.length === 24 ? d.total.push(d.total[0]) : '';
+  //     return areaFunction(d[rVar].map((e, i) => ({rVar: e, total: d.total[i]})));
+  //   })
+  //   .attr('fill', (d, i) => colorScheme(season)[i])
+  //   .attr('stroke', (d, i) => colorScheme(season)[i])
+  //   .attr('stroke-width', '2px')
+  //   .attr('transform', `translate(${xOffset}, ${yOffset})`)
 
   // const legend = container.append('g')
   //   .attr('height', yOffset * 1.5)
