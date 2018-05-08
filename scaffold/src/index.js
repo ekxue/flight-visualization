@@ -116,7 +116,7 @@ function drawLabels(graphContainer, data, params) {
     // .nodes(labels)
      .nodes(linkNodes)
     // .velocityDecay(0.6)
-    .force("link", linkForce)
+    .force('link', linkForce)
         // .charge(-10))
         // .strength(.5)
         // .distance(0))
@@ -125,7 +125,7 @@ function drawLabels(graphContainer, data, params) {
     // .force('y', forceYs)
     .force('collide', collide)
     // .on('tick', tick)
-    .on("tick", updateNetwork);
+    .on('tick', updateNetwork);
 
 
   // var labelNode = graphContainer.selectAll("g")
@@ -171,25 +171,25 @@ function drawLabels(graphContainer, data, params) {
 //   }
 
    var labelNodes = graphContainer
-    .selectAll("g.node")
+    .selectAll('g.node')
     .data(linkNodes.filter(d => d.type = 'source'))
     .enter()
     .append('g')
-    .attr("class", "node")
+    .attr('class', 'node');
 
-    labelNodes.append("text")
+    labelNodes.append('text')
       .data(data)
       .attr('text-anchor', 'start')
       .attr('font-family', params.textFont)
       .attr('font-size', '25px')
       .text(d => d.airport)
-      .attr("x", function (d) {return params.xScale(d[params.xVar])})
-      .attr("y", function (d) {return params.yScale(d[params.yVar])});
+      .attr('x', d => params.xScale(d[params.xVar]))
+      .attr('y', d => params.yScale(d[params.yVar]));
 
 
   function updateNetwork() {
-    graphContainer.selectAll("g.node")
-      .attr("transform", function (d) {return "translate(" + d.x / 50 + "," + d.y / 50 + ")"})
+    graphContainer.selectAll('g.node')
+      .attr('transform', d => `translate(${d.x / 50}, ${d.y / 50})`);
   }
 }
 
@@ -204,7 +204,7 @@ function scatterPlot(container, data, params) {
   const xVar = params.xVar;
   const yVar = params.yVar;
 
-  const colors = ["#3d5c8f", "#2985d6", "#63a7cf", "#89c6dc", "#aec3d1", "#cccccc", "#dabda5", "#f69a6f", "#d96b59", "#cc343e", "#923a44"]
+  const colors = ['#3d5c8f', '#2985d6', '#63a7cf', '#89c6dc', '#aec3d1', '#cccccc', '#dabda5', '#f69a6f', '#d96b59', '#cc343e', '#923a44'];
   
   const maxPow = Math.ceil(Math.log10(Math.max(...data.map(d => d[xVar]))));
   const minPow = Math.floor(Math.log10(Math.min(...data.map(d => d[xVar]))));
