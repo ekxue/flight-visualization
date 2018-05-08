@@ -30,118 +30,28 @@ domReady(() => {
   .then(arrayofDataBlobs => myVis(arrayofDataBlobs))
 });
 
-function scatterPlot(container, data, xVar, yVar, xLabel, yLabel, text, textFont) {
-  const height = container.attr('height');
-  const width = container.attr('width');
-  const plotHeight = 0.85 * height;
-  const plotWidth = 0.85 * width;
-  const margin = 0.7 * Math.min(height - plotHeight, width - plotWidth);
+function drawBoundingBox(container, data, cutoff, xScale, yScale) {
+    const xLow = Math.min(...data.slice(0, cutoff).map((d, i) => d.total))
+    const yLow = Math.min(...data.slice(0, cutoff).map((d, i) => d.percent))
+    const xHigh = Math.max(...data.slice(0, cutoff).map((d, i) => d.total))
+    const yHigh = Math.max(...data.slice(0, cutoff).map((d, i) => d.percent))
 
-  const colors = ["#3d5c8f", "#2985d6", "#63a7cf", "#89c6dc", "#aec3d1", "#cccccc", "#dabda5", "#f69a6f", "#d96b59", "#cc343e", "#923a44"]
-  // console.log(colors.reverse())
+    console.log(xScale(xLow))
+    console.log(xScale(xHigh))
+    console.log(yScale(yLow))
+    console.log(yScale(yHigh))
 
-  const maxPow = Math.ceil(Math.log10(Math.max(...data.map(d => d[xVar]))));
-  const minPow = Math.floor(Math.log10(Math.min(...data.map(d => d[xVar]))));
+    container.append('rect')
+      .attr('x', xScale(xLow))
+      .attr('y', yScale(yHigh))
+      .attr('width', xScale(xHigh) - xScale(xLow))
+      .attr('height', yScale(yLow) - yScale(yHigh))
+      .attr('fill', 'none')
+      .attr('stroke', 'black')
+      .attr('stroke-width', '2px');
+  }
 
-  const xtickData = [... new Array(maxPow - minPow + 1)].map((d, i) => Math.pow(10, minPow + i));
-  // console.log(xtickData);
-
-  const xScale = scaleLog()
-    .domain([Math.pow(10, minPow), Math.pow(10, maxPow)])
-    .range([0, plotWidth]);
-
-    console.log(xScale.domain());
-
-  const yScale = scaleLinear()
-    // .domain([Math.min(...data.map(d => d[yVar])), Math.max(...data.map(d => d[yVar]))])
-    .domain([0, Math.max(...data.map(d => d[yVar]))])
-    .range([plotHeight, 0]);
-
-  // Array of median lengths of flights
-
-  const length = data.map(d => d.median);
-
-  const medianLength = median(length);
-  console.log(medianLength);
-  const dist = Math.max(medianLength - Math.min(...length), Math.max(...length) - medianLength);
-
-
-  const incr = Math.max(...length) - Math.min(...length);
-
-  // Scale for dot color
-
-  // const colorScale = scaleLinear()
-  //     .domain([Math.min(...length), Math.max(...length)])
-  //     .range([1,0]);
-  // const colorScale = scaleLinear()
-  //     .domain([medianLength - dist, medianLength + dist])
-  //     .range([1,0]);
-  const colorScale = scaleQuantile()
-    .domain(data.map(d => d.median))
-    .range(colors);
-
-  const graphContainer = container.append('g')
-    .attr('height', plotHeight)
-    .attr('width', plotWidth)
-    .attr('transform', `translate(${margin}, ${height - margin - plotHeight})`);
-
-  graphContainer.append('g')
-    .attr('transform', `translate(0, ${plotHeight})`)
-    .call(axisBottom(xScale)
-      .ticks(3, format(',.2r'))
-      .tickValues(xtickData));
-
-  graphContainer.append('g')
-    .attr('transform', `translate(0, 0)`)
-    .call(axisLeft(yScale));
-
-  container.append('text')
-    .attr('transform', 'rotate(-90)')
-    .attr('x', -height / 2)
-    .attr('y', margin / 2)
-    .attr('text-anchor', 'middle')
-    .attr('font-size', '30px')
-    .attr('font-family', textFont)
-    .text(yLabel);
-
-  container.append('text')
-    .attr('x', width / 2)
-    .attr('y', height - margin / 4)
-    .attr('text-anchor', 'middle')
-    .attr('font-family', textFont)
-    .attr('font-size', '30px')
-    .text(xLabel);
-
-  graphContainer.selectAll('.dot')
-    .data(data)
-    .enter().append('circle')
-    .attr('class', 'dot')
-    .attr('r', 10)
-    .attr('cx', d => xScale(d[xVar]))
-    .attr('cy', d => yScale(d[yVar]))
-    .style('fill', d => colorScale(d.median))
-    .attr('stroke', 'black');
-
-  // if (text) {
-  //   graphContainer.selectAll('.text')
-  //   .data(data)
-  //   .enter().append('text')
-  //   .attr('x', d => xScale(d[xVar])+ width / 200)
-  //   .attr('y', d => yScale(d[yVar]) + width / 300)
-  //   .attr('text-anchor', 'start')
-  //   .attr('font-family', 'Arial')
-  //   .attr('font-size', '25px')
-  //   .text(d => d.airport);
-
-  // }
-
-  // FORCE DIRECTED LABELS
-
-  // FORCE DIRECTED LABELS
-
-  // FORCE DIRECTED LABELS
-
-  if (text) {
+function drawLabels(graphContainer, data, params) {
 
   //   // the points/nodes:
 
@@ -190,47 +100,47 @@ function scatterPlot(container, data, xVar, yVar, xLabel, yLabel, text, textFont
     // var forceYs = forceY(d => yScale(d[yVar]))
     //   .strength(1)
 
-    const collide = forceCollide()
-      .radius(100)
-      .iterations(200)
-      .strength(1);
+  const collide = forceCollide()
+    .radius(100)
+    .iterations(200)
+    .strength(1);
 
-    const charge = forceManyBody();
-      // .strength(-700);
+  const charge = forceManyBody();
+    // .strength(-700);
 
-    const linkForce = forceLink(links)
-          .id(d => d.id)
-          .strength(1);
+  const linkForce = forceLink(links)
+        .id(d => d.id)
+        .strength(1);
 
-    const forceSim = forceSimulation()
-      // .nodes(labels)
-       .nodes(linkNodes)
-      // .velocityDecay(0.6)
-      .force("link", linkForce)
-          // .charge(-10))
-          // .strength(.5)
-          // .distance(0))
-      .force('charge', charge)
-      // .force('x', forceXs)
-      // .force('y', forceYs)
-      .force('collide', collide)
-      // .on('tick', tick)
-      .on("tick", updateNetwork);
+  const forceSim = forceSimulation()
+    // .nodes(labels)
+     .nodes(linkNodes)
+    // .velocityDecay(0.6)
+    .force("link", linkForce)
+        // .charge(-10))
+        // .strength(.5)
+        // .distance(0))
+    .force('charge', charge)
+    // .force('x', forceXs)
+    // .force('y', forceYs)
+    .force('collide', collide)
+    // .on('tick', tick)
+    .on("tick", updateNetwork);
 
 
-    // var labelNode = graphContainer.selectAll("g")
-    //   .data(labels)
-    //   .enter().append("g")
-    //     .attr("class", "labelNode");
+  // var labelNode = graphContainer.selectAll("g")
+  //   .data(labels)
+  //   .enter().append("g")
+  //     .attr("class", "labelNode");
 
-    // labelNode.append("circle")
-    //     .attr("r", 0)
-    //     .style("fill", "red");
+  // labelNode.append("circle")
+  //     .attr("r", 0)
+  //     .style("fill", "red");
 
-    // labelNode.append("text")
-    //   .text(function(d, i) { return i % 2 == 0 ? "" : d.node.label })
-    //   .style("fill", "#555")
-    //   .style("font-size", 20);
+  // labelNode.append("text")
+  //   .text(function(d, i) { return i % 2 == 0 ? "" : d.node.label })
+  //   .style("fill", "#555")
+  //   .style("font-size", 20);
 
 
 //     function tick() {
@@ -260,58 +170,110 @@ function scatterPlot(container, data, xVar, yVar, xLabel, yLabel, text, textFont
 
 //   }
 
-     var labelNodes = graphContainer
-      .selectAll("g.node")
-      .data(linkNodes.filter(d => d.type = 'source'))
-      .enter()
-      .append("g")
-      .attr("class", "node")
+   var labelNodes = graphContainer
+    .selectAll("g.node")
+    .data(linkNodes.filter(d => d.type = 'source'))
+    .enter()
+    .append('g')
+    .attr("class", "node")
 
-      labelNodes.append("text")
-        .data(data)
-        .attr('text-anchor', 'start')
-        .attr('font-family', textFont)
-        .attr('font-size', '25px')
-        .text(d => d.airport)
-        .attr("x", function (d) {return xScale(d[xVar])})
-        .attr("y", function (d) {return yScale(d[yVar])});
+    labelNodes.append("text")
+      .data(data)
+      .attr('text-anchor', 'start')
+      .attr('font-family', params.textFont)
+      .attr('font-size', '25px')
+      .text(d => d.airport)
+      .attr("x", function (d) {return params.xScale(d[params.xVar])})
+      .attr("y", function (d) {return params.yScale(d[params.yVar])});
 
 
-    function updateNetwork() {
-      graphContainer.selectAll("g.node")
-        .attr("transform", function (d) {return "translate(" + d.x / 50 + "," + d.y / 50 + ")"})
-    }
+  function updateNetwork() {
+    graphContainer.selectAll("g.node")
+      .attr("transform", function (d) {return "translate(" + d.x / 50 + "," + d.y / 50 + ")"})
   }
+}
 
-  if (!text){
-    graphContainer.append('line')
-      .attr('x1', xScale(Math.min(...(data.slice(0, 50)).map((d, i) => d.total))) - 10)
-      .attr('x2', xScale(Math.min(...(data.slice(0, 50)).map((d, i) => d.total))) - 10)
-      .attr('y1', yScale(.55))
-      .attr('y2', yScale(.25))
-      .attr('stroke', 'black');
+function scatterPlot(container, data, params) {
+  const height = container.attr('height');
+  const width = container.attr('width');
+  const plotHeight = 0.85 * height;
+  const plotWidth = 0.85 * width;
+  const margin = 0.7 * Math.min(height - plotHeight, width - plotWidth);
+  const plotMargin = 0.10;
 
-    graphContainer.append('line')
-      .attr('x1', xScale(Math.max(...(data.slice(0, 50)).map((d, i) => d.total))) + 10)
-      .attr('x2', xScale(Math.max(...(data.slice(0, 50)).map((d, i) => d.total))) + 10)
-      .attr('y1', yScale(.55))
-      .attr('y2', yScale(.25))
-      .attr('stroke', 'black');
+  const xVar = params.xVar;
+  const yVar = params.yVar;
 
-    graphContainer.append('line')
-      .attr('x1', xScale(Math.min(...(data.slice(0, 50)).map((d, i) => d.total))) - 10)
-      .attr('x2', xScale(Math.max(...(data.slice(0, 50)).map((d, i) => d.total))) + 10)
-      .attr('y1', yScale(.55))
-      .attr('y2', yScale(.55))
-      .attr('stroke', 'black');
+  const colors = ["#3d5c8f", "#2985d6", "#63a7cf", "#89c6dc", "#aec3d1", "#cccccc", "#dabda5", "#f69a6f", "#d96b59", "#cc343e", "#923a44"]
+  
+  const maxPow = Math.ceil(Math.log10(Math.max(...data.map(d => d[xVar]))));
+  const minPow = Math.floor(Math.log10(Math.min(...data.map(d => d[xVar]))));
 
-    graphContainer.append('line')
-      .attr('x1', xScale(Math.min(...(data.slice(0, 50)).map((d, i) => d.total))) - 10)
-      .attr('x2', xScale(Math.max(...(data.slice(0, 50)).map((d, i) => d.total))) + 10)
-      .attr('y1', yScale(.25))
-      .attr('y2', yScale(.25))
-      .attr('stroke', 'black');
-  }
+  const maxPercent = Math.max(...data.map(d => d[yVar]))
+  const minPercent = params.showZero ? 0 : Math.min(...data.map(d => d[yVar]));
+
+  const xtickData = [...new Array(maxPow - minPow + 1)].map((d, i) => Math.pow(10, minPow + i));
+
+  const xScale = scaleLog()
+    .domain([Math.pow(10, minPow), Math.pow(10, maxPow)])
+    .range([0, plotWidth]);
+
+  const yMargin = plotMargin * (maxPercent - minPercent);
+  const yScale = scaleLinear()
+    .domain([minPercent - yMargin, maxPercent + yMargin])
+    .range([plotHeight, 0]);
+
+  const colorScale = scaleQuantile()
+    .domain(data.map(d => d.median))
+    .range(colors);
+
+  const graphContainer = container.append('g')
+    .attr('height', plotHeight)
+    .attr('width', plotWidth)
+    .attr('transform', `translate(${margin}, ${height - margin - plotHeight})`);
+
+  graphContainer.append('g')
+    .attr('transform', `translate(0, ${plotHeight})`)
+    .call(axisBottom(xScale)
+      .ticks(3, format(',.2r'))
+      .tickValues(xtickData));
+
+  graphContainer.append('g')
+    .attr('transform', `translate(0, 0)`)
+    .call(axisLeft(yScale));
+
+  container.append('text')
+    .attr('transform', 'rotate(-90)')
+    .attr('x', -height / 2)
+    .attr('y', margin / 2)
+    .attr('text-anchor', 'middle')
+    .attr('font-size', '30px')
+    .attr('font-family', params.textFont)
+    .text(params.yLabel);
+
+  container.append('text')
+    .attr('x', width / 2)
+    .attr('y', height - margin / 4)
+    .attr('text-anchor', 'middle')
+    .attr('font-family', params.textFont)
+    .attr('font-size', '30px')
+    .text(params.xLabel);
+
+  graphContainer.selectAll('.dot')
+    .data(data)
+    .enter().append('circle')
+    .attr('class', 'dot')
+    .attr('r', 10)
+    .attr('cx', d => xScale(d[xVar]))
+    .attr('cy', d => yScale(d[yVar]))
+    .style('fill', d => colorScale(d.median))
+    .attr('stroke', 'black');
+
+  params.xScale = xScale;
+  params.yScale = yScale;
+  params.showLabels ? drawLabels(graphContainer, data, params) : 0;
+
+  params.bboxCutoff !== 'none' ? drawBoundingBox(graphContainer, data, params.bboxCutoff, xScale, yScale) : 0;
 
   // LEGEND
 
@@ -365,7 +327,7 @@ function scatterPlot(container, data, xVar, yVar, xLabel, yLabel, text, textFont
     .attr('y', legendHeight - legendHeight / 8)
     .text('Length of Delay (mins)')
     .attr('text-anchor', 'middle')
-    .attr('font-family', textFont)
+    .attr('font-family', params.textFont)
     .attr('font-size', '25px')
     .attr('fill', 'black');
 
@@ -854,8 +816,30 @@ function myVis(data) {
   // drawRadial(radialAvgContainer, data[3], 'average', 10);
   // drawRadial(radialContainer, data[3], 'percent', 8);
 
-  scatterPlot(fullScatterContainer, data[1], 'total', 'percent', 'Total Outbound Flights (Airport Size)', 'Proportion of Delayed Flights', false, textFont);
-  scatterPlot(zoomScatterContainer, data[1].slice(0,50), 'total', 'percent', 'Total Outbound Flights (Airport Size)', 'Proportion of Delayed Flights', true, textFont);
+  const fullParams = {
+    xVar: 'total', 
+    yVar: 'percent', 
+    xLabel: 'Total Outbound Flights', 
+    yLabel: 'Proportion of Delayed Flights',
+    showLabels: false, 
+    showZero: true, 
+    textFont: textFont,
+    bboxCutoff: 50,
+  };
+
+  const zoomParams = {
+    xVar: 'total', 
+    yVar: 'percent', 
+    xLabel: 'Total Outbound Flights', 
+    yLabel: 'Proportion of Delayed Flights',
+    showLabels: true, 
+    showZero: false, 
+    textFont: textFont,
+    bboxCutoff: 'none'
+  };
+
+  scatterPlot(fullScatterContainer, data[1], fullParams);
+  scatterPlot(zoomScatterContainer, data[1].slice(0, 50), zoomParams);
 
   // drawBar(container, data, var1, var2, xLabel, yLabel, title)
   drawBar(barContainer, data[2], 'Airlines', 'Percentage', 'Plot of Delays by Airlines', textFont);
