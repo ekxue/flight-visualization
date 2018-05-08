@@ -32,14 +32,19 @@ domReady(() => {
 });
 
 function lineAnnotation(container, label, title, x, y, dx, dy, annotationWidth) {
+  const containerHeight = container.attr('height');
+  const containerWidth = container.attr('width');
+  const xScale = scaleLinear().domain([0, 100]).range([0, containerWidth]);
+  const yScale = scaleLinear().domain([0, 100]).range([0, containerHeight]);
+
   const annotations = [{
     note: {
       title: title,
       label: label
     },
     type: annotationCallout,
-    x: x, y: y,
-    dx: dx, dy: dy
+    x: xScale(x), y: yScale(y),
+    dx: xScale(dx), dy: yScale(dy)
   }];
 
   container.append("g")
@@ -48,16 +53,23 @@ function lineAnnotation(container, label, title, x, y, dx, dy, annotationWidth) 
 }
 
 function circleAnnotation(container, label, title, x, y, dx, dy, radius, annotationWidth) {
+  const containerHeight = container.attr('height');
+  const containerWidth = container.attr('width');
+  const xScale = scaleLinear().domain([0, 100]).range([0, containerWidth]);
+  const yScale = scaleLinear().domain([0, 100]).range([0, containerHeight]);
+  const maxRadius = Math.min(containerWidth, containerHeight);
+  const radiusScale = scaleLinear(). domain([0, 100]).range([0, maxRadius]);
+
   const annotations = [{
     note: {
       title: title,
       label: label
     },
     type: annotationCalloutCircle,
-    x: x, y: y,
-    dx: dx, dy: dy,
+    x: xScale(x), y: yScale(y),
+    dx: xScale(dx), dy: yScale(dy),
     subject: {
-      radius: radius,
+      radius: radiusScale(radius),
       radiusPadding: 5
     }
   }]
@@ -68,17 +80,22 @@ function circleAnnotation(container, label, title, x, y, dx, dy, radius, annotat
 }
 
 function rectAnnotation(container, label, title, x, y, dx, dy, width, height, annotationWidth) {
+  const containerHeight = container.attr('height');
+  const containerWidth = container.attr('width');
+  const xScale = scaleLinear().domain([0, 100]).range([0, containerWidth]);
+  const yScale = scaleLinear().domain([0, 100]).range([0, containerHeight]);
+
   const annotations = [{
     note: {
       title: title,
       label: label
     },
     type: annotationCalloutRect,
-    x: x, y: y,
-    dx: dx, dy: dy,
+    x: xScale(x), y: yScale(y),
+    dx: xScale(dx), dy: yScale(dy),
     subject: {
-      width: -width,
-      height: height
+      width: -xScale(width),
+      height: -yScale(height)
     }
   }];
 
