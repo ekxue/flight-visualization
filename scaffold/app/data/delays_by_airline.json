@@ -4,111 +4,97 @@
         "delayed": 256550.0,
         "total": 515723.0,
         "percent": 0.49745696817865404,
-        "average": 32.60218281036835,
-        "median": 13.0
+        "percenta": 0.0701500611762516
     },
     {
         "airline": "Southwest Airlines",
         "delayed": 566807.0,
         "total": 1261855.0,
         "percent": 0.44918552448577687,
-        "average": 26.95237708779179,
-        "median": 13.0
+        "percenta": 0.055511132420127514
     },
     {
         "airline": "Spirit Air Lines",
         "delayed": 52089.0,
         "total": 117379.0,
         "percent": 0.4437676245324973,
-        "average": 41.924149052583076,
-        "median": 21.0
+        "percenta": 0.0587243033251263
     },
     {
         "airline": "Frontier Airlines",
         "delayed": 34893.0,
         "total": 90836.0,
         "percent": 0.3841318420009688,
-        "average": 44.54076748918121,
-        "median": 20.0
+        "percenta": 0.05234708705799463
     },
     {
         "airline": "JetBlue Airways",
         "delayed": 102061.0,
         "total": 267048.0,
         "percent": 0.3821822294119409,
-        "average": 37.6171211334398,
-        "median": 18.0
+        "percenta": 0.0637188819987418
     },
     {
         "airline": "Virgin America",
         "delayed": 23379.0,
         "total": 61903.0,
         "percent": 0.3776715183432144,
-        "average": 30.285983147268915,
-        "median": 13.0
+        "percenta": 0.0327286238146778
     },
     {
         "airline": "American Airlines",
         "delayed": 245904.0,
         "total": 725984.0,
         "percent": 0.3387182086657557,
-        "average": 34.370396577526186,
-        "median": 15.0
+        "percenta": 0.0574282628818266
     },
     {
         "airline": "Delta Air Lines",
         "delayed": 282463.0,
         "total": 875881.0,
         "percent": 0.32249015562616384,
-        "average": 29.68744224907333,
-        "median": 12.0
+        "percenta": 0.042871120620266906
     },
     {
         "airline": "American Eagle Airlines",
         "delayed": 93726.0,
         "total": 294632.0,
         "percent": 0.3181120855847294,
-        "average": 40.16399931715853,
-        "median": 21.0
+        "percenta": 0.05281164299872383
     },
     {
         "airline": "US Airways",
         "delayed": 62565.0,
         "total": 198715.0,
         "percent": 0.31484789774299876,
-        "average": 28.500615360025574,
-        "median": 13.0
+        "percenta": 0.05597966937573912
     },
     {
         "airline": "Atlantic Southeast Airlines",
         "delayed": 169897.0,
         "total": 571977.0,
         "percent": 0.2970346709745322,
-        "average": 40.840515135641006,
-        "median": 19.0
+        "percenta": 0.05236574197913552
     },
     {
         "airline": "Skywest Airlines",
         "delayed": 171572.0,
         "total": 588353.0,
         "percent": 0.2916140480289894,
-        "average": 39.20327908982818,
-        "median": 19.0
+        "percenta": 0.04755138496786793
     },
     {
         "airline": "Hawaiian Airlines",
         "delayed": 20146.0,
         "total": 76272.0,
         "percent": 0.2641336270190896,
-        "average": 16.844038518812667,
-        "median": 7.0
+        "percenta": 0.04114222781623662
     },
     {
         "airline": "Alaska Airlines",
         "delayed": 43566.0,
         "total": 172521.0,
         "percent": 0.25252577947032534,
-        "average": 26.045976219988063,
-        "median": 11.0
+        "percenta": 0.0347725784107442
     }
 ]

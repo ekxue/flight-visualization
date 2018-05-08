@@ -4,7 +4,7 @@
 
 // import from: https://github.com/d3/d3/blob/master/API.md
 import {select, selectAll} from 'd3-selection';
-import {scaleBand, scaleLinear, bandwidth, scaleLog} from 'd3-scale';
+import {scaleBand, scaleLinear, bandwidth, scaleLog, scaleQuantile} from 'd3-scale';
 import {median, max, indexOf} from 'd3-array';
 import {axisBottom, axisLeft, axisTop} from 'd3-axis';
 import {format} from 'd3-format';
@@ -30,18 +30,15 @@ domReady(() => {
   .then(arrayofDataBlobs => myVis(arrayofDataBlobs))
 });
 
-function scatterPlot(container, data, xVar, yVar, xLabel, yLabel, text) {
-  // The posters will all be 24 inches by 36 inches
-  // Your graphic can either be portrait or landscape, up to you
-  // the important thing is to make sure the aspect ratio is correct.
-
+function scatterPlot(container, data, xVar, yVar, xLabel, yLabel, text, textFont) {
   const height = container.attr('height');
   const width = container.attr('width');
-  const margin = 70;
+  const plotHeight = 0.85 * height;
+  const plotWidth = 0.85 * width;
+  const margin = 0.7 * Math.min(height - plotHeight, width - plotWidth);
 
-  if (text) {
-    data = data.slice(0, 50);
-  }
+  const colors = ["#3d5c8f", "#2985d6", "#63a7cf", "#89c6dc", "#aec3d1", "#cccccc", "#dabda5", "#f69a6f", "#d96b59", "#cc343e", "#923a44"]
+  // console.log(colors.reverse())
 
   const maxPow = Math.ceil(Math.log10(Math.max(...data.map(d => d[xVar]))));
   const minPow = Math.floor(Math.log10(Math.min(...data.map(d => d[xVar]))));
@@ -51,20 +48,21 @@ function scatterPlot(container, data, xVar, yVar, xLabel, yLabel, text) {
 
   const xScale = scaleLog()
     .domain([Math.pow(10, minPow), Math.pow(10, maxPow)])
-    .range([margin, width - margin]);
+    .range([0, plotWidth]);
 
     console.log(xScale.domain());
 
   const yScale = scaleLinear()
     // .domain([Math.min(...data.map(d => d[yVar])), Math.max(...data.map(d => d[yVar]))])
     .domain([0, Math.max(...data.map(d => d[yVar]))])
-    .range([height - margin, margin]);
+    .range([plotHeight, 0]);
 
   // Array of median lengths of flights
 
   const length = data.map(d => d.median);
 
   const medianLength = median(length);
+  console.log(medianLength);
   const dist = Math.max(medianLength - Math.min(...length), Math.max(...length) - medianLength);
 
 
@@ -75,39 +73,43 @@ function scatterPlot(container, data, xVar, yVar, xLabel, yLabel, text) {
   // const colorScale = scaleLinear()
   //     .domain([Math.min(...length), Math.max(...length)])
   //     .range([1,0]);
-  const colorScale = scaleLinear()
-      .domain([medianLength - dist, medianLength + dist])
-      .range([1,0]);
+  // const colorScale = scaleLinear()
+  //     .domain([medianLength - dist, medianLength + dist])
+  //     .range([1,0]);
+  const colorScale = scaleQuantile()
+    .domain(data.map(d => d.median))
+    .range(colors);
 
-  const vis = container;
-
-  const graphContainer = vis.append('g');
+  const graphContainer = container.append('g')
+    .attr('height', plotHeight)
+    .attr('width', plotWidth)
+    .attr('transform', `translate(${margin}, ${height - margin - plotHeight})`);
 
   graphContainer.append('g')
-    .attr('transform', `translate(0, ${height - margin})`)
+    .attr('transform', `translate(0, ${plotHeight})`)
     .call(axisBottom(xScale)
       .ticks(3, format(',.2r'))
       .tickValues(xtickData));
 
   graphContainer.append('g')
-    .attr('transform', `translate(${margin}, 0)`)
+    .attr('transform', `translate(0, 0)`)
     .call(axisLeft(yScale));
 
-  graphContainer.append('text')
+  container.append('text')
     .attr('transform', 'rotate(-90)')
     .attr('x', -height / 2)
     .attr('y', margin / 2)
     .attr('text-anchor', 'middle')
-    .attr('font-size', '25px')
-    .attr('font-family', 'Arial')
+    .attr('font-size', '30px')
+    .attr('font-family', textFont)
     .text(yLabel);
 
-  graphContainer.append('text')
+  container.append('text')
     .attr('x', width / 2)
     .attr('y', height - margin / 4)
     .attr('text-anchor', 'middle')
-    .attr('font-family', 'Arial')
-    .attr('font-size', '25px')
+    .attr('font-family', textFont)
+    .attr('font-size', '30px')
     .text(xLabel);
 
   graphContainer.selectAll('.dot')
@@ -117,7 +119,7 @@ function scatterPlot(container, data, xVar, yVar, xLabel, yLabel, text) {
     .attr('r', 10)
     .attr('cx', d => xScale(d[xVar]))
     .attr('cy', d => yScale(d[yVar]))
-    .style('fill', d => interpolateRdBu(colorScale(d.median)))
+    .style('fill', d => colorScale(d.median))
     .attr('stroke', 'black');
 
   // if (text) {
@@ -268,7 +270,7 @@ function scatterPlot(container, data, xVar, yVar, xLabel, yLabel, text) {
       labelNodes.append("text")
         .data(data)
         .attr('text-anchor', 'start')
-        .attr('font-family', 'Arial')
+        .attr('font-family', textFont)
         .attr('font-size', '25px')
         .text(d => d.airport)
         .attr("x", function (d) {return xScale(d[xVar])})
@@ -314,73 +316,191 @@ function scatterPlot(container, data, xVar, yVar, xLabel, yLabel, text) {
   // LEGEND
 
   const legendColors = schemeRdBu[10];
-  const tenStops = [1,2,3,4,5,6,7,8,9,10];
-  const elevenStops = [1,2,3,4,5,6,7,8,9,10,11];
-  const tickVals = elevenStops.map((d, i) => Math.min(...length) + i * incr / 10);
-  console.log(tickVals);
+  // const tickVals = elevenStops.map((d, i) => Math.min(...length) + i * incr / 10);
+  // console.log(tickVals);
 
-  const legendContainer = graphContainer.append('g')
-    .attr('width', width / 5)
-    .attr('height', height / 5)
-    .attr('transform', `translate(0,${height - height / 3})`);
+  const legendContainer = container.append('g')
+    .attr('width', width / 4)
+    .attr('height', height / 6)
+    .attr('transform', `translate(${0.7 * width},${height - height / 3})`);
 
-  const legWidth = legendContainer.attr('width');
-  const legHeight = legendContainer.attr('height');
+  const legendWidth = legendContainer.attr('width');
+  const legendHeight = legendContainer.attr('height');
 
-  const legs = legendContainer.selectAll('.rect')
-    .data(tenStops)
+  legendContainer.selectAll('.rect')
+    .data(colors)
     .enter().append('rect')
-      .attr('x', d =>  3 * width / 5 + d * 9 * legWidth / 100)
-      .attr('y', legHeight)
-      .attr('width', legWidth / 10)
-      .attr('height', legHeight / 20)
-      .attr('fill', d => legendColors[10 - d]);
+      .attr('x', (d, i) =>  i * legendWidth / colors.length)
+      .attr('y', legendHeight)
+      .attr('width', legendWidth / colors.length)
+      .attr('height', legendHeight / 20)
+      .attr('fill', d => d);
 
-  legendContainer.selectAll('.line')
-    .data(tenStops)
-    .enter().append('line')
-      .attr('x1', d =>  3 * width / 5 + (d + 1) * 9 * legWidth / 100)
-      .attr('y1', legHeight / 10)
-      .attr('x2', d =>  3 * width / 5 + (d + 1) * 9 * legWidth / 100)
-      .attr('y2', legHeight / 20)
-      .attr('transform',`translate(0, ${legendContainer.attr('height') - legHeight / 20})`)
-      .attr('stroke', 'black');
+  // legendContainer.selectAll('.line')
+  //   .data(tenStops)
+  //   .enter().append('line')
+  //     .attr('x1', d =>  3 * width / 5 + (d + 1) * 9 * legWidth / 100)
+  //     .attr('y1', legHeight / 10)
+  //     .attr('x2', d =>  3 * width / 5 + (d + 1) * 9 * legWidth / 100)
+  //     .attr('y2', legHeight / 20)
+  //     .attr('transform',`translate(0, ${legendContainer.attr('height') - legHeight / 20})`)
+  //     .attr('stroke', 'black');
 
-  legendContainer.selectAll('.text')
-    .data(elevenStops)
-    .enter().append('text')
-      .attr('x', d =>  3 * width / 5 + (d) * 9 * legWidth / 100)
-      .attr('y', legHeight - legHeight / 30)
-      // .attr('transform', `translate(0, ${legWidth / 3})`)
-      .text(d => tickVals[d - 1])
-      .attr('text-anchor', 'middle')
-      .attr('font-family', 'Arial')
-      .attr('font-size', '13px')
-      .attr('fill', 'black');
+  // legendContainer.selectAll('.text')
+  //   .data(elevenStops)
+  //   .enter().append('text')
+  //     .attr('x', (d, i) => i * legendWidth / colors.length)
+  //     .attr('y', legendHeight - legendHeight / 30)
+  //     // .attr('transform', `translate(0, ${legWidth / 3})`)
+  //     .text(d => tickVals[d - 1])
+  //     .attr('text-anchor', 'middle')
+  //     .attr('font-family', textFont)
+  //     .attr('font-size', '13px')
+  //     .attr('fill', 'black');
 
   // legend label
 
   legendContainer.append('text')
-    .attr('x', 3 * width / 5 + 6 * 9 * legWidth / 100)
-    .attr('y', legHeight - legHeight / 8)
+    .attr('x',  0)
+    .attr('y', legendHeight - legendHeight / 8)
     .text('Length of Delay (mins)')
     .attr('text-anchor', 'middle')
-    .attr('font-family', 'Arial')
+    .attr('font-family', textFont)
     .attr('font-size', '25px')
     .attr('fill', 'black');
 
 }
 
+function createSeasonLegend(container, data, colors, season) {
+  const graphHeight = container.attr('height');
+  const graphWidth = container.attr('width');
+  
+  const height = 0.15 * graphHeight;
+  const width = 0.35 * graphWidth;
 
-function drawRadial(container, data, rVar, numLevels, colors, season) {
+  const legendContainer = container.append('g')
+    .attr('height', height)
+    .attr('width', width)
+    .attr('transform', `translate(${0.5 * (graphWidth - width)},${0.97 * graphHeight})`);
+
+  const textFont = 'montserrat';
+
+  // legendContainer.append('rect')
+  //   .attr('height', height)
+  //   .attr('width', width)
+  //   .attr('fill', 'None')
+  //   .attr('stroke', 'black')
+  //   .attr('stroke-width', '2px');
+
+  const xScale = scaleBand()
+    .domain([...new Array(2)].map((d,i) => i))
+    .range([0, width])
+    .paddingInner(0.1)
+    .paddingOuter(0.1);
+  const yScale = scaleBand()
+    .domain([...new Array(2)].map((d,i) => i))
+    .range([0, height])
+    .paddingInner(0.1)
+    .paddingOuter(0.1);
+
+  legendContainer.selectAll('.legend-box')
+    .data(data)
+    .enter()
+    .append('circle')
+    .attr('r', 0.75 * yScale.bandwidth() / 2)
+    .attr('cx', (d, i) => xScale((Math.floor(i / 2) + (i % 2)) % 2) + 0.5 * yScale.bandwidth() / 2)
+    .attr('cy', (d, i) => yScale(Math.floor(i / 2)) + yScale.bandwidth() / 2)
+    .attr('fill', (d, i) => colors[i]);
+
+  legendContainer.selectAll('.legend-text')
+    .data(data)
+    .enter()
+    .append('text')
+    .attr('x', (d, i) => xScale((Math.floor(i / 2) + (i % 2)) % 2) + 0.85 * yScale.bandwidth())
+    .attr('y', (d, i) => yScale(Math.floor(i / 2)) + 0.7 * yScale.bandwidth())
+    .attr('font-family', textFont)
+    .attr('font-size', '70px')
+    .text(d => d.season.toUpperCase())
+}
+
+function createMonthLegend(container, data, colors, season) {
+  const graphHeight = container.attr('height');
+  const graphWidth = container.attr('width');
+
+  const height = 0.2 * graphHeight;
+  const width = 0.2 * graphWidth;
+
+  const legendX = (season === 'spring') || (season === 'summer') ? 0.7 * graphWidth : 0.1 * graphWidth;
+  
+  const legendContainer = container.append('g')
+    .attr('height', height)
+    .attr('width', width)
+    .attr('transform', `translate(${legendX},${0})`);
+
+
+  const textFont = 'montserrat';
+
+  const widthScale = scaleBand()
+    .domain(data.map(d => d.month))
+    .range([0, height])
+    .paddingInner(0.1)
+    .paddingOuter(0.1);
+
+  // container.append('rect')
+  //   .attr('height', height)
+  //   .attr('width', width)
+  //   .attr('x', 0)
+  //   .attr('y', 0)
+  //   .attr('fill', 'none')
+  //   .attr('stroke', 'black')
+  //   .attr('stroke-width', '10px');
+
+  legendContainer.selectAll('.legend-box')
+    .data(data)
+    .enter()
+    // .append('rect')
+    // .attr('height', widthScale.bandwidth())
+    // .attr('width', widthScale.bandwidth())
+    // .attr('x', 0.05 * width)
+    // .attr('y', d => widthScale(d.month))
+    // .attr('fill', (d, i) => colors[i]);
+    // .append('line')
+    // .attr('x1', 0.05 * width)
+    // .attr('y1', d => widthScale(d.month) + widthScale.bandwidth() / 2)
+    // .attr('x2', 0.05 * width + widthScale.bandwidth())
+    // .attr('y2', d => widthScale(d.month) + widthScale.bandwidth() / 2)
+    // .attr('stroke', (d, i) => colors[i])
+    // .attr('stroke-width', '10px');
+    .append('circle')
+    .attr('r', 0.75 * widthScale.bandwidth() / 2)
+    .attr('cx', 0.15 * width)
+    .attr('cy', d => widthScale(d.month) + widthScale.bandwidth() / 2)
+    .attr('fill', (d, i) => colors[i]);
+
+  legendContainer.selectAll('.legend-text')
+    .data(data)
+    .enter()
+    .append('text')
+    .attr('x', 0.3 * width)
+    .attr('y', d => widthScale(d.month) + 0.7 * widthScale.bandwidth())
+    .attr('font-family', textFont)
+    .attr('font-size', '50px')
+    .text(d => d.month)
+}
+
+
+function drawRadial(container, data, rVar, numLevels, colors, season, textFont) {
   const height = container.attr('height');
   const width = container.attr('width');
-  const xOffset = width / 2;
-  const yOffset = height / 2
+  const graphHeight = 0.9 * height;
+  const graphWidth = 0.9 * width;
+  const xOffset = graphWidth / 2;
+  const yOffset = graphHeight / 2
   const m = Math.min(xOffset, yOffset) / 20;
   const radius = 0.8 * Math.min(xOffset, yOffset);
   const maxThick = 0.03 * radius;
 
+  const titleFont = 'montserrat'
 
   const numHours = 24;
 
@@ -413,6 +533,23 @@ function drawRadial(container, data, rVar, numLevels, colors, season) {
      level: Math.floor(i / numHours) + 1,
     }));
 
+  if (season !== 'season') {
+    container.append('text')
+      .attr('x', 0.5 * width)
+      .attr('y', 0.03 * height)
+      .attr('font-family', 'montserrat')
+      .attr('font-weight', 'bold')
+      .attr('font-size', '80px')
+      .attr('text-anchor', 'middle')
+      .text(season.toUpperCase());
+  }
+  
+
+  const graphContainer = container.append('g')
+    .attr('width', graphWidth)
+    .attr('height', graphHeight)
+    .attr('transform', `translate(${(width - graphWidth) / 2}, ${(height - graphHeight) / 2})`)
+
   // container.selectAll('.lines')
   //   .data(axisData)
   //   .enter()
@@ -427,7 +564,7 @@ function drawRadial(container, data, rVar, numLevels, colors, season) {
   //   .attr('stroke-width', '0.3px')
   //   .attr('transform', `translate(${xOffset}, ${yOffset})`);
 
-  container.selectAll('.lines')
+  graphContainer.selectAll('.lines')
     .data(levels)
     .enter()
     .append('circle')
@@ -449,7 +586,7 @@ function drawRadial(container, data, rVar, numLevels, colors, season) {
   //   .attr('r', axisScale(numLevels));
 
 
-  container.selectAll('.lines')
+  graphContainer.selectAll('.lines')
     .data(hours)
     .enter().append('line')
     .attr('x1', 0)
@@ -461,10 +598,10 @@ function drawRadial(container, data, rVar, numLevels, colors, season) {
     .attr('stroke', 'grey')
     .attr('transform', `translate(${xOffset}, ${yOffset})`);
 
-  container.selectAll('.axis-text')
+  graphContainer.selectAll('.axis-text')
     .data(levels)
     .enter().append('text')
-    .style('font-family', 'sans-serif')
+    .style('font-family', textFont)
     .style('font-size', '22px')
     .attr('class', 'axis-text')
     .attr('x', 0)
@@ -472,10 +609,10 @@ function drawRadial(container, data, rVar, numLevels, colors, season) {
     .attr('transform', `translate(${xOffset}, ${yOffset})`)
     .text(l => formatFunc((l + 1)/ numLevels * maxRadius));
 
-  container.selectAll('.hours-text')
+  graphContainer.selectAll('.hours-text')
     .data(hours)
     .enter().append('text')
-    .style('font-family', 'sans-serif')
+    .style('font-family', textFont)
     .style('font-size', '22px')
     .attr('class', 'hours-text')
     .attr('transform', `translate(${xOffset}, ${yOffset})`)
@@ -494,11 +631,6 @@ function drawRadial(container, data, rVar, numLevels, colors, season) {
   const arcGenerator = arc()
     .innerRadius(0)
     .outerRadius(radius);
-
-  const graphContainer = container.append('g')
-    .attr('width', width)
-    .attr('height', height)
-    .attr('transform', `translate(${0}, ${0})`)
     // .attr('clip-path', 'url(#graphClip)');
 
   // const lineData = 
@@ -514,8 +646,6 @@ function drawRadial(container, data, rVar, numLevels, colors, season) {
     })
     .attr('transform', `translate(${xOffset}, ${yOffset})`);
 
-  // console.log(data[0].total.map((d, i) => ({total: d.total, color: colors[i]})))
-
   graphContainer.selectAll('.base')
     .data(data)
     .enter().append('g')
@@ -523,127 +653,91 @@ function drawRadial(container, data, rVar, numLevels, colors, season) {
     .attr('height', height)
     .attr('transform', 'translate(0, 0)')
     .attr('clip-path', (d, i) => `url(#${season + i})`)
-    .selectAll(`${'.base-' + season}`)
+    .selectAll('.base')
     .data((d, i) => d.total.slice(0, -1).map(t => ({total: t, color: colors[i]})))
     .enter().append('path')
     .attr('d', (d, i) => arcGenerator({startAngle: i / 12 * Math.PI, endAngle: (i + 1) / 12 * Math.PI}))
     .attr('transform', `translate(${xOffset}, ${yOffset})`)
     .attr('fill', d => d.color)
     .attr('opacity', d => 0.85 * d.total / maxTotal + 0.15);
-    // .append('path')
-    // .attr('d', arcGenerator({startAngle: 0, endAngle: Math.PI}))
-    // .attr('transform', `translate(${xOffset}, ${yOffset})`)
-    // .attr('fill', (d, i) => colors[i])
-    // .attr('opacity', 1);
-    // .attr('opacity', '0.1');
 
-  // graphContainer.selectAll('.graph')
-  //   .data(data.slice(2))
-  //   .enter().append('path')
-  //   .attr('d', d => {
-  //     d[rVar].push(d[rVar][0]);
-  //     d.total.length === 24 ? d.total.push(d.total[0]) : '';
-  //     return areaFunction(d[rVar].map((e, i) => ({rVar: e, total: d.total[i]})));
-  //   })
-  //   .attr('fill', (d, i) => colors[i])
-  //   .attr('stroke', (d, i) => colors[i])
-  //   .attr('stroke-width', '2px')
-  //   .attr('transform', `translate(${xOffset}, ${yOffset})`)
+  const legendFunc = season === 'season' ? createSeasonLegend : createMonthLegend;
 
-  // graphContainer.selectAll('.graph')
-  //   .data(data)
-  //   .enter().append('path')
-  //   .attr('d', d => {
-  //     d[rVar].push(d[rVar][0]);
-  //     d.total.length === 24 ? d.total.push(d.total[0]) : '';
-  //     return areaFunction(d[rVar].map((e, i) => ({rVar: e, total: d.total[i]})));
-  //   })
-  //   .attr('fill', (d, i) => colorScheme(season)[i])
-  //   .attr('stroke', (d, i) => colorScheme(season)[i])
-  //   .attr('stroke-width', '2px')
-  //   .attr('transform', `translate(${xOffset}, ${yOffset})`)
-
-  // const legend = container.append('g')
-  //   .attr('height', yOffset * 1.5)
-  //   .attr('width', xOffset / 2)
-  //   .attr('transform', `translate(${ 2 * xOffset}, ${0.25 * yOffset})`)
-
-  // legend.append('rect')
-  //   .attr('class', 'legend')
-  //   .attr('height', legend.attr('height'))
-  //   .attr('width', legend.attr('width'))
-  //   .attr('fill', 'None')
-  //   .attr('stroke', 'black')
-  //   .attr('stroke-width', '2px');
-
-  // legend.selectAll('.box')
-  //   .data(data)
-  //   .enter()
-  //   .append('rect')
-  //   .attr('width', 0.7 * legend.attr('height') / 12)
-  //   .attr('height', 0.7 * legend.attr('height') / 12)
-  //   .attr('x', 0.05 * legend.attr('width'))
-  //   .attr('y', (d, i) => (i + 0.15) * legend.attr('height') / 12)
-  //   .attr('fill', (d, i) => colors[i]);
-
-  // legend.selectAll('.text')
-  //   .data(data)
-  //   .enter()
-  //   .append('text')
-  //   .attr('font-family', 'sans-serif')
-  //   .attr('x', 0.2 * legend.attr('width'))
-  //   .attr('y', (d, i) => (i + 0.15) * legend.attr('height') / 12)
-  //   .text(d => d.month)
+  legendFunc(graphContainer, data, colors, season);
 }
 
 
-function drawBar(container, data, barVar, yVar, xLabel, yLabel, title) {
+function drawBar(container, data, xLabel, yLabel, title, textFont) {
 
   const height = container.attr('height');
   const width = container.attr('width');
-  const margin = 70;
-  const airlines = data.map(d => d[barVar])
+  const graphHeight = 0.85 * height;
+  const graphWidth = 0.85 * width;
+  const margin = 0.7 * Math.min(height - graphHeight, width - graphWidth);
+  const airlines = data.map(d => d.airline)
 
   const xScale = scaleBand()
     .domain(airlines)
-    .range([margin, width - margin])
+    .range([0, graphWidth])
     .paddingInner(0.1)
     .paddingOuter(0.1);
   const yScale = scaleLinear()
-    .domain([0, max(data, d => d.percent * 100)])
-    .range([height - margin, 2 * margin]);
+    .domain([0, Math.max(...data.map(d => d.percent))])
+    .range([graphHeight, 0]);
 
-  container.append('g')
-    .attr('transform', `translate(0, ${height - margin})`)
+  const graphContainer = container.append('g')
+    .attr('width', graphWidth)
+    .attr('height', graphHeight)
+    .attr('transform', `translate(${margin}, ${height - margin - graphHeight})`);
+
+  graphContainer.append('g')
+    .attr('transform', `translate(0, ${graphHeight})`)
     .call(axisBottom(xScale));
-  container.append('g')
-    .attr('transform', `translate(${margin}, 0)`)
+
+  graphContainer.append('g')
+    .attr('transform', `translate(0, 0)`)
     .call(axisLeft(yScale));
-  container.selectAll('.bar')
+
+  const yellow = '#e0b506'
+
+  const blue = '#307db6'
+
+  graphContainer.selectAll('.bar')
     .data(data)
     .enter().append('rect')
     .attr('width', xScale.bandwidth())
-    .attr('height', d => height - margin - yScale(d.percent * 100))
+    .attr('height', d => yScale(d.percenta) - yScale(d.percent))
     .attr('x', d => xScale(d.airline))
-    .attr('y', d => yScale(d.percent * 100))
-    .attr('fill', 'steelblue');
-  container.append('text')
-    .attr('x', width / 2)
-    .attr('y', 1.25 * margin)
-    .attr('font-family', 'sans-serif')
-    .attr('font-size', '80px')
-    .attr('text-anchor', 'middle')
-    .text(title);
+    .attr('y', d => yScale(d.percent))
+    .attr('fill', blue);
+
+
+  graphContainer.selectAll('.bar')
+    .data(data)
+    .enter().append('rect')
+    .attr('width', xScale.bandwidth())
+    .attr('height', d => graphHeight - yScale(d.percenta))
+    .attr('x', d => xScale(d.airline))
+    .attr('y', d => yScale(d.percenta))
+    .attr('fill', yellow);
+
+  // container.append('text')
+  //   .attr('x', width / 2)
+  //   .attr('y', 1.25 * margin)
+  //   .attr('font-family', 'sans-serif')
+  //   .attr('font-size', '80px')
+  //   .attr('text-anchor', 'middle')
+  //   .text(title);
   container.append('text')
     .attr('x', width / 2)
     .attr('y', height - margin / 8)
-    .attr('font-family', 'sans-serif')
+    .attr('font-family', textFont)
     .attr('font-size', '40px')
     .attr('text-anchor', 'middle')
     .text(xLabel);
  container.append('text')
     .attr('transform', `translate(${margin / 2}, ${height / 2})rotate(-90)`)
-    .attr('font-family', 'sans-serif')
+    .attr('font-family', textFont)
     .attr('font-size', '40px')
     .attr('text-anchor', 'middle')
     .text(yLabel);
@@ -674,11 +768,13 @@ function myVis(data) {
   // The posters will all be 24 inches by 36 inches
   // Your graphic can either be portrait or landscape, up to you
   // the important thing is to make sure the aspect ratio is correct.
-
+  const textFont = 'open sans'
   // Eggshell
   const list1 = [1, 1, 1, 1];
   console.log(list1.reduce((ls, l) => ls.concat([l, l]), []))
-  const backgroundColor = '#EFF1ED';
+  // const backgroundColor = '#EFF1ED';
+  const backgroundColor = '#f7f7f7';
+  // const backgroundColor = 'None';
 
   // const seasonColors = ['#0b66f1', // winter
   //                       '#1cd50a', // spring 
@@ -725,33 +821,42 @@ function myVis(data) {
     .attr('y', 0)
     .attr('fill', backgroundColor);
 
+  vis.append('text')
+    .attr('x', 0.5 * width)
+    .attr('y', 0.03 * height)
+    .attr('font-family', 'montserrat')
+    .attr('font-weight', 'bold')
+    .attr('font-size', '150px')
+    .attr('text-anchor', 'middle')
+    .text('AVOIDING FLIGHT DELAYS');
+
   const radialContainer = makeContainer(vis,  width, 0.4 * height, 0, 0.06 * height, false);
 
   const rHeight = radialContainer.attr('height');
   const rWidth = radialContainer.attr('width');
-  const radialSeasons = makeContainer(radialContainer, 0.7 * rWidth, 0.7 * rHeight, 0.15 * rWidth, 0.15 * rHeight);
-  const radialWinter = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0, 0);
-  const radialSpring = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0.6 * rWidth, 0);
-  const radialSummer = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0, 0.5 * rHeight);
-  const radialAutumn = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0.6 * rWidth, 0.5 * rHeight);
+  const radialSeasons = makeContainer(radialContainer, 0.7 * rWidth, 0.7 * rHeight, 0.15 * rWidth, 0.15 * rHeight, false);
+  const radialWinter = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0, 0, false);
+  const radialSpring = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0.6 * rWidth, 0, false);
+  const radialAutumn = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0, 0.5 * rHeight, false);
+  const radialSummer = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0.6 * rWidth, 0.5 * rHeight, false);
 
-  const fullScatterContainer = makeContainer(vis, 0.4 * width, 0.2 * height, 0.05 * width, 0.58 * height, true);
-  const zoomScatterContainer = makeContainer(vis, 0.4 * width, 0.2 * height, 0.5 * width, 0.5 * height, true);
-  const barContainer = makeContainer(vis, 0.4 * width, 0.2 * height, 0.5 * width, 0.77 * height, true);
+  const fullScatterContainer = makeContainer(vis, 0.4 * width, 0.2 * height, 0.05 * width, 0.58 * height, false);
+  const zoomScatterContainer = makeContainer(vis, 0.4 * width, 0.2 * height, 0.5 * width, 0.5 * height, false);
+  const barContainer = makeContainer(vis, 0.4 * width, 0.2 * height, 0.5 * width, 0.77 * height, false);
 
   // console.log(data[0].slice(8, 11))
 
-  drawRadial(radialSeasons, data[3], 'percent', 8, seasonColors, 'season');
-  drawRadial(radialWinter, data[0].slice(-1).concat(data[0].slice(0, 2)), 'percent', 8, winterColors, 'winter');
-  drawRadial(radialSpring, data[0].slice(2, 5), 'percent', 8, springColors, 'spring');
-  drawRadial(radialSummer, data[0].slice(5, 8), 'percent', 8, summerColors, 'summer');
-  drawRadial(radialAutumn, data[0].slice(8, 11), 'percent', 8, autumnColors, 'autumn');
+  drawRadial(radialSeasons, data[3], 'percent', 8, seasonColors, 'season', textFont);
+  drawRadial(radialWinter, data[0].slice(-1).concat(data[0].slice(0, 2)), 'percent', 8, winterColors, 'winter', textFont);
+  drawRadial(radialSpring, data[0].slice(2, 5), 'percent', 8, springColors, 'spring', textFont);
+  drawRadial(radialSummer, data[0].slice(5, 8), 'percent', 8, summerColors, 'summer', textFont);
+  drawRadial(radialAutumn, data[0].slice(8, 11), 'percent', 8, autumnColors, 'autumn', textFont);
   // drawRadial(radialAvgContainer, data[3], 'average', 10);
   // drawRadial(radialContainer, data[3], 'percent', 8);
 
-  scatterPlot(fullScatterContainer, data[1], 'total', 'percent', 'Total Outbound Flights (Airport Size)', 'Proportion of Delayed Flights', false);
-  scatterPlot(zoomScatterContainer, data[1], 'total', 'percent', 'Total Outbound Flights (Airport Size)', 'Proportion of Delayed Flights', true);
+  scatterPlot(fullScatterContainer, data[1], 'total', 'percent', 'Total Outbound Flights (Airport Size)', 'Proportion of Delayed Flights', false, textFont);
+  scatterPlot(zoomScatterContainer, data[1].slice(0,50), 'total', 'percent', 'Total Outbound Flights (Airport Size)', 'Proportion of Delayed Flights', true, textFont);
 
-  // drawBar(container, data, barVar, yVar, xLabel, yLabel, title)
-  drawBar(barContainer, data[2], 'airline', 'percent', 'Airlines', 'Percentage', 'Plot of Delays by Airlines');
+  // drawBar(container, data, var1, var2, xLabel, yLabel, title)
+  drawBar(barContainer, data[2], 'Airlines', 'Percentage', 'Plot of Delays by Airlines', textFont);
 }
