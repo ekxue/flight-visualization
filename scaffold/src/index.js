@@ -31,6 +31,15 @@ domReady(() => {
   .then(arrayofDataBlobs => myVis(arrayofDataBlobs))
 });
 
+// Comments on how to use annotation functions:
+// Usage: x, y, dx, dy are scaled from (0, 100) and annotationwidth is how many pixels wide you want the labels and title
+// dx and dy are change in x and y coordinates that you want the annotations to be relative to point on plot
+// Example: lineAnnotation(barContainer, "input some comments on the data", "Annotation 1:", 20, 20, 5, 5, 150);
+// rectAnnotation and circleAnnotation have attributes width and height and radius respectively, which are also scaled,
+//    i.e. values between (0, 100)
+// circleAnnotation(barContainer, "more comments on data...", "Annotation 2:", 50, 50, 10, 0, 8, 200);
+// Use function in myVis
+// Side notes: need to yarn add d3-drag and also keep styling from main.scss
 function lineAnnotation(container, label, title, x, y, dx, dy, annotationWidth) {
   const containerHeight = container.attr('height');
   const containerWidth = container.attr('width');
