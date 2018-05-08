@@ -5,14 +5,15 @@
 // import from: https://github.com/d3/d3/blob/master/API.md
 import {select, selectAll} from 'd3-selection';
 import {scaleBand, scaleLinear, bandwidth, scaleLog} from 'd3-scale';
-import {max} from 'd3-array';
+import {median, max, indexOf} from 'd3-array';
 import {axisBottom, axisLeft, axisTop} from 'd3-axis';
 import {format} from 'd3-format';
 import {line, radialArea, curveNatural, curveCardinalClosed} from 'd3-shape';
 import {interpolateRdBu, schemeRdBu} from 'd3-scale-chromatic';
 import {bboxCollide} from 'd3-bboxCollide';
-import {forceSimulation, forceManyBody, forceX, forceY} from 'd3-force';
-import {image} from 'd3-fetch';
+import {hsl} from 'd3-color';
+import {forceSimulation, forceManyBody, forceX, forceY, forceLink, forceCollide} from 'd3-force';
+import {annotation, annotationTypeBase, annotationLabel, annotationCallout, annotationCalloutCurve, annotationCalloutCircle, annotationCalloutRect} from './d3-annotation'; // need d3-drag for d3-annotation
 
 const domReady = require('domready');
 domReady(() => {
@@ -29,6 +30,62 @@ domReady(() => {
   ].map(filename => fetch(filename).then(response => response.json())))
   .then(arrayofDataBlobs => myVis(arrayofDataBlobs))
 });
+
+function lineAnnotation(container, label, title, x, y, dx, dy, annotationWidth) {
+  const annotations = [{
+    note: {
+      title: title,
+      label: label
+    },
+    type: annotationCallout,
+    x: x, y: y,
+    dx: dx, dy: dy
+  }];
+
+  container.append("g")
+    .attr("class", "annotation-group")
+    .call(annotation().textWrap(annotationWidth).annotations(annotations));
+}
+
+function circleAnnotation(container, label, title, x, y, dx, dy, radius, annotationWidth) {
+  const annotations = [{
+    note: {
+      title: title,
+      label: label
+    },
+    type: annotationCalloutCircle,
+    x: x, y: y,
+    dx: dx, dy: dy,
+    subject: {
+      radius: radius,
+      radiusPadding: 5
+    }
+  }]
+
+  container.append("g")
+    .attr("class", "annotation-group")
+    .call(annotation().textWrap(annotationWidth).annotations(annotations));
+}
+
+function rectAnnotation(container, label, title, x, y, dx, dy, width, height, annotationWidth) {
+  const annotations = [{
+    note: {
+      title: title,
+      label: label
+    },
+    type: annotationCalloutRect,
+    x: x, y: y,
+    dx: dx, dy: dy,
+    subject: {
+      width: -width,
+      height: height
+    }
+  }];
+
+  container.append("g")
+    .attr("class", "annotation-group")
+    .call(annotation().textWrap(annotationWidth).annotations(annotations));
+}
 
 function scatterPlot(container, data, xVar, yVar, xLabel, yLabel, text) {
   // The posters will all be 24 inches by 36 inches
@@ -64,12 +121,19 @@ function scatterPlot(container, data, xVar, yVar, xLabel, yLabel, text) {
 
   const length = data.map(d => d.median);
 
+  const medianLength = median(length);
+  const dist = Math.max(medianLength - Math.min(...length), Math.max(...length) - medianLength);
+
+
   const incr = Math.max(...length) - Math.min(...length);
 
   // Scale for dot color
 
+  // const colorScale = scaleLinear()
+  //     .domain([Math.min(...length), Math.max(...length)])
+  //     .range([1,0]);
   const colorScale = scaleLinear()
-      .domain([Math.min(...length), Math.max(...length)])
+      .domain([medianLength - dist, medianLength + dist])
       .range([1,0]);
 
   const vis = container;
@@ -126,48 +190,151 @@ function scatterPlot(container, data, xVar, yVar, xLabel, yLabel, text) {
 
   // }
 
+  // FORCE DIRECTED LABELS
+
+  // FORCE DIRECTED LABELS
+
+  // FORCE DIRECTED LABELS
+
   if (text) {
 
-    // force directing the labels so they don't collide.
+  //   // the points/nodes:
 
-    var forceXs = forceX(d => xScale(d[xVar]))
-      .strength(1)
+  //   const points = data.map(d => ({x: d.total, y: d.median, label: d.airport}));
+  //   console.log(points);
 
-    var forceYs = forceY(d => yScale(d[yVar]))
-      .strength(0.5)
+  //   // the labels:
+  //   const labels = [];
+  //   // const labelLinks = [];
 
-    window.collide = bboxCollide((d, i) =>
-          [[xScale(d[xVar]) - 5, xScale(d[xVar])],[yScale(d[yVar]) + 5, yScale(d[yVar])]])
+  //   for(var i = 0; i < points.length; i++) {
+  //   var node = {
+  //     label: points[i].label,
+  //     x: points[i].x,
+  //     y: points[i].y
+  //   };
+  //   labels.push({node : node }); labels.push({node : node }); // push twice
+  //   // labelLinks.push({ source : i * 2, target : i * 2 + 1, index: i });
+  // };
+  //   // const labels = points.map(d => ({node: {label: d.label, x: d.x, y: d.y}}, {node: {label: d.label, x: d.x, y: d.y}}));
+  //   const labelLinks = points.map((d, i) => ({ source : i * 2, target : i * 2 + 1, index: i }))
+
+  // make nodes: alternates between the 'node' dot and a text label.
+
+  const linkNodes = data.reduce((acc, row) => {
+    const dot = {id: `${row.airport}_source`, type: 'source'};
+    const label = {id: `${row.airport}_target`, type: 'target'};
+    acc.push(label, dot);
+    return acc;
+  }, []);
+
+  console.log(linkNodes);
+
+  // make links between the sources and targets
+
+  const links = data.map((d, i) => ({source: `${d.airport}_source`, target: `${d.airport}_target`, index: i}));
+  console.log(links);
+
+
+  //   console.log(labels);
+  //   console.log(labelLinks);
+
+    // var forceXs = forceX(d => xScale(d[xVar]))
+    //   .strength(1)
+
+    // var forceYs = forceY(d => yScale(d[yVar]))
+    //   .strength(1)
+
+    const collide = forceCollide()
+      .radius(100)
+      .iterations(200)
       .strength(1);
 
-    window.forceSim = forceSimulation()
-    .velocityDecay(0.6)
-    .force('charge', forceManyBody())
-    .force('x', forceXs)
-    .force('y', forceYs)
-    .force('collide', window.collide)
-    .nodes(data)
-    .on("tick", updateNetwork);
+    const charge = forceManyBody();
+      // .strength(-700);
+
+    const linkForce = forceLink(links)
+          .id(d => d.id)
+          .strength(1);
+
+    const forceSim = forceSimulation()
+      // .nodes(labels)
+       .nodes(linkNodes)
+      // .velocityDecay(0.6)
+      .force("link", linkForce)
+          // .charge(-10))
+          // .strength(.5)
+          // .distance(0))
+      .force('charge', charge)
+      // .force('x', forceXs)
+      // .force('y', forceYs)
+      .force('collide', collide)
+      // .on('tick', tick)
+      .on("tick", updateNetwork);
+
+
+    // var labelNode = graphContainer.selectAll("g")
+    //   .data(labels)
+    //   .enter().append("g")
+    //     .attr("class", "labelNode");
+
+    // labelNode.append("circle")
+    //     .attr("r", 0)
+    //     .style("fill", "red");
+
+    // labelNode.append("text")
+    //   .text(function(d, i) { return i % 2 == 0 ? "" : d.node.label })
+    //   .style("fill", "#555")
+    //   .style("font-size", 20);
+
+
+//     function tick() {
+//     labelNode.each(function(d, i) {
+//       if(i % 2 == 0) {
+//         d.x = d.node.x;
+//         d.y = d.node.y;
+//       } else {
+//         var b = this.childNodes[1].getBBox();
+//         var diffX = d.x - d.node.x,
+//             diffY = d.y - d.node.y;
+//         var dist = Math.sqrt(diffX * diffX + diffY * diffY);
+//         var shiftX = Math.min(0, b.width * (diffX - dist) / (dist * 2));
+//         var shiftY = 5;
+//         this.childNodes[1].setAttribute("transform", "translate(" + shiftX + "," + shiftY + ")");
+//       }
+//     });
+//     labelNode.call(updateNode);
+
+
+// // Update nodes
+//   function updateNode(){
+//     graphContainer.selectAll("labelNode").attr("transform", function(d) {
+//       return "translate(" + d.x + "," + d.y + ")";
+//     });
+//   }
+
+//   }
 
      var labelNodes = graphContainer
       .selectAll("g.node")
-      .data(data)
+      .data(linkNodes.filter(d => d.type = 'source'))
       .enter()
       .append("g")
       .attr("class", "node")
 
       labelNodes.append("text")
+        .data(data)
         .attr('text-anchor', 'start')
         .attr('font-family', 'Arial')
         .attr('font-size', '25px')
         .text(d => d.airport)
-        .attr("x", function (d) {return xScale(d[xVar]) - width / 4})
-        .attr("y", function (d) {return yScale(d[yVar]) + width / 300});
+        .attr("x", function (d) {return xScale(d[xVar])})
+        .attr("y", function (d) {return yScale(d[yVar])});
 
 
     function updateNetwork() {
       graphContainer.selectAll("g.node")
-        .attr("transform", function (d) {return "translate(" + d.x + "," + d.y + ")"})
+        .attr("transform", function (d) {return "translate(" + d.x / 50 + "," + d.y / 50 + ")"})
     }
   }
 
@@ -262,7 +429,7 @@ function scatterPlot(container, data, xVar, yVar, xLabel, yLabel, text) {
 }
 
 
-function drawRadial(container, data, rVar, numLevels) {
+function drawRadial(container, data, rVar, numLevels, colors) {
   const height = container.attr('height');
   const width = container.attr('width');
   const xOffset = width / 2;
@@ -271,26 +438,6 @@ function drawRadial(container, data, rVar, numLevels) {
   const radius = 0.8 * Math.min(xOffset, yOffset);
   const maxThick = 0.03 * radius;
 
-  const colors = ['#3366cc',
-                  '#dc3912',
-                  '#ff9900',
-                  '#109618',
-                  '#990099',
-                  '#0099c6',
-                  '#dd4477',
-                  '#66aa00',
-                  '#b82e2e',
-                  '#316395',
-                  '#994499',
-                  '#22aa99',
-                  '#aaaa11',
-                  '#aaaa11',
-                  '#e67300',
-                  '#8b0707',
-                  '#651067',
-                  '#329262',
-                  '#5574a6',
-                  '#3b3eac'];
 
   const numHours = 24;
 
@@ -386,7 +533,7 @@ function drawRadial(container, data, rVar, numLevels) {
   .angle((d, i) => i * 2 * Math.PI / numHours)
   .innerRadius((d, i) => rScale(d.rVar) - thickScale(d.total))
   .outerRadius((d, i) => rScale(d.rVar))
-  .curve(curveCardinalClosed.tension(0.55));
+  .curve(curveCardinalClosed.tension(1));
 
   const graphContainer = container.append('g')
     .attr('width', width)
@@ -406,6 +553,19 @@ function drawRadial(container, data, rVar, numLevels) {
     .attr('stroke', (d, i) => colors[i])
     .attr('stroke-width', '2px')
     .attr('transform', `translate(${xOffset}, ${yOffset})`)
+
+  // graphContainer.selectAll('.graph')
+  //   .data(data)
+  //   .enter().append('path')
+  //   .attr('d', d => {
+  //     d[rVar].push(d[rVar][0]);
+  //     d.total.length === 24 ? d.total.push(d.total[0]) : '';
+  //     return areaFunction(d[rVar].map((e, i) => ({rVar: e, total: d.total[i]})));
+  //   })
+  //   .attr('fill', (d, i) => colorScheme(season)[i])
+  //   .attr('stroke', (d, i) => colorScheme(season)[i])
+  //   .attr('stroke-width', '2px')
+  //   .attr('transform', `translate(${xOffset}, ${yOffset})`)
 
   // const legend = container.append('g')
   //   .attr('height', yOffset * 1.5)
@@ -448,7 +608,6 @@ function drawBar(container, data, barVar, yVar, xLabel, yLabel, title) {
   const margin = 70;
   const airlines = data.map(d => d[barVar])
 
-  // use image from d3-fetch to get airline logo, stored under data[image]
   const xScale = scaleBand()
     .domain(airlines)
     .range([margin, width - margin])
@@ -475,25 +634,24 @@ function drawBar(container, data, barVar, yVar, xLabel, yLabel, title) {
   container.append('text')
     .attr('x', width / 2)
     .attr('y', 1.25 * margin)
-    .attr('font', 'sans-serif')
+    .attr('font-family', 'sans-serif')
     .attr('font-size', '80px')
     .attr('text-anchor', 'middle')
     .text(title);
   container.append('text')
     .attr('x', width / 2)
     .attr('y', height - margin / 8)
-    .attr('font', 'sans-serif')
+    .attr('font-family', 'sans-serif')
     .attr('font-size', '40px')
     .attr('text-anchor', 'middle')
     .text(xLabel);
  container.append('text')
     .attr('transform', `translate(${margin / 2}, ${height / 2})rotate(-90)`)
-    .attr('font', 'sans-serif')
+    .attr('font-family', 'sans-serif')
     .attr('font-size', '40px')
     .attr('text-anchor', 'middle')
     .text(yLabel);
 }
-
 
 function makeContainer(vis, width, height, x, y, border) {
   const container = vis.append('g')
@@ -524,6 +682,36 @@ function myVis(data) {
 
   const backgroundColor = '#EFF1ED';
 
+  // const seasonColors = ['#0b66f1', // winter
+  //                       '#1cd50a', // spring
+  //                       '#fff60a', //summer
+  //                       '#fd8308']; // fall
+  const seasonColors = ['#375E97', '#3F681C', '#FFBB00', '#FF300C'];
+
+  // const winterColors = ['#17bbff',
+  //                       '#0b66f1',
+  //                       '#5d4fff'];
+  // const winterColors = ['#39bedd', '#5c81cf', '#4c69db'];
+  const winterColors = ['#2A354E', '#375E97', '#008DFF']
+
+  // const springColors = ['#52d585',
+  //                       '#1cd50a',
+  //                       '#8fd646']
+  // const springColors = ['#58b87c', '#74b946', '#5a8339'];
+  const springColors = ['#26391C', '#3F681C', '#469E00']
+  // const summerColors = ['#cdff22',
+  //                       '#fff60a',
+  //                       '#f9da09'];
+  // const summerColors = ['#ac882c', '#dec36c', '#d9ce3a'];
+  const summerColors = ['#BE8E3B', '#FFBB00', '#FDEF00'];
+
+  // const autumnColors = ['#f9b409',
+  //                     '#fd8308',
+  //                     '#f86607'];
+  // const autumnColors = ['#ce8541', '#d5565e', '#dd502b'];
+  // const autumnColors = [hsl(351.82, 0.91, 0.55), hsl(7.90, 0.56, 0.55), hsl(12.66, 0.88, 0.55) ];
+  const autumnColors = ['#C30000', '#FF300C', '#FFA26C']
+
   const width = 5000; // was 5000, changed to 500 for viewing in browser
   const height = 36 / 24 * width;
   const margin = 70;
@@ -539,12 +727,7 @@ function myVis(data) {
     .attr('y', 0)
     .attr('fill', backgroundColor);
 
-
-  const fullAirportAverageContainer = makeContainer(vis, width / 4, height / 3, width / 2, height / 2, true);
-
-  const zoomAirportAverageContainer = makeContainer(vis, width / 4, height / 3, 3 * width / 4, height / 2, true);
-
-  const radialContainer = makeContainer(vis,  width, 0.4 * height, 0, 0, false);
+  const radialContainer = makeContainer(vis,  width, 0.4 * height, 0, 0.06 * height, false);
 
   const rHeight = radialContainer.attr('height');
   const rWidth = radialContainer.attr('width');
@@ -554,23 +737,22 @@ function myVis(data) {
   const radialSummer = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0, 0.5 * rHeight);
   const radialAutumn = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0.6 * rWidth, 0.5 * rHeight);
 
-
-  // const radialAvgContainer = makeContainer(vis, 0.25 * width, 0.25 * height, width / 8, 0.4 * height)
-
-  const barContainer = makeContainer(vis, 0.3 * height, 0.3 * height, 0.02 * width, 0.5 * height, true);
+  const fullScatterContainer = makeContainer(vis, 0.4 * width, 0.2 * height, 0.05 * width, 0.58 * height, true);
+  const zoomScatterContainer = makeContainer(vis, 0.4 * width, 0.2 * height, 0.5 * width, 0.5 * height, true);
+  const barContainer = makeContainer(vis, 0.4 * width, 0.2 * height, 0.5 * width, 0.77 * height, true);
 
   // console.log(data[0].slice(8, 11))
 
-  drawRadial(radialSeasons, data[3], 'percent', 8);
-  drawRadial(radialWinter, data[0].slice(-1).concat(data[0].slice(0, 2)), 'percent', 8);
-  drawRadial(radialSpring, data[0].slice(2, 5), 'percent', 8);
-  drawRadial(radialSummer, data[0].slice(5, 8), 'percent', 8);
-  drawRadial(radialAutumn, data[0].slice(8, 11), 'percent', 8);
+  drawRadial(radialSeasons, data[3], 'percent', 8, seasonColors);
+  drawRadial(radialWinter, data[0].slice(-1).concat(data[0].slice(0, 2)), 'percent', 8, winterColors);
+  drawRadial(radialSpring, data[0].slice(2, 5), 'percent', 8, springColors);
+  drawRadial(radialSummer, data[0].slice(5, 8), 'percent', 8, summerColors);
+  drawRadial(radialAutumn, data[0].slice(8, 11), 'percent', 8, autumnColors);
   // drawRadial(radialAvgContainer, data[3], 'average', 10);
   // drawRadial(radialContainer, data[3], 'percent', 8);
 
-  scatterPlot(fullAirportAverageContainer, data[1], 'total', 'percent', 'Total Outbound Flights (Airport Size)', 'Proportion of Delayed Flights', false);
-  scatterPlot(zoomAirportAverageContainer, data[1], 'total', 'percent', 'Total Outbound Flights (Airport Size)', 'Proportion of Delayed Flights', true);
+  scatterPlot(fullScatterContainer, data[1], 'total', 'percent', 'Total Outbound Flights (Airport Size)', 'Proportion of Delayed Flights', false);
+  scatterPlot(zoomScatterContainer, data[1], 'total', 'percent', 'Total Outbound Flights (Airport Size)', 'Proportion of Delayed Flights', true);
 
   // drawBar(container, data, barVar, yVar, xLabel, yLabel, title)
   drawBar(barContainer, data[2], 'airline', 'percent', 'Airlines', 'Percentage', 'Plot of Delays by Airlines');
