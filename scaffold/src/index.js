@@ -5,10 +5,10 @@
 // import from: https://github.com/d3/d3/blob/master/API.md
 import {select, selectAll} from 'd3-selection';
 import {scaleBand, scaleLinear, bandwidth, scaleLog} from 'd3-scale';
-import {median} from 'd3-array';
+import {max, median} from 'd3-array';
 import {axisBottom, axisLeft, axisTop} from 'd3-axis';
 import {format} from 'd3-format';
-import {line, radialArea, curveNatural, curveCardinalClosed} from 'd3-shape';
+import {arc, line, radialArea, curveNatural, curveCardinalClosed} from 'd3-shape';
 import {interpolateRdBu, schemeRdBu} from 'd3-scale-chromatic';
 import {bboxCollide} from 'd3-bboxCollide';
 import {hsl} from 'd3-color';
@@ -269,7 +269,7 @@ function scatterPlot(container, data, xVar, yVar, xLabel, yLabel, text) {
 }
 
 
-function drawRadial(container, data, rVar, numLevels, colors) {
+function drawRadial(container, data, rVar, numLevels, colors, season) {
   const height = container.attr('height');
   const width = container.attr('width');
   const xOffset = width / 2;
@@ -303,22 +303,35 @@ function drawRadial(container, data, rVar, numLevels, colors) {
 
   const thickScale = scaleLinear()
     .domain([minTotal, maxTotal])
-    .range([0, maxThick]);
+    .range([maxThick, 2]);
 
   const axisData = [...new Array(numHours * numLevels)].map((x, i) => ({
      hour: i % numHours,
      level: Math.floor(i / numHours) + 1,
     }));
 
+  // container.selectAll('.lines')
+  //   .data(axisData)
+  //   .enter()
+  //   .append('line')
+  //   .attr('x1', d => axisScale(d.level) * (Math.sin(d.hour * 2 * Math.PI / numHours)))
+  //   .attr('y1', d => axisScale(d.level) * (Math.cos(d.hour * 2 * Math.PI / numHours)))
+  //   .attr('x2', d => axisScale(d.level) * (Math.sin((d.hour + 1) * 2 * Math.PI / numHours)))
+  //   .attr('y2', d => axisScale(d.level) * (Math.cos((d.hour + 1) * 2 * Math.PI / numHours)))
+  //   .attr('class', 'line')
+  //   .attr('stroke', 'grey')
+  //   .attr('stroke-opacity', '0.75')
+  //   .attr('stroke-width', '0.3px')
+  //   .attr('transform', `translate(${xOffset}, ${yOffset})`);
+
   container.selectAll('.lines')
-    .data(axisData)
+    .data(levels)
     .enter()
-    .append('line')
-    .attr('x1', d => axisScale(d.level) * (Math.sin(d.hour * 2 * Math.PI / numHours)))
-    .attr('y1', d => axisScale(d.level) * (Math.cos(d.hour * 2 * Math.PI / numHours)))
-    .attr('x2', d => axisScale(d.level) * (Math.sin((d.hour + 1) * 2 * Math.PI / numHours)))
-    .attr('y2', d => axisScale(d.level) * (Math.cos((d.hour + 1) * 2 * Math.PI / numHours)))
-    .attr('class', 'line')
+    .append('circle')
+    .attr('cx', 0)
+    .attr('cy', 0)
+    .attr('r', l => axisScale(l + 1))
+    .attr('fill', 'none')
     .attr('stroke', 'grey')
     .attr('stroke-opacity', '0.75')
     .attr('stroke-width', '0.3px')
@@ -370,10 +383,14 @@ function drawRadial(container, data, rVar, numLevels, colors) {
 
 
   const areaFunction = radialArea()
-  .angle((d, i) => i * 2 * Math.PI / numHours)
-  .innerRadius((d, i) => rScale(d.rVar) - thickScale(d.total))
-  .outerRadius((d, i) => rScale(d.rVar))
-  .curve(curveCardinalClosed.tension(1));
+    .angle((d, i) => i * 2 * Math.PI / numHours)
+    .innerRadius((d, i) => rScale(d.rVar) - thickScale(d.total))
+    .outerRadius((d, i) => rScale(d.rVar) + thickScale(d.total))
+    .curve(curveCardinalClosed.tension(0.55));
+
+  const arcGenerator = arc()
+    .innerRadius(0)
+    .outerRadius(radius);
 
   const graphContainer = container.append('g')
     .attr('width', width)
@@ -381,18 +398,54 @@ function drawRadial(container, data, rVar, numLevels, colors) {
     .attr('transform', `translate(${0}, ${0})`)
     // .attr('clip-path', 'url(#graphClip)');
 
-  graphContainer.selectAll('.graph')
+  // const lineData = 
+  graphContainer.selectAll('.data-clip')
     .data(data)
-    .enter().append('path')
+    .enter().append('clipPath')
+    .attr('id', (d, i) => `${season + i}`)
+    .append('path')
     .attr('d', d => {
       d[rVar].push(d[rVar][0]);
       d.total.length === 24 ? d.total.push(d.total[0]) : '';
       return areaFunction(d[rVar].map((e, i) => ({rVar: e, total: d.total[i]})));
     })
-    .attr('fill', (d, i) => colors[i])
-    .attr('stroke', (d, i) => colors[i])
-    .attr('stroke-width', '2px')
+    .attr('transform', `translate(${xOffset}, ${yOffset})`);
+
+  // console.log(data[0].total.map((d, i) => ({total: d.total, color: colors[i]})))
+
+  graphContainer.selectAll('.base')
+    .data(data)
+    .enter().append('g')
+    .attr('width', width)
+    .attr('height', height)
+    .attr('transform', 'translate(0, 0)')
+    .attr('clip-path', (d, i) => `url(#${season + i})`)
+    .selectAll(`${'.base-' + season}`)
+    .data((d, i) => d.total.slice(0, -1).map(t => ({total: t, color: colors[i]})))
+    .enter().append('path')
+    .attr('d', (d, i) => arcGenerator({startAngle: i / 12 * Math.PI, endAngle: (i + 1) / 12 * Math.PI}))
     .attr('transform', `translate(${xOffset}, ${yOffset})`)
+    .attr('fill', d => d.color)
+    .attr('opacity', d => 0.85 * d.total / maxTotal + 0.15);
+    // .append('path')
+    // .attr('d', arcGenerator({startAngle: 0, endAngle: Math.PI}))
+    // .attr('transform', `translate(${xOffset}, ${yOffset})`)
+    // .attr('fill', (d, i) => colors[i])
+    // .attr('opacity', 1);
+    // .attr('opacity', '0.1');
+
+  // graphContainer.selectAll('.graph')
+  //   .data(data.slice(2))
+  //   .enter().append('path')
+  //   .attr('d', d => {
+  //     d[rVar].push(d[rVar][0]);
+  //     d.total.length === 24 ? d.total.push(d.total[0]) : '';
+  //     return areaFunction(d[rVar].map((e, i) => ({rVar: e, total: d.total[i]})));
+  //   })
+  //   .attr('fill', (d, i) => colors[i])
+  //   .attr('stroke', (d, i) => colors[i])
+  //   .attr('stroke-width', '2px')
+  //   .attr('transform', `translate(${xOffset}, ${yOffset})`)
 
   // const legend = container.append('g')
   //   .attr('height', yOffset * 1.5)
@@ -507,7 +560,8 @@ function myVis(data) {
   // the important thing is to make sure the aspect ratio is correct.
 
   // Eggshell
-
+  const list1 = [1, 1, 1, 1];
+  console.log(list1.reduce((ls, l) => ls.concat([l, l]), []))
   const backgroundColor = '#EFF1ED';
 
   // const seasonColors = ['#0b66f1', // winter
@@ -571,11 +625,11 @@ function myVis(data) {
 
   // console.log(data[0].slice(8, 11))
 
-  drawRadial(radialSeasons, data[3], 'percent', 8, seasonColors);
-  drawRadial(radialWinter, data[0].slice(-1).concat(data[0].slice(0, 2)), 'percent', 8, winterColors);
-  drawRadial(radialSpring, data[0].slice(2, 5), 'percent', 8, springColors);
-  drawRadial(radialSummer, data[0].slice(5, 8), 'percent', 8, summerColors);
-  drawRadial(radialAutumn, data[0].slice(8, 11), 'percent', 8, autumnColors);
+  drawRadial(radialSeasons, data[3], 'percent', 8, seasonColors, 'season');
+  drawRadial(radialWinter, data[0].slice(-1).concat(data[0].slice(0, 2)), 'percent', 8, winterColors, 'winter');
+  drawRadial(radialSpring, data[0].slice(2, 5), 'percent', 8, springColors, 'spring');
+  drawRadial(radialSummer, data[0].slice(5, 8), 'percent', 8, summerColors, 'summer');
+  drawRadial(radialAutumn, data[0].slice(8, 11), 'percent', 8, autumnColors, 'autumn');
   // drawRadial(radialAvgContainer, data[3], 'average', 10);
   // drawRadial(radialContainer, data[3], 'percent', 8);
 
