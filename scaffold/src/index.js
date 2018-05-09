@@ -6,13 +6,14 @@
 import {select, selectAll} from 'd3-selection';
 import {scaleBand, scaleLinear, bandwidth, scaleLog, scaleQuantile} from 'd3-scale';
 import {median, max, indexOf, histogram} from 'd3-array';
-import {axisBottom, axisLeft, axisTop, axisRight} from 'd3-axis';
+import {axisBottom, axisLeft, axisTop, axisRight, axisTop} from 'd3-axis';
 import {format} from 'd3-format';
 import {area, arc, line, radialArea, curveNatural, curveBasis, curveCardinal, curveCardinalClosed} from 'd3-shape';
 import {interpolateRdBu, schemeRdBu} from 'd3-scale-chromatic';
 import {bboxCollide} from 'd3-bboxCollide';
 import {hsl} from 'd3-color';
 import {forceSimulation, forceManyBody, forceX, forceY, forceLink, forceCollide} from 'd3-force';
+import {annotation, annotationTypeBase, annotationLabel, annotationXYThreshold, annotationCallout, annotationCalloutCurve, annotationCalloutCircle, annotationCalloutRect} from './d3-annotation'; // need d3-drag for d3-annotation
 
 const domReady = require('domready');
 domReady(() => {
