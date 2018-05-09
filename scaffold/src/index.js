@@ -66,9 +66,18 @@ function lineAnnotation(container, note, dx, dy, flipX, flipY) {
     .attr('class', 'annotation-group')
     .attr('font-family', 'Montserrat')
     .attr('font-size', 25)
+    .attr('fill', '#FFFFFF')
     .attr('text-anchor', 'center')
     .call(annotation().textWrap(250).annotations(annotations));
+
+  container.selectAll('.annotation text')
+    .attr('fill', 'black');
+
+  container.selectAll('.annotation line')
+    .attr('fill', 'black');
 }
+
+
 
 function circleAnnotation(container, note, dx, dy, radius) {
   const containerHeight = container.attr('height');
@@ -117,17 +126,27 @@ function titleAnnotation(container, note, dx, dy, fontSize, boxSize) {
       title: note.title,
       label: note.label
     },
-    type: annotationCallout,
+    type: annotationLabel,
     x: xScale(note.x), y: yScale(note.y),
     dx: xScale(dx), dy: yScale(dy),
   }];
 
-  container.append('g')
+  const x = container.append('g')
     .attr('class', 'annotation-group')
     .attr('font-family', 'Montserrat')
     .attr('font-size', fontSize)
     .attr('text-anchor', 'center')
+    .attr('fill', 'black')
     .call(annotation().textWrap(boxSize).annotations(annotations));
+
+  container.selectAll('.annotation text')
+    .attr('fill', '#575757');
+
+  // container.selectAll('.annotation.label')
+  //   .append('rect')
+  //     .attr('height', container.attr('height'))
+  //     .attr('width', 10)
+  //     .attr('transform', `rotate(180), translate(-${container.attr('width') * 0.5}, ${container.attr('height') * 0.5}`)
 }
 
 
@@ -867,10 +886,16 @@ function drawRadarAnnotations(radialContainer, radialSeasons) {
   const radarExplain = {
     label: 'Each circular line in the seasons graph represents one average day in the time period specified by the legend. The lines shooting out from the center each represent one hour in the 24-hour average day. Radius of the line represents the percent of delayed flights at that time of day. The fewer total flights there are at a given hour of day, the wider and less opaque the line is.',
     title: '',
-    x: 0,
+    x: 0.55,
     y: 0
   };
-  titleAnnotation(radarTitle, radarExplain, 0, 0, 50, 1630);
+  titleAnnotation(radarTitle, radarExplain, 0, 0, 50, 1550);
+
+  radarTitle.append('rect')
+    .attr('height', radarTitle.attr('height') * 1.35)
+    .attr('width', 10)
+    .attr('transform', `rotate(180), translate(${radarTitle.attr('width') * - 0.065}, ${- 1.35 * radarTitle.attr('height')})`);
+
 
 }
 
@@ -878,23 +903,34 @@ function drawScatterAnnotations(fullScatterContainer, zoomScatterContainer) {
   const s1Height = fullScatterContainer.attr('height');
   const s1Width = fullScatterContainer.attr('width');
 
-  const sp1Ann = makeContainer(fullScatterContainer, s1Width,  s1Height, 10, 10, false);
+  const s2Height = zoomScatterContainer.attr('height');
+  const s2Width = zoomScatterContainer.attr('width');
+
+  const sp1Ann = makeContainer(fullScatterContainer, s1Width,  s1Height, 10, 10);
   const sp2Ann = makeContainer(zoomScatterContainer, s1Width,  0.1 * s1Height, 0.05 * s1Width, 0);
+  
+  const annContainer = makeContainer(zoomScatterContainer, s2Width, s2Height * 0.4, - s2Width, 0.08 * s2Height);
 
   const largeNote = {
     label: 'Larger airports have shorter delay times',
     title: '',
-    x: 0.65,
+    x: 0.45,
     y: 0.4
   }
   lineAnnotation(sp1Ann, largeNote, .05, .1, true, true);
+
+  annContainer.append('rect')
+    .attr('height', annContainer.attr('height') * 0.86)
+    .attr('width', 10)
+    .attr('transform', `rotate(180), translate(${annContainer.attr('width') * 0.02}, ${- 0.89 * annContainer.attr('height')})`)
+
   // lineAnnotation(seasonsAnn, dayNote, .05, .1, false, false);
   // lineAnnotation(seasonsAnn, winterNote, .015, .015, false, false);
 
   const scatterNote = {
     label: 'The leftmost scatterplot has the largest 150 IATA airports (where size is measured by total number of outbound flights). The color of each dot represents the median length of a delay at that airport. Red represents a longer median delay time, while blue represents a shorter median delay time. The rightmost graph is a zoomed-in view of the first graph that shows the largest 50 airports and labels them so that you can find the airports that you frequently fly from.',
     title: '',
-    x: 0.15,
+    x: 0.5,
     y: - 0.4
   };
 
@@ -950,9 +986,11 @@ function drawBarAnnotations(barContainer) {
   const barExplain = {
     label: 'Each bar represents the percentage of delays for a particular airline. The bars are divided into two parts based on the cause for the delay. The bottom blue portion represents delays caused by the airline. The upper light yellow portion represents all other types of delays.',
     title: '',
-    x: - 0.8,
+    x: - 0.5,
     y: 0.75,
   };
+
+  const barBox = makeContainer(barContainer, bWidth * 0.8, bHeight * 0.2, - bWidth * 0.95, bHeight * 0.75);
 
   titleAnnotation(barContainer, barExplain, 0, 0, 50, 1730);
 
@@ -964,6 +1002,11 @@ function drawBarAnnotations(barContainer) {
   };
 
   lineAnnotation(barContainer, barNote, 0.05, .1, false, true);
+
+  barBox.append('rect')
+    .attr('height', barBox.attr('height') * 0.75)
+    .attr('width', 10)
+    .attr('transform', `rotate(180), translate(${- 0.01 * barBox.attr('width')}, ${- 0.77 * barBox.attr('height')})`);
 
 }
 
@@ -1135,11 +1178,16 @@ function myVis(data) {
   const subNote = {
     label: 'Flight delays are dependent on a number of factors. Here, we investigate three factors that affect airline delays: time, airport, and airline.',
     title: '',
-    x: 0.33,
+    x: 0.5,
     y: 0.05
   }
 
-  titleAnnotation(vis, subNote, 0, 0, 80, 1730)
+  titleAnnotation(vis, subNote, 0, 0, 80, 1730);
+
+  subtitle.append('rect')
+    .attr('height', subtitle.attr('height') * 0.5)
+    .attr('width', 10)
+    .attr('transform', `rotate(180), translate(${subtitle.attr('width') * 0.01}, ${-subtitle.attr('height') * 0.7})`)
 
   // const subText = [
   //   {text: 'Flight delays are dependent on a number of factors. Here, we investigate three factors that affect airline delays: time, airport, and airline.'}
