@@ -3,17 +3,16 @@
 // (I tend to think it's best to use screaming snake case for imported json)
 
 // import from: https://github.com/d3/d3/blob/master/API.md
-import {select, selectAll} from 'd3-selection';
-import {scaleBand, scaleLinear, bandwidth, scaleLog, scaleQuantile} from 'd3-scale';
-import {median, max, indexOf, histogram} from 'd3-array';
-import {axisBottom, axisLeft, axisTop, axisRight, axisTop} from 'd3-axis';
+import {select} from 'd3-selection';
+import {scaleBand, scaleLinear, scaleLog, scaleQuantile} from 'd3-scale';
+import {histogram} from 'd3-array';
+import {axisBottom, axisLeft, axisTop, axisRight} from 'd3-axis';
 import {format} from 'd3-format';
-import {area, arc, line, radialArea, curveNatural, curveBasis, curveCardinal, curveCardinalClosed} from 'd3-shape';
-import {interpolateRdBu, schemeRdBu} from 'd3-scale-chromatic';
-import {bboxCollide} from 'd3-bboxCollide';
-import {hsl} from 'd3-color';
-import {forceSimulation, forceManyBody, forceX, forceY, forceLink, forceCollide} from 'd3-force';
-import {annotation, annotationTypeBase, annotationLabel, annotationXYThreshold, annotationCallout, annotationCalloutCurve, annotationCalloutCircle, annotationCalloutRect} from './d3-annotation'; // need d3-drag for d3-annotation
+import {area, arc, radialArea, curveBasis, curveCardinalClosed} from 'd3-shape';
+// import {interpolateRdBu, schemeRdBu} from 'd3-scale-chromatic';
+// import {bboxCollide} from 'd3-bboxCollide';
+// import {hsl} from 'd3-color';
+import {forceSimulation, forceManyBody, forceLink, forceCollide} from 'd3-force';
 
 const domReady = require('domready');
 domReady(() => {
@@ -28,7 +27,7 @@ domReady(() => {
     './data/delays_by_airline.json',
     './data/seasonal_delays.json'
   ].map(filename => fetch(filename).then(response => response.json())))
-  .then(arrayofDataBlobs => myVis(arrayofDataBlobs))
+  .then(arrayofDataBlobs => myVis(arrayofDataBlobs));
 });
 
 function drawBoundingBox(container, data, params) {
@@ -56,10 +55,10 @@ function drawBoundingBox(container, data, params) {
     .attr('stroke-width', '2px');
 
   return {
-    'x1': parseInt(bbox.attr('x')), 
-    'y1': parseInt(bbox.attr('y')), 
-    'x2': parseInt(bbox.attr('x')) + parseInt(bbox.attr('width')), 
-    'y2': parseInt(bbox.attr('y')) + parseInt(bbox.attr('height'))
+    x1: parseInt(bbox.attr('x'), 10),
+    y1: parseInt(bbox.attr('y'), 10),
+    x2: parseInt(bbox.attr('x'), 10) + parseInt(bbox.attr('width'), 10),
+    y2: parseInt(bbox.attr('y'), 10) + parseInt(bbox.attr('height'), 10)
   };
 }
 
@@ -75,7 +74,11 @@ function drawLabels(graphContainer, data, params) {
 
   // make links between the sources and targets
 
-  const links = data.map((d, i) => ({source: `${d.airport}_source`, target: `${d.airport}_target`, index: i}));
+  const links = data.map((d, i) => ({
+    source: `${d.airport}_source`,
+    target: `${d.airport}_target`,
+    index: i
+  }));
 
   const collide = forceCollide()
     .radius(100)
@@ -85,22 +88,22 @@ function drawLabels(graphContainer, data, params) {
   const charge = forceManyBody();
 
   const linkForce = forceLink(links)
-        .id(d => d.id)
-        .strength(1);
+    .id(d => d.id)
+    .strength(1);
 
-  const forceSim = forceSimulation()
+  forceSimulation()
     .nodes(linkNodes)
     .force('link', linkForce)
     .force('charge', charge)
     .force('collide', collide)
     .on('tick', updateNetwork);
 
- var labelNodes = graphContainer
-  .selectAll('g.node')
-  .data(linkNodes.filter(d => d.type = 'source'))
-  .enter()
-  .append('g')
-  .attr('class', 'node');
+  const labelNodes = graphContainer
+    .selectAll('g.node')
+    .data(linkNodes.filter(d => d.type === 'source'))
+    .enter()
+    .append('g')
+    .attr('class', 'node');
 
   labelNodes.append('text')
     .data(data)
@@ -111,7 +114,6 @@ function drawLabels(graphContainer, data, params) {
     .attr('x', d => params.xScale(d[params.xVar]))
     .attr('y', d => params.yScale(d[params.yVar]));
 
-
   function updateNetwork() {
     graphContainer.selectAll('g.node')
       .attr('transform', d => `translate(${d.x / 50}, ${d.y / 50})`);
@@ -119,14 +121,11 @@ function drawLabels(graphContainer, data, params) {
 }
 
 function drawScatterLegend(container, data, params) {
-
-  // const tickVals = elevenStops.map((d, i) => Math.min(...length) + i * incr / 10);
-  // console.log(tickVals);
   const colors = params.colors;
   const width = container.attr('width');
   const height = container.attr('height');
 
-  const legendWidth =  0.25 * width;
+  const legendWidth = 0.25 * width;
   const legendHeight = 0.2 * height;
 
   const bins = params.colorScale.quantiles();
@@ -158,18 +157,17 @@ function drawScatterLegend(container, data, params) {
   const intervals = histogramGenerator(data.map(d => d.median));
   const counts = intervals.map(d => d.length);
 
-  const histData = counts.map((c,i) => ({time: times[i], count: c}));
+  const histData = counts.map((c, i) => ({time: times[i], count: c}));
 
   const heightScale = scaleLinear()
     .domain([0, Math.max(...counts)])
     .range([0.95 * legendHeight, 0]);
 
-  const lineGenerator = area()
-    .x(d => xScale(d.time))
-    .y1(d => heightScale(d.count))
-    .y0(d => heightScale(d.count) - 5)
-    .curve(curveBasis);
-
+  // const lineGenerator = area()
+  //   .x(d => xScale(d.time))
+  //   .y1(d => heightScale(d.count))
+  //   .y0(d => heightScale(d.count) - 5)
+  //   .curve(curveBasis);
 
   const areaGenerator = area()
     .x(d => xScale(d.time))
@@ -190,7 +188,7 @@ function drawScatterLegend(container, data, params) {
     .selectAll('.legend-rect')
     .data(colors)
     .enter().append('rect')
-    .attr('x', (d, i) =>  xScale(lowerBounds[i]))
+    .attr('x', (d, i) => xScale(lowerBounds[i]))
     .attr('y', 0)
     .attr('width', (d, i) => xScale(upperBounds[i]) - xScale(lowerBounds[i]))
     .attr('height', legendHeight)
@@ -209,7 +207,7 @@ function drawScatterLegend(container, data, params) {
   legendContainer.selectAll('.rect')
     .data(colors)
     .enter().append('rect')
-    .attr('x', (d, i) =>  xScale(lowerBounds[i]))
+    .attr('x', (d, i) => xScale(lowerBounds[i]))
     .attr('y', 0.95 * legendHeight)
     .attr('width', (d, i) => xScale(upperBounds[i]) - xScale(lowerBounds[i]))
     .attr('height', 0.05 * legendHeight)
@@ -240,16 +238,15 @@ function scatterPlot(container, data, params) {
 
   const colors = params.colors;
 
-  
   const maxPow = Math.ceil(Math.log10(Math.max(...data.map(d => d[xVar]))));
   const minPow = Math.floor(Math.log10(Math.min(...data.map(d => d[xVar]))));
 
-  const maxPercent = Math.max(...data.map(d => d[yVar]))
+  const maxPercent = Math.max(...data.map(d => d[yVar]));
   const minPercent = params.showZero ? 0 : Math.min(...data.map(d => d[yVar]));
 
   // const xtickData = [...new Array(maxPow - minPow + 1)].map((d, i) => Math.pow(10, minPow + i));
   // console.log(xtickData);
-  const xMargin = params.fullBorder ? 0.02 * plotWidth : 0;
+  // const xMargin = params.fullBorder ? 0.02 * plotWidth : 0;
   const xScale = scaleLog()
     .domain([Math.pow(10, minPow), Math.pow(10, maxPow)])
     .range([0, plotWidth]);
@@ -274,7 +271,7 @@ function scatterPlot(container, data, params) {
     .attr('height', graphContainer.attr('height'))
     .attr('width', graphContainer.attr('width'))
     .attr('fill', 'none')
-    .attr('stroke', 'black')
+    .attr('stroke', 'black');
 
   const bottomAxis = params.fullBorder ? axisTop : axisBottom;
   const leftAxis = params.fullBorder ? axisRight : axisLeft;
@@ -284,10 +281,10 @@ function scatterPlot(container, data, params) {
     .call(bottomAxis(xScale)
       .tickFormat(d => {
         return (Math.log10(d) % 1) === 0 ? format(',.2r')(d) : '';
-    }));
+      }));
 
   graphContainer.append('g')
-    .attr('transform', `translate(0, 0)`)
+    .attr('transform', 'translate(0, 0)')
     .call(leftAxis(yScale)
       .tickFormat(format('.0%')));
 
@@ -329,24 +326,26 @@ function scatterPlot(container, data, params) {
 
   params.xScale = xScale;
   params.yScale = yScale;
-  params.showLabels ? drawLabels(graphContainer, data, params) : 0;
+  if (params.showLabels) {
+    drawLabels(graphContainer, data, params);
+  }
 
   const graphCorners = {
-    'x1': margin, 
-    'y1': height - margin - plotHeight, 
-    'x2': margin + plotWidth, 
-    'y2': height - margin
+    x1: margin,
+    y1: height - margin - plotHeight,
+    x2: margin + plotWidth,
+    y2: height - margin
   };
 
   const bboxCorners = params.bboxCutoff > 0 ? drawBoundingBox(graphContainer, data, params) : graphCorners;
 
   const corners = params.bboxCutoff < 0 ? graphCorners : {
-    'x1': bboxCorners.x1 + graphCorners.x1,
-    'y1': bboxCorners.y1 + graphCorners.y1,
-    'x2': bboxCorners.x2 + graphCorners.x1,
-    'y2': bboxCorners.y2 + graphCorners.y1
+    x1: bboxCorners.x1 + graphCorners.x1,
+    y1: bboxCorners.y1 + graphCorners.y1,
+    x2: bboxCorners.x2 + graphCorners.x1,
+    y2: bboxCorners.y2 + graphCorners.y1
   };
-  
+
   // LEGEND
   params.colors = colors;
   params.colorScale = colorScale;
@@ -358,7 +357,7 @@ function scatterPlot(container, data, params) {
 function createSeasonLegend(container, data, colors, season) {
   const graphHeight = container.attr('height');
   const graphWidth = container.attr('width');
-  
+
   const height = 0.15 * graphHeight;
   const width = 0.35 * graphWidth;
 
@@ -377,12 +376,12 @@ function createSeasonLegend(container, data, colors, season) {
   //   .attr('stroke-width', '2px');
 
   const xScale = scaleBand()
-    .domain([...new Array(2)].map((d,i) => i))
+    .domain([...new Array(2)].map((d, i) => i))
     .range([0, width])
     .paddingInner(0.1)
     .paddingOuter(0.1);
   const yScale = scaleBand()
-    .domain([...new Array(2)].map((d,i) => i))
+    .domain([...new Array(2)].map((d, i) => i))
     .range([0, height])
     .paddingInner(0.1)
     .paddingOuter(0.1);
@@ -404,7 +403,7 @@ function createSeasonLegend(container, data, colors, season) {
     .attr('y', (d, i) => yScale(Math.floor(i / 2)) + 0.7 * yScale.bandwidth())
     .attr('font-family', textFont)
     .attr('font-size', '70px')
-    .text(d => d.season.toUpperCase())
+    .text(d => d.season.toUpperCase());
 }
 
 function createMonthLegend(container, data, colors, season) {
@@ -415,12 +414,11 @@ function createMonthLegend(container, data, colors, season) {
   const width = 0.2 * graphWidth;
 
   const legendX = (season === 'spring') || (season === 'summer') ? 0.7 * graphWidth : 0.1 * graphWidth;
-  
+
   const legendContainer = container.append('g')
     .attr('height', height)
     .attr('width', width)
     .attr('transform', `translate(${legendX},${0})`);
-
 
   const textFont = 'montserrat';
 
@@ -430,31 +428,9 @@ function createMonthLegend(container, data, colors, season) {
     .paddingInner(0.1)
     .paddingOuter(0.1);
 
-  // container.append('rect')
-  //   .attr('height', height)
-  //   .attr('width', width)
-  //   .attr('x', 0)
-  //   .attr('y', 0)
-  //   .attr('fill', 'none')
-  //   .attr('stroke', 'black')
-  //   .attr('stroke-width', '10px');
-
   legendContainer.selectAll('.legend-box')
     .data(data)
     .enter()
-    // .append('rect')
-    // .attr('height', widthScale.bandwidth())
-    // .attr('width', widthScale.bandwidth())
-    // .attr('x', 0.05 * width)
-    // .attr('y', d => widthScale(d.month))
-    // .attr('fill', (d, i) => colors[i]);
-    // .append('line')
-    // .attr('x1', 0.05 * width)
-    // .attr('y1', d => widthScale(d.month) + widthScale.bandwidth() / 2)
-    // .attr('x2', 0.05 * width + widthScale.bandwidth())
-    // .attr('y2', d => widthScale(d.month) + widthScale.bandwidth() / 2)
-    // .attr('stroke', (d, i) => colors[i])
-    // .attr('stroke-width', '10px');
     .append('circle')
     .attr('r', 0.75 * widthScale.bandwidth() / 2)
     .attr('cx', 0.15 * width)
@@ -469,9 +445,8 @@ function createMonthLegend(container, data, colors, season) {
     .attr('y', d => widthScale(d.month) + 0.7 * widthScale.bandwidth())
     .attr('font-family', textFont)
     .attr('font-size', '50px')
-    .text(d => d.month)
+    .text(d => d.month);
 }
-
 
 function drawRadial(container, data, rVar, numLevels, colors, season, textFont) {
   const height = container.attr('height');
@@ -479,15 +454,13 @@ function drawRadial(container, data, rVar, numLevels, colors, season, textFont) 
   const graphHeight = 0.9 * height;
   const graphWidth = 0.9 * width;
   const xOffset = graphWidth / 2;
-  const yOffset = graphHeight / 2
-  const m = Math.min(xOffset, yOffset) / 20;
+  const yOffset = graphHeight / 2;
   const radius = 0.8 * Math.min(xOffset, yOffset);
   const maxThick = 0.03 * radius;
 
-  const titleFont = 'montserrat'
+  // const titleFont = 'montserrat';
 
   const numHours = 24;
-
 
   const hours = [...new Array(numHours)].map((d, i) => i);
   const levels = [...new Array(numLevels)].map((d, i) => i);
@@ -512,10 +485,10 @@ function drawRadial(container, data, rVar, numLevels, colors, season, textFont) 
     .domain([minTotal, maxTotal])
     .range([maxThick, 2]);
 
-  const axisData = [...new Array(numHours * numLevels)].map((x, i) => ({
-     hour: i % numHours,
-     level: Math.floor(i / numHours) + 1,
-    }));
+  // const axisData = [...new Array(numHours * numLevels)].map((x, i) => ({
+  //   hour: i % numHours,
+  //   level: Math.floor(i / numHours) + 1
+  // }));
 
   if (season !== 'season') {
     container.append('text')
@@ -527,26 +500,11 @@ function drawRadial(container, data, rVar, numLevels, colors, season, textFont) 
       .attr('text-anchor', 'middle')
       .text(season.toUpperCase());
   }
-  
 
   const graphContainer = container.append('g')
     .attr('width', graphWidth)
     .attr('height', graphHeight)
-    .attr('transform', `translate(${(width - graphWidth) / 2}, ${(height - graphHeight) / 2})`)
-
-  // container.selectAll('.lines')
-  //   .data(axisData)
-  //   .enter()
-  //   .append('line')
-  //   .attr('x1', d => axisScale(d.level) * (Math.sin(d.hour * 2 * Math.PI / numHours)))
-  //   .attr('y1', d => axisScale(d.level) * (Math.cos(d.hour * 2 * Math.PI / numHours)))
-  //   .attr('x2', d => axisScale(d.level) * (Math.sin((d.hour + 1) * 2 * Math.PI / numHours)))
-  //   .attr('y2', d => axisScale(d.level) * (Math.cos((d.hour + 1) * 2 * Math.PI / numHours)))
-  //   .attr('class', 'line')
-  //   .attr('stroke', 'grey')
-  //   .attr('stroke-opacity', '0.75')
-  //   .attr('stroke-width', '0.3px')
-  //   .attr('transform', `translate(${xOffset}, ${yOffset})`);
+    .attr('transform', `translate(${(width - graphWidth) / 2}, ${(height - graphHeight) / 2})`);
 
   graphContainer.selectAll('.lines')
     .data(levels)
@@ -560,15 +518,6 @@ function drawRadial(container, data, rVar, numLevels, colors, season, textFont) 
     .attr('stroke-opacity', '0.75')
     .attr('stroke-width', '0.3px')
     .attr('transform', `translate(${xOffset}, ${yOffset})`);
-
-
-  // container.append('clipPath')
-  //   .attr('id', 'graphClip')
-  //   .append('circle')
-  //   .attr('cx', xOffset)
-  //   .attr('cy', yOffset)
-  //   .attr('r', axisScale(numLevels));
-
 
   graphContainer.selectAll('.lines')
     .data(hours)
@@ -591,7 +540,7 @@ function drawRadial(container, data, rVar, numLevels, colors, season, textFont) 
     .attr('x', 0)
     .attr('y', l => -axisScale(l + 1))
     .attr('transform', `translate(${xOffset}, ${yOffset})`)
-    .text(l => formatFunc((l + 1)/ numLevels * maxRadius));
+    .text(l => formatFunc((l + 1) / numLevels * maxRadius));
 
   graphContainer.selectAll('.hours-text')
     .data(hours)
@@ -603,8 +552,7 @@ function drawRadial(container, data, rVar, numLevels, colors, season, textFont) 
     .attr('x', h => 1.05 * radius * (-Math.sin(-h * 2 * Math.PI / numHours)))
     .attr('y', h => 1.05 * radius * (-Math.cos(-h * 2 * Math.PI / numHours)))
     .attr('text-anchor', 'middle')
-    .text(h => `${h}:00`)
-
+    .text(h => `${h}:00`);
 
   const areaFunction = radialArea()
     .angle((d, i) => i * 2 * Math.PI / numHours)
@@ -617,7 +565,7 @@ function drawRadial(container, data, rVar, numLevels, colors, season, textFont) 
     .outerRadius(radius);
     // .attr('clip-path', 'url(#graphClip)');
 
-  // const lineData = 
+  // const lineData =
   graphContainer.selectAll('.data-clip')
     .data(data)
     .enter().append('clipPath')
@@ -625,7 +573,10 @@ function drawRadial(container, data, rVar, numLevels, colors, season, textFont) 
     .append('path')
     .attr('d', d => {
       d[rVar].push(d[rVar][0]);
-      d.total.length === 24 ? d.total.push(d.total[0]) : '';
+      if (d.total.length === 24) {
+        d.total.push(d.total[0]);
+      }
+      // d.total.length === 24 ?  : '';
       return areaFunction(d[rVar].map((e, i) => ({rVar: e, total: d.total[i]})));
     })
     .attr('transform', `translate(${xOffset}, ${yOffset})`);
@@ -650,7 +601,6 @@ function drawRadial(container, data, rVar, numLevels, colors, season, textFont) 
   legendFunc(graphContainer, data, colors, season);
 }
 
-
 function drawBar(container, data, xLabel, yLabel, title, textFont) {
 
   const height = container.attr('height');
@@ -658,7 +608,7 @@ function drawBar(container, data, xLabel, yLabel, title, textFont) {
   const graphHeight = 0.85 * height;
   const graphWidth = 0.85 * width;
   const margin = 0.7 * Math.min(height - graphHeight, width - graphWidth);
-  const airlines = data.map(d => d.airline)
+  const airlines = data.map(d => d.airline);
 
   const xScale = scaleBand()
     .domain(airlines)
@@ -679,12 +629,12 @@ function drawBar(container, data, xLabel, yLabel, title, textFont) {
     .call(axisBottom(xScale));
 
   graphContainer.append('g')
-    .attr('transform', `translate(0, 0)`)
+    .attr('transform', 'translate(0, 0)')
     .call(axisLeft(yScale));
 
-  const yellow = '#e0b506'
+  const yellow = '#e0b506';
 
-  const blue = '#307db6'
+  const blue = '#307db6';
 
   graphContainer.selectAll('.bar')
     .data(data)
@@ -694,7 +644,6 @@ function drawBar(container, data, xLabel, yLabel, title, textFont) {
     .attr('x', d => xScale(d.airline))
     .attr('y', d => yScale(d.percent))
     .attr('fill', blue);
-
 
   graphContainer.selectAll('.bar')
     .data(data)
@@ -720,14 +669,13 @@ function drawBar(container, data, xLabel, yLabel, title, textFont) {
     .attr('text-anchor', 'middle')
     .text(xLabel);
 
- container.append('text')
+  container.append('text')
     .attr('transform', `translate(${margin / 2}, ${height / 2})rotate(-90)`)
     .attr('font-family', textFont)
     .attr('font-size', '40px')
     .attr('text-anchor', 'middle')
     .text(yLabel);
 }
-
 
 function makeContainer(vis, width, height, x, y, border) {
   const container = vis.append('g')
@@ -748,29 +696,38 @@ function makeContainer(vis, width, height, x, y, border) {
   return container;
 }
 
-
 function myVis(data) {
   // The posters will all be 24 inches by 36 inches
   // Your graphic can either be portrait or landscape, up to you
   // the important thing is to make sure the aspect ratio is correct.
-  const width = 5000; // was 5000, changed to 500 for viewing in browser
+  const width = 5000;
   const height = 36 / 24 * width;
-  const margin = 70;
-  const textFont = 'open sans'
-  
-  const list1 = [1, 1, 1, 1];
-  console.log(list1.reduce((ls, l) => ls.concat([l, l]), []))
+  // const margin = 70;
+  const labelFont = 'open sans';
+
+  // const list1 = [1, 1, 1, 1];
   // const backgroundColor = '#EFF1ED';
   const backgroundColor = '#f7f7f7';
   // const backgroundColor = 'None';
-
 
   const seasonColors = ['#375E97', '#3F681C', '#FFBB00', '#FF300C'];
   const winterColors = ['#2A354E', '#375E97', '#008DFF'];
   const springColors = ['#26391C', '#3F681C', '#469E00'];
   const summerColors = ['#BE8E3B', '#FFBB00', '#FDEF00'];
   const autumnColors = ['#C30000', '#FF300C', '#FFA26C'];
-  const divergingColors = ['#3d5c8f', '#2985d6', '#63a7cf', '#89c6dc', '#aec3d1', '#cccccc', '#dabda5', '#f69a6f', '#d96b59', '#cc343e', '#923a44'];
+  const divergingColors = [
+    '#3d5c8f',
+    '#2985d6',
+    '#63a7cf',
+    '#89c6dc',
+    '#aec3d1',
+    '#cccccc',
+    '#dabda5',
+    '#f69a6f',
+    '#d96b59',
+    '#cc343e',
+    '#923a44'
+  ];
 
   const zoomX = 0.5 * width;
   const zoomY = 0.5 * height;
@@ -797,47 +754,50 @@ function myVis(data) {
     .attr('text-anchor', 'middle')
     .text('AVOIDING FLIGHT DELAYS');
 
-  const radialContainer = makeContainer(vis,  width, 0.4 * height, 0, 0.06 * height, false);
+  const radialContainer = makeContainer(vis, width, 0.4 * height, 0, 0.06 * height, false);
 
   const rHeight = radialContainer.attr('height');
   const rWidth = radialContainer.attr('width');
-  const radialSeasons = makeContainer(radialContainer, 0.7 * rWidth, 0.7 * rHeight, 0.15 * rWidth, 0.15 * rHeight, false);
+  const radialSeasons =
+    makeContainer(radialContainer, 0.7 * rWidth, 0.7 * rHeight, 0.15 * rWidth, 0.15 * rHeight, false);
   const radialWinter = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0, 0, false);
   const radialSpring = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0.6 * rWidth, 0, false);
   const radialAutumn = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0, 0.5 * rHeight, false);
-  const radialSummer = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0.6 * rWidth, 0.5 * rHeight, false);
+  const radialSummer =
+    makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0.6 * rWidth, 0.5 * rHeight, false);
 
   const fullScatterContainer = makeContainer(vis, 0.4 * width, 0.2 * height, fullX, fullY, false);
   const zoomScatterContainer = makeContainer(vis, 0.4 * width, 0.2 * height, zoomX, zoomY, false);
   const barContainer = makeContainer(vis, 0.4 * width, 0.2 * height, 0.5 * width, 0.77 * height, false);
 
-  drawRadial(radialSeasons, data[3], 'percent', 8, seasonColors, 'season', textFont);
-  drawRadial(radialWinter, data[0].slice(-1).concat(data[0].slice(0, 2)), 'percent', 8, winterColors, 'winter', textFont);
-  drawRadial(radialSpring, data[0].slice(2, 5), 'percent', 8, springColors, 'spring', textFont);
-  drawRadial(radialSummer, data[0].slice(5, 8), 'percent', 8, summerColors, 'summer', textFont);
-  drawRadial(radialAutumn, data[0].slice(8, 11), 'percent', 8, autumnColors, 'autumn', textFont);
+  drawRadial(radialSeasons, data[3], 'percent', 8, seasonColors, 'season', labelFont);
+  drawRadial(radialWinter, data[0].slice(-1).concat(data[0].slice(0, 2)),
+   'percent', 8, winterColors, 'winter', labelFont);
+  drawRadial(radialSpring, data[0].slice(2, 5), 'percent', 8, springColors, 'spring', labelFont);
+  drawRadial(radialSummer, data[0].slice(5, 8), 'percent', 8, summerColors, 'summer', labelFont);
+  drawRadial(radialAutumn, data[0].slice(8, 11), 'percent', 8, autumnColors, 'autumn', labelFont);
 
   const fullParams = {
-    xVar: 'total', 
-    yVar: 'percent', 
-    xLabel: 'Total Outbound Flights', 
+    xVar: 'total',
+    yVar: 'percent',
+    xLabel: 'Total Outbound Flights',
     yLabel: 'Proportion of Delayed Flights',
-    showLabels: false, 
-    showZero: true, 
-    textFont: textFont,
+    showLabels: false,
+    showZero: true,
+    textFont: labelFont,
     bboxCutoff: 50,
     colors: divergingColors,
     fullBorder: false
   };
 
   const zoomParams = {
-    xVar: 'total', 
-    yVar: 'percent', 
-    xLabel: '', 
+    xVar: 'total',
+    yVar: 'percent',
+    xLabel: '',
     yLabel: '',
-    showLabels: true, 
-    showZero: false, 
-    textFont: textFont,
+    showLabels: true,
+    showZero: false,
+    textFont: labelFont,
     bboxCutoff: -1,
     colors: divergingColors.slice(3, 8),
     fullBorder: true
@@ -861,5 +821,5 @@ function myVis(data) {
     .attr('stroke', 'black')
     .attr('stroke-width', '2px');
   // drawBar(container, data, var1, var2, xLabel, yLabel, title)
-  drawBar(barContainer, data[2], 'Airlines', 'Percentage', 'Plot of Delays by Airlines', textFont);
+  drawBar(barContainer, data[2], 'Airlines', 'Percentage', 'Plot of Delays by Airlines', labelFont);
 }
