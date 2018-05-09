@@ -131,16 +131,20 @@ function titleAnnotation(container, note, dx, dy, fontSize, boxSize) {
     dx: xScale(dx), dy: yScale(dy),
   }];
 
-  const x = container.append('g')
+  container.append('g')
     .attr('class', 'annotation-group')
     .attr('font-family', 'Montserrat')
     .attr('font-size', fontSize)
-    .attr('text-anchor', 'center')
-    .attr('fill', 'black')
+    .attr('text-anchor', 'right')
+    .attr('fill', '#575757')
     .call(annotation().textWrap(boxSize).annotations(annotations));
 
-  container.selectAll('.annotation text')
-    .attr('fill', '#575757');
+  // container.selectAll('.annotation-note-label')
+  //   .attr('font-size', 0.96 * fontSize);
+
+  console.log(container.selectAll('text'))
+  container.selectAll('text').enter()
+    .attr('fill', 'black');
 
   // container.selectAll('.annotation.label')
   //   .append('rect')
@@ -148,7 +152,6 @@ function titleAnnotation(container, note, dx, dy, fontSize, boxSize) {
   //     .attr('width', 10)
   //     .attr('transform', `rotate(180), translate(-${container.attr('width') * 0.5}, ${container.attr('height') * 0.5}`)
 }
-
 
 // function brackAnnotation(container, label, title, x, y, dx, dy, y1, y2, annotationWidth, fontSize, fontFamily) {
 //   const containerHeight = container.attr('height');
@@ -219,7 +222,6 @@ function drawLabels(graphContainer, data, params) {
   }, []);
 
   // make links between the sources and targets
-
   const links = data.map((d, i) => ({
     source: `${d.airport}_source`,
     target: `${d.airport}_target`,
@@ -227,9 +229,9 @@ function drawLabels(graphContainer, data, params) {
   }));
 
   const collide = forceCollide()
-    .radius(100)
-    .iterations(200)
-    .strength(1);
+    .radius(60)
+    .iterations(300)
+    .strength(0.7);
 
   const charge = forceManyBody();
 
@@ -237,12 +239,12 @@ function drawLabels(graphContainer, data, params) {
     .id(d => d.id)
     .strength(1);
 
-  forceSimulation()
-    .nodes(linkNodes)
-    .force('link', linkForce)
-    .force('charge', charge)
-    .force('collide', collide)
-    .on('tick', updateNetwork);
+  // forceSimulation()
+  //   .nodes(linkNodes)
+  //   .force('link', linkForce)
+  //   .force('charge', charge)
+  //   .force('collide', collide)
+  //   .on('tick', updateNetwork);
 
   const labelNodes = graphContainer
     .selectAll('g.node')
@@ -251,19 +253,39 @@ function drawLabels(graphContainer, data, params) {
     .append('g')
     .attr('class', 'node');
 
-  labelNodes.append('text')
+  graphContainer.selectAll('.labels')
     .data(data)
+    .enter().append('text')
     .attr('text-anchor', 'start')
     .attr('font-family', params.textFont)
     .attr('font-size', '25px')
+    .attr('id', d => d.airport)
     .text(d => d.airport)
     .attr('x', d => params.xScale(d[params.xVar]))
-    .attr('y', d => params.yScale(d[params.yVar]));
+    .attr('y', d => params.yScale(d[params.yVar]))
+    .attr('dx', 15);
 
-  function updateNetwork() {
-    graphContainer.selectAll('g.node')
-      .attr('transform', d => `translate(${d.x / 50}, ${d.y / 50})`);
-  }
+  graphContainer.selectAll('#PIT, #CLT')
+    .attr('dx', -55);
+
+  graphContainer.selectAll('#MSY, #FLL, #MKE, #LGA, #SMF')
+    .attr('dx', -65);
+
+  graphContainer.selectAll('#CMH, #RSW, #RDU')
+    .attr('dx', -75);
+
+  graphContainer.selectAll('#HNL, #TPA, #PHL, #RDU, #BOS, #PIT')
+    .attr('dy', 20);
+  graphContainer.selectAll('#MKE')
+    .attr('dy', 30);
+    // .attr('dy', 40);
+
+  // graphContainer.select();
+
+  // function updateNetwork() {
+  //   graphContainer.selectAll('g.node')
+  //     .attr('transform', d => `translate(${d.x / 50}, ${d.y / 50})`);
+  // }
 }
 
 function drawScatterLegend(container, data, params) {
@@ -271,7 +293,7 @@ function drawScatterLegend(container, data, params) {
   const width = container.attr('width');
   const height = container.attr('height');
 
-  const legendWidth = 0.25 * width;
+  const legendWidth = params.fullBorder? 0.30 * width : 0.35 * width;
   const legendHeight = 0.2 * height;
 
   const bins = params.colorScale.quantiles();
@@ -279,6 +301,7 @@ function drawScatterLegend(container, data, params) {
   const xMax = Math.max(...data.map(d => d.median));
   const lowerBounds = [xMin].concat(bins);
   const upperBounds = bins.concat([xMax]);
+  const bounds = lowerBounds.concat([xMax]);
 
   const xScale = scaleLinear()
     .domain([xMin, xMax])
@@ -308,6 +331,10 @@ function drawScatterLegend(container, data, params) {
   const heightScale = scaleLinear()
     .domain([0, Math.max(...counts)])
     .range([0.95 * legendHeight, 0]);
+
+  const percentScale = scaleLinear()
+    .domain([0, colors.length])
+    .range([0, legendWidth]);
 
   // const lineGenerator = area()
   //   .x(d => xScale(d.time))
@@ -344,7 +371,7 @@ function drawScatterLegend(container, data, params) {
   legendContainer.selectAll('.rect')
     .data(colors)
     .enter().append('rect')
-    .attr('x', (d, i) => legendWidth * i / colors.length)
+    .attr('x', (d, i) => percentScale(i))
     .attr('y', 1.1 * legendHeight)
     .attr('width', (d, i) => legendWidth / colors.length)
     .attr('height', 0.05 * legendHeight)
@@ -363,12 +390,30 @@ function drawScatterLegend(container, data, params) {
     .data([...new Array(colors.length + 1)].map((d, i) => i / colors.length))
     .enter()
     .append('text')
-    .attr('x', (d, i) => legendWidth * i / colors.length)
+    .attr('x', (d, i) => percentScale(i))
     .attr('y', 1.2 * legendHeight)
     .attr('text-anchor', 'middle')
     .attr('font-family', params.textFont)
     .attr('font-size', '12px')
     .text(d => format('.0%')(d));
+
+  legendContainer.append('text')
+    .attr('x', 0.5 * legendWidth)
+    .attr('y', 1.25 * legendHeight)
+    .attr('font-family', params.textFont)
+    .attr('font-size', '15px')
+    .attr('text-anchor', 'middle')
+    .text('Percentile');
+
+  legendContainer.selectAll('.legend-text')
+    .data(bounds)
+    .enter()
+    .append('text')
+    .attr('x', (d, i) => xScale(d))
+    .attr('y', 1.1 * legendHeight)
+    .attr('text-anchor', 'middle')
+    .attr('font-family', params.textFont)
+    .text(d => format(',.0f')(d));
 }
 
 function scatterPlot(container, data, params) {
@@ -427,7 +472,7 @@ function scatterPlot(container, data, params) {
     .attr('transform', `translate(0, ${plotHeight})`)
     .call(bottomAxis(xScale)
       .tickFormat(d => {
-        return (Math.log10(d) % 1) === 0 ? format(',.2r')(d) : '';
+        return (Math.log10(d) % 1) === 0 ? (d > 100000 ? `${d / 1000000}M` : `${d / 1000}K`) : '';
       })
       .tickSize(10));
 
@@ -440,6 +485,12 @@ function scatterPlot(container, data, params) {
   graphContainer.selectAll('.tick text')
     .attr('font-size', '25px')
     .attr('font-family', 'Montserrat');
+
+  select('body > svg > g:nth-child(6) > g:nth-child(1) > g:nth-child(1) > g:nth-child(2) > text')
+    .attr('dx', 30);
+
+  select('body > svg > g:nth-child(6) > g:nth-child(1) > g:nth-child(1) > g:nth-child(20) > text')
+    .attr('dx', -24);
 
   graphContainer.append('rect')
     .attr('x', 0)
@@ -455,7 +506,7 @@ function scatterPlot(container, data, params) {
     .attr('x', -height / 2)
     .attr('y', margin / 2)
     .attr('text-anchor', 'middle')
-    .attr('font-size', '30px')
+    .attr('font-size', '35px')
     .attr('font-family', params.textFont)
     .text(params.yLabel);
 
@@ -464,7 +515,7 @@ function scatterPlot(container, data, params) {
     .attr('y', height - margin / 4)
     .attr('text-anchor', 'middle')
     .attr('font-family', params.textFont)
-    .attr('font-size', '30px')
+    .attr('font-size', '35px')
     .text(params.xLabel);
 
   graphContainer.selectAll('.dot')
@@ -648,7 +699,7 @@ function drawRadial(container, data, rVar, numLevels, colors, season, textFont) 
       .attr('x', 0.5 * width)
       .attr('y', 0.03 * height)
       .attr('font-family', 'Montserrat')
-      .attr('font-weight', 'bold')
+      .attr('font-weight', 'semi-bold')
       .attr('font-size', '80px')
       .attr('text-anchor', 'middle')
       .text(season.toUpperCase());
@@ -754,7 +805,7 @@ function drawRadial(container, data, rVar, numLevels, colors, season, textFont) 
   legendFunc(graphContainer, data, colors, season);
 }
 
-function drawBar(container, data, xLabel, yLabel, title, textFont) {
+function drawBar(container, data, xLabel, yLabel, textFont, accentColor) {
 
   const height = container.attr('height');
   const width = container.attr('width');
@@ -762,7 +813,7 @@ function drawBar(container, data, xLabel, yLabel, title, textFont) {
   const graphWidth = 0.6 * width;
   const margin = 0.7 * Math.min(height - graphHeight, width - graphWidth);
   // const airlines = data.map(d => d.airline);
-  const colors = ['#e0b506', '#307db6'];
+  const colors = [accentColor, '#cccccc'];
 
   const xScale = scaleBand()
     .domain(data.map(d => d.iatacode))
@@ -781,11 +832,14 @@ function drawBar(container, data, xLabel, yLabel, title, textFont) {
 
   graphContainer.append('g')
     .attr('transform', `translate(0, ${graphHeight})`)
-    .call(axisBottom(xScale));
+    .call(axisBottom(xScale)
+      .tickSize(10));
 
   graphContainer.append('g')
     .attr('transform', 'translate(0, 0)')
-    .call(axisLeft(yScale));
+    .call(axisLeft(yScale)
+      .tickFormat(format('.0%'))
+      .tickSize(10));
 
   graphContainer.selectAll('.tick text')
     .attr('font-size', '20px')
@@ -841,7 +895,7 @@ function drawBar(container, data, xLabel, yLabel, title, textFont) {
     .attr('font-family', textFont)
     .attr('font-size', `${0.7 * legendScale.bandwidth()}px`)
     // .attr('font-size', '40px')
-    .text((d, i) => (i % 2) === 0 ? 'Total Delays' : 'Airline Delays');
+    .text((d, i) => (i % 2) === 1 ? 'Total Delays' : 'Airline Delays');
 
   // container.append('text')
   //   .attr('x', width / 2)
@@ -854,14 +908,14 @@ function drawBar(container, data, xLabel, yLabel, title, textFont) {
     .attr('x', width / 2)
     .attr('y', height - margin * 0.25)
     .attr('font-family', textFont)
-    .attr('font-size', '40px')
+    .attr('font-size', '35px')
     .attr('text-anchor', 'middle')
     .text(xLabel);
 
   container.append('text')
-    .attr('transform', `translate(${margin * 0.75}, ${height / 2})rotate(-90)`)
+    .attr('transform', `translate(${margin * 0.75}, ${0.55 * height})rotate(-90)`)
     .attr('font-family', textFont)
-    .attr('font-size', '40px')
+    .attr('font-size', '35px')
     .attr('text-anchor', 'middle')
     .text(yLabel);
 }
@@ -888,7 +942,8 @@ function makeContainer(vis, width, height, x, y, border) {
 // lineAnnotation(container, annotation, dx, dy, flipX, flipY)
 // circleAnnotation(container, annotation, dx, dy, radius)
 
-function drawRadarAnnotations(radialContainer, radialSeasons) {
+function drawRadarAnnotations(radialContainer, radialSeasons, accentColor) {
+  // const accentColor = '#008DFF';//'#ffbb00';
   const rHeight = radialContainer.attr('height');
   const rWidth = radialContainer.attr('width');
 
@@ -925,24 +980,29 @@ function drawRadarAnnotations(radialContainer, radialSeasons) {
   lineAnnotation(seasonsAnn, dayNote, .026, .1, false, false);
   lineAnnotation(seasonsAnn, winterNote, .015, .015, false, false);
 
-  const radarTitle = makeContainer(radialContainer, rWidth * 0.33 , rHeight * 0.1, rWidth * 0.33 , rHeight * 0.8);
+  const radarTitle = makeContainer(radialContainer, rWidth * 0.25 , 300, rWidth * 0.375 , rHeight * 0.8, false);
   const radarExplain = {
-    label: 'Each circular line in the seasons graph represents one average day in the time period specified by the legend. The lines shooting out from the center each represent one hour in the 24-hour average day. Radius of the line represents the percent of delayed flights at that time of day. The fewer total flights there are at a given hour of day, the wider and less opaque the line is.',
+    label: 'Each circular line in represents an average day within the specified time period. \
+      The width and transparency of the line increase as the total number of flights decreases \
+      for a particular hour within the specified time period.',
+      // The lines shooting out from the center each represent one hour in the 24-hour average day. Radius of the line \
+      // represents the percent of delayed flights at that time of day. The fewer total flights there are at a given hour of \
+      // day, the wider and less opaque the line is.',
     title: '',
-    x: 0.55,
+    x: 0.505,
     y: 0
   };
-  titleAnnotation(radarTitle, radarExplain, 0, 0, 50, 1550);
+  titleAnnotation(radarTitle, radarExplain, 0, 0, 50, 0.97 * radarTitle.attr('width'));
 
   radarTitle.append('rect')
-    .attr('height', radarTitle.attr('height') * 1.35)
-    .attr('width', 10)
-    .attr('transform', `rotate(180), translate(${radarTitle.attr('width') * - 0.065}, ${- 1.35 * radarTitle.attr('height')})`);
-
-
+    .attr('height', radarTitle.attr('height'))
+    .attr('width', 15)
+    // .attr('transform', `rotate(180), translate(${radarTitle.attr('width') * - 0.065}, ${- 1.35 * radarTitle.attr('height')})`)
+    .attr('fill', accentColor);
 }
 
-function drawScatterAnnotations(fullScatterContainer, zoomScatterContainer) {
+function drawScatterAnnotations(fullScatterContainer, zoomScatterContainer, accentColor) {
+  // const accentColor = '#008DFF';//'#ffbb00';
   const s1Height = fullScatterContainer.attr('height');
   const s1Width = fullScatterContainer.attr('width');
 
@@ -952,129 +1012,133 @@ function drawScatterAnnotations(fullScatterContainer, zoomScatterContainer) {
   const sp1Ann = makeContainer(fullScatterContainer, s1Width,  s1Height, 10, 10);
   const sp2Ann = makeContainer(zoomScatterContainer, s1Width,  0.1 * s1Height, 0.05 * s1Width, 0);
   
-  const annContainer = makeContainer(zoomScatterContainer, s2Width, s2Height * 0.4, - s2Width, 0.08 * s2Height);
+  const annContainer = makeContainer(zoomScatterContainer, 1500, 500, - s2Width, 0.08 * s2Height, false);
 
   const largeNote = {
     label: 'Larger airports have shorter delay times',
     title: '',
-    x: 0.45,
+    x: 0.65,
     y: 0.4
   }
   lineAnnotation(sp1Ann, largeNote, .05, .1, true, true);
 
   annContainer.append('rect')
-    .attr('height', annContainer.attr('height') * 0.86)
-    .attr('width', 10)
-    .attr('transform', `rotate(180), translate(${annContainer.attr('width') * 0.02}, ${- 0.89 * annContainer.attr('height')})`)
+    .attr('height', annContainer.attr('height'))
+    .attr('width', 15)
+    // .attr('transform', `rotate(180), translate(${annContainer.attr('width') * 0.02}, ${- 0.89 * annContainer.attr('height')})`)
+    .attr('fill', accentColor);
 
   // lineAnnotation(seasonsAnn, dayNote, .05, .1, false, false);
   // lineAnnotation(seasonsAnn, winterNote, .015, .015, false, false);
 
+
   const scatterNote = {
-    label: 'The leftmost scatterplot has the largest 150 IATA airports (where size is measured by total number of outbound flights). The color of each dot represents the median length of a delay at that airport. Red represents a longer median delay time, while blue represents a shorter median delay time. The rightmost graph is a zoomed-in view of the first graph that shows the largest 50 airports and labels them so that you can find the airports that you frequently fly from.',
+    label: 'The scatterplot below shows the relationship between airport size (as measured \
+      by number of outbound flights), proportion of delays, and median delay time for all 323 \
+      airports within the United States. The color of each dot represents the median length \
+      of a delay at that airport. Red represents a longer median delay time, while blue represents \
+      a shorter median delay time. The graph on the right shows a rescaled plot of the 50 largest \
+      airports.',
     title: '',
     x: 0.5,
-    y: - 0.4
+    y: 0
   };
 
-  titleAnnotation(sp1Ann, scatterNote, 0, 0, 60, 1600);
+  titleAnnotation(annContainer, scatterNote, 0, 0, 50, 0.98 * annContainer.attr('width'));
 
   const mdwNote = {
-    label: 'Midway has shorter delays than O\'Hare, but a higher percentage of delays', 
+    label: 'Midway had shorter delays than O\'Hare, but a higher percentage of delays', 
     title: 'Midway',
-    x: 0.51,
+    x: 0.508,
     y: 0.17
   };
 
   const ordNote = {
-    label: 'O\'Hare has longer delays than Midway, but a lower percentage of delays',
+    label: 'O\'Hare had longer delays than Midway, but a lower percentage of delays',
     title: 'O\'Hare',
-    x: 0.74,
+    x: 0.741,
     y: 0.41
   };
 
   const jfkNote = {
-    label: 'JFK has moderately long delays, and a lower percentage of delays than Newark',
+    label: 'JFK had moderately long delays, and a lower percentage of delays than Newark',
     title: 'JFK',
-    x: 0.53,
-    y: 0.53
+    x: 0.5335,
+    y: 0.534
   };
 
   const ewrNote = {
-    label: 'Newark has the shortest delays of any NY airport, but a higher percentage of delays',
+    label: 'Newark had the shortest delays of any NY airport, but a higher percentage of delays',
     title: 'Newark',
     x: 0.55,
     y: 0.36
   };
 
   const lgaNote = {
-    label: 'LaGuardia has the longest delays of any NY airport or any top 50 airport, but a lower percentage of delays than other NY airports',
+    label: 'LaGuardia had the longest delays of any NY airport or any top 50 airport, but a lower percentage of delays than other NY airports',
     title: 'LaGuardia',
-    x: 0.54,
-    y: 0.58
+    x: 0.544,
+    y: 0.578
   };
 
   lineAnnotation(zoomScatterContainer, mdwNote, 0.2, 0.14, true, true);
   lineAnnotation(zoomScatterContainer, ordNote, 0.05, 0.1, false, true);
-  lineAnnotation(zoomScatterContainer, jfkNote, 0.15, 0.25, true, true);
+  lineAnnotation(zoomScatterContainer, jfkNote, 0.20, 0.2, true, true);
   lineAnnotation(zoomScatterContainer, ewrNote, 0.05, 0.1, false, true);
-  lineAnnotation(zoomScatterContainer, lgaNote, 0.27, 0.16, true, false);
+  lineAnnotation(zoomScatterContainer, lgaNote, 0.275, 0.158, true, false);
 
 }
 
-function drawBarAnnotations(barContainer) {
+function drawBarAnnotations(barContainer, accentColor) {
+  // const accentColor = '#008DFF';//'#ffbb00';
   const bHeight = barContainer.attr('height');
   const bWidth = barContainer.attr('width');
 
   const barExplain = {
-    label: 'Each bar represents the percentage of delays for a particular airline. The bars are divided into two parts based on the cause for the delay. The bottom blue portion represents delays caused by the airline. The upper light yellow portion represents all other types of delays.',
+    label: 'The barchart to the right shows the proportion of delays for the 14 largest domestic air carriers in the US. \
+      The bars are divided into two portions, the lower of which shows the proportion of delays circumstances within the \
+      airline\'s control. The upper portion shows all other delays.',
     title: '',
-    x: - 0.5,
-    y: 0.75,
+    x: 0.5,
+    y: 0
   };
 
-  const barBox = makeContainer(barContainer, bWidth * 0.8, bHeight * 0.2, - bWidth * 0.95, bHeight * 0.75);
+  const barBox = makeContainer(barContainer, bWidth * 0.8, 315, - bWidth * 0.8, bHeight * 0.68, false);
 
-  titleAnnotation(barContainer, barExplain, 0, 0, 50, 1730);
+  titleAnnotation(barBox, barExplain, 0, 0, 50, 0.98 * barBox.attr('width'));
 
   const barNote = {
-    label: 'Virgin Airlines has a proportionally low amount of airline-related delays.',
+    label: 'Virgin America Airlines had a proportionally low amount of airline-related delays.',
     title: '',
     x: 0.45,
-    y: 0.45,
+    y: 0.45
   };
 
   lineAnnotation(barContainer, barNote, 0.05, .1, false, true);
 
   barBox.append('rect')
-    .attr('height', barBox.attr('height') * 0.75)
-    .attr('width', 10)
-    .attr('transform', `rotate(180), translate(${- 0.01 * barBox.attr('width')}, ${- 0.77 * barBox.attr('height')})`);
+    .attr('height', barBox.attr('height'))
+    .attr('width', 15)
+    // .attr('transform', `rotate(180), translate(${- 0.01 * barBox.attr('width')}, ${- 0.77 * barBox.attr('height')})`)
+    .attr('fill', accentColor);
 
 }
 
+// function drawAnnotations(radialContainer, radialSeasons, fullScatterContainer, zoomScatterContainer, barContainer){
 
-function drawAnnotations(radialContainer, radialSeasons, fullScatterContainer, zoomScatterContainer, barContainer){
+//   // brackAnnotation(sp1AnnS, 'Smaller airports do not appear to have a strong tendency to have longer or shorter delays', '', 10, sp1AnnS.attr('height') / 2, 0, 0, 0, 20, 200, 20, 'montserrat');
+//   // brackAnnotation(sp1AnnM, 'Mid-sized airports have longer and more severe delays', '', 10, - sp1AnnM.attr('height') / 2, 0, 0, 10, 20, 200, 20, 'montserrat', false, true);
+//   // brackAnnotation(sp1AnnL, 'Larger airports have the shortest delays', '', 10, sp1AnnL.attr('height') / 2, 0, 0, 10, 20, 200, 20, 'montserrat');
+//   // brackAnnotation(sp2Ann, 'Midway has shorter delays than O\'Hare, but a higher percentage of delays', 'Midway', 43, 80, 5, 40, 0, 0, 200, 20, 'montserrat', false, true);
+//   // brackAnnotation(sp2Ann, 'O\'Hare has longer delays than Midway, but a lower percentage of delays', 'O\'Hare', 68, 225, 5, 60, 0, 0, 200, 20, 'montserrat', false, true);
+//   // brackAnnotation(sp2Ann, 'JFK has moderately long delays, and a lower percentage of delays than Newark', 'JFK', 46, 295, 5, 360, 0, 0, 200, 20, 'montserrat', true, false);
+//   // brackAnnotation(sp2Ann, 'Newark has the shortest delays of any NY airport, but a higher percentage of delays', 'Newark', 47, 198, 20, 300, 0, 0, 200, 20, 'montserrat', true, false);
+//   // brackAnnotation(sp2Ann, 'LaGuardia has the longest delays of any NY airport or any top 50 airport, but a lower percentage of delays than other NY airports', 'LaGuardia', 47, 320, 10, 200, 0, 0, 200, 20, 'montserrat', false, false);
+//   // brackAnnotation(barAnn, 'Virgin Airlines has a proportionally low amount of airline-related delays.', 'Virgin America', 35, 300, 5, 50, 5, 50, 200, 20, 'montserrat', false, true);
+// }
 
-
- 
-
-  // brackAnnotation(sp1AnnS, 'Smaller airports do not appear to have a strong tendency to have longer or shorter delays', '', 10, sp1AnnS.attr('height') / 2, 0, 0, 0, 20, 200, 20, 'montserrat');
-  // brackAnnotation(sp1AnnM, 'Mid-sized airports have longer and more severe delays', '', 10, - sp1AnnM.attr('height') / 2, 0, 0, 10, 20, 200, 20, 'montserrat', false, true);
-  // brackAnnotation(sp1AnnL, 'Larger airports have the shortest delays', '', 10, sp1AnnL.attr('height') / 2, 0, 0, 10, 20, 200, 20, 'montserrat');
-  
-  // brackAnnotation(sp2Ann, 'Midway has shorter delays than O\'Hare, but a higher percentage of delays', 'Midway', 43, 80, 5, 40, 0, 0, 200, 20, 'montserrat', false, true);
-  // brackAnnotation(sp2Ann, 'O\'Hare has longer delays than Midway, but a lower percentage of delays', 'O\'Hare', 68, 225, 5, 60, 0, 0, 200, 20, 'montserrat', false, true);
-  // brackAnnotation(sp2Ann, 'JFK has moderately long delays, and a lower percentage of delays than Newark', 'JFK', 46, 295, 5, 360, 0, 0, 200, 20, 'montserrat', true, false);
-  // brackAnnotation(sp2Ann, 'Newark has the shortest delays of any NY airport, but a higher percentage of delays', 'Newark', 47, 198, 20, 300, 0, 0, 200, 20, 'montserrat', true, false);
-  // brackAnnotation(sp2Ann, 'LaGuardia has the longest delays of any NY airport or any top 50 airport, but a lower percentage of delays than other NY airports', 'LaGuardia', 47, 320, 10, 200, 0, 0, 200, 20, 'montserrat', false, false);
-  // brackAnnotation(barAnn, 'Virgin Airlines has a proportionally low amount of airline-related delays.', 'Virgin America', 35, 300, 5, 50, 5, 50, 200, 20, 'montserrat', false, true);
-
-}
-
-
-function drawRadarPlots(vis, data, width, height) {
-  const labelFont = 'open sans';
+function drawRadarPlots(vis, data, width, height, accentColor) {
+  const labelFont = 'Montserrat';
   const seasonColors = ['#375E97', '#3F681C', '#FFBB00', '#FF300C'];
   const winterColors = ['#2A354E', '#375E97', '#008DFF'];
   const springColors = ['#26391C', '#3F681C', '#469E00'];
@@ -1087,7 +1151,7 @@ function drawRadarPlots(vis, data, width, height) {
   const rWidth = radialContainer.attr('width');
 
   const radialSeasons =
-    makeContainer(radialContainer, 0.7 * rWidth, 0.7 * rHeight, 0.15 * rWidth, 0.15 * rHeight, false);
+    makeContainer(radialContainer, 0.7 * rWidth, 0.7 * rHeight, 0.15 * rWidth, 0.10 * rHeight, false);
   const radialWinter = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0, 0, false);
   const radialSpring = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0.6 * rWidth, 0, false);
   const radialAutumn = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0, 0.5 * rHeight, false);
@@ -1101,11 +1165,11 @@ function drawRadarPlots(vis, data, width, height) {
   drawRadial(radialSummer, data[0].slice(5, 8), 'percent', 8, summerColors, 'summer', labelFont);
   drawRadial(radialAutumn, data[0].slice(8, 11), 'percent', 8, autumnColors, 'autumn', labelFont);
 
-  drawRadarAnnotations(radialContainer, radialSeasons);
+  drawRadarAnnotations(radialContainer, radialSeasons, accentColor);
 }
 
-function drawScatterPlots(vis, data, width, height) {
-  const labelFont = 'open sans';
+function drawScatterPlots(vis, data, width, height, accentColor) {
+  const labelFont = 'Montserrat';
   const divergingColors = [
     '#3d5c8f',
     '#2985d6',
@@ -1172,15 +1236,15 @@ function drawScatterPlots(vis, data, width, height) {
     .attr('stroke', 'black')
     .attr('stroke-width', '2px');
 
-  drawScatterAnnotations(fullScatterContainer, zoomScatterContainer);
+  drawScatterAnnotations(fullScatterContainer, zoomScatterContainer, accentColor);
 
 }
 
-function drawBarPlot(vis, data, width, height) {
-  const labelFont = 'open sans';
-  const barContainer = makeContainer(vis, 0.4 * width, 0.2 * height, 0.5 * width, 0.77 * height, false);
-  drawBar(barContainer, data[2], 'Airlines', 'Percentage', 'Plot of Delays by Airlines', labelFont);
-  drawBarAnnotations(barContainer);
+function drawBarPlot(vis, data, width, height, accentColor) {
+  const labelFont = 'Montserrat';
+  const barContainer = makeContainer(vis, 0.45 * width, 0.25 * height, 0.45 * width, 0.74 * height, false);
+  drawBar(barContainer, data[2], 'Airline', 'Proportion of Delayed Flights', labelFont, accentColor);
+  drawBarAnnotations(barContainer, accentColor);
 }
 
 function myVis(data) {
@@ -1189,6 +1253,7 @@ function myVis(data) {
   // the important thing is to make sure the aspect ratio is correct.
   const width = 5000;
   const height = 36 / 24 * width;
+  const accentColor = '#469E00';
   // const margin = 70;
 
   // const list1 = [1, 1, 1, 1];
@@ -1216,26 +1281,31 @@ function myVis(data) {
     .attr('text-anchor', 'middle')
     .text('AVOIDING FLIGHT DELAYS');
 
-  const subtitle = makeContainer(vis, width * 0.33 , height * 0.1, width * 0.33 , height * 0.03);
+  const subtitle = makeContainer(vis, width * 0.5, height * 0.05, width * 0.265 , height * 0.045, false);
 
   const subNote = {
-    label: 'Flight delays are dependent on a number of factors. Here, we investigate three factors that affect airline delays: time, airport, and airline.',
-    title: '',
-    x: 0.5,
-    y: 0.05
+    // label: 'Flight delays are dependent on a number of factors. Here, we investigate three factors that affect airline delays: time, airport, and airline.',
+    label: 'Of of the 5,819,079 domestic (US) flights in 2015, 2,125,618 were delayed. Here, we \
+    examine the effect of departure time, departure airport, and flight carrier on the number of \
+    flight delays.',
+    // title: 'Examining the effect of departure time, airport, and airline on the number of flight delays',
+    x: 0.475,
+    y: 0
   }
 
-  titleAnnotation(vis, subNote, 0, 0, 80, 1730);
+  titleAnnotation(subtitle, subNote, 0, 0, 75, 0.98 * subtitle.attr('width'));//1730);
 
   subtitle.append('rect')
-    .attr('height', subtitle.attr('height') * 0.5)
-    .attr('width', 10)
-    .attr('transform', `rotate(180), translate(${subtitle.attr('width') * 0.01}, ${-subtitle.attr('height') * 0.7})`);
+    .attr('height', subtitle.attr('height'))
+    .attr('width', 15)
+    // .attr('x')
+    // .attr('transform', `rotate(180), translate(${subtitle.attr('width') * 0.01}, ${-subtitle.attr('height') * 0.7})`)
+    .attr('fill', accentColor);
 
   // const subText = [
   //   {text: 'Flight delays are dependent on a number of factors. Here, we investigate three factors that affect airline delays: time, airport, and airline.'}
   // ]
-
+  // '#12939a'
   // new TextBox()
   //   .data(subText)
   //   .x(width * 0.33)
@@ -1253,7 +1323,14 @@ function myVis(data) {
   //   .text('Flight delays are dependent on a number of factors. Here, we investigate three factors that affect airline delays: time, airport, and airline.');
 
   // drawAnnotations(radialContainer, radialSeasons, fullScatterContainer, zoomScatterContainer, barContainer);
-  drawRadarPlots(vis, data, width, height);
-  drawScatterPlots(vis, data, width, height);
-  drawBarPlot(vis, data, width, height);
+  drawRadarPlots(vis, data, width, height, accentColor);
+  drawScatterPlots(vis, data, width, height, accentColor);
+  drawBarPlot(vis, data, width, height, accentColor);
+
+  vis.append('text')
+    .attr('x', 0.015 * width)
+    .attr('y', 0.995 * height)
+    .attr('font-family', 'Montserrat')
+    .attr('font-size', '30px')
+    .text('Created by Larry Chen, Emily Xue, and Arthur Tseng');
 }
