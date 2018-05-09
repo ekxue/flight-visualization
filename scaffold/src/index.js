@@ -12,7 +12,9 @@ import {area, arc, radialArea, curveBasis, curveCardinalClosed} from 'd3-shape';
 // import {interpolateRdBu, schemeRdBu} from 'd3-scale-chromatic';
 // import {bboxCollide} from 'd3-bboxCollide';
 // import {hsl} from 'd3-color';
+import {annotation, annotationTypeBase, annotationLabel, annotationXYThreshold, annotationCallout, annotationCalloutCurve, annotationCalloutCircle, annotationCalloutRect} from 'd3-svg-annotation'; // need d3-drag for d3-annotation
 import {forceSimulation, forceManyBody, forceLink, forceCollide} from 'd3-force';
+import {TextBox} from 'd3plus-text';
 
 const domReady = require('domready');
 domReady(() => {
@@ -40,43 +42,53 @@ domReady(() => {
 // circleAnnotation(barContainer, 'more comments on data...', 'Annotation 2:', 50, 50, 10, 0, 8, 200);
 // Use function in myVis
 // Side notes: need to yarn add d3-drag and also keep styling from main.scss
-function lineAnnotation(container, annotation, dx, dy, annotationWidth) {
+function lineAnnotation(container, note, dx, dy, flipX, flipY) {
   const containerHeight = container.attr('height');
   const containerWidth = container.attr('width');
-  const xScale = scaleLinear().domain([0, 100]).range([0, containerWidth]);
-  const yScale = scaleLinear().domain([0, 100]).range([0, containerHeight]);
+  const xScale = scaleLinear()
+    .domain([0, 1])
+    .range([0, containerWidth]);
+  const yScale = scaleLinear()
+    .domain([0, 1])
+    .range([0, containerHeight]);
 
   const annotations = [{
     note: {
-      title: title,
-      label: label
+      title: note.title,
+      label: note.label
     },
     type: annotationCallout,
-    x: xScale(x), y: yScale(y),
-    dx: xScale(dx), dy: yScale(dy)
+    x: xScale(note.x), y: yScale(note.y),
+    dx: (flipX) ? - xScale(dx) : xScale(dx), dy: (flipY) ? - yScale(dy): yScale(dy),
   }];
 
   container.append('g')
     .attr('class', 'annotation-group')
-    .attr('font-family', fontFamily)
-    .call(annotation().textWrap(annotationWidth).annotations(annotations));
+    .attr('font-family', 'Montserrat')
+    .attr('font-size', 25)
+    .attr('text-anchor', 'center')
+    .call(annotation().textWrap(250).annotations(annotations));
 }
 
-function circleAnnotation(container, label, title, x, y, dx, dy, radius, annotationWidth, fontSize, fontFamily) {
+function circleAnnotation(container, note, dx, dy, radius) {
   const containerHeight = container.attr('height');
   const containerWidth = container.attr('width');
-  const xScale = scaleLinear().domain([0, 100]).range([0, containerWidth]);
-  const yScale = scaleLinear().domain([0, 100]).range([0, containerHeight]);
+  const xScale = scaleLinear()
+    .domain([0, 1])
+    .range([0, containerWidth]);
+  const yScale = scaleLinear()
+    .domain([0, 1])
+    .range([0, containerHeight]);
   const maxRadius = Math.min(containerWidth, containerHeight);
   const radiusScale = scaleLinear(). domain([0, 100]).range([0, maxRadius]);
 
   const annotations = [{
     note: {
-      title: title,
-      label: label
+      title: note.title,
+      label: note.label
     },
     type: annotationCalloutCircle,
-    x: xScale(x), y: yScale(y),
+    x: xScale(note.x), y: yScale(note.y),
     dx: xScale(dx), dy: yScale(dy),
     subject: {
       radius: radiusScale(radius),
@@ -86,61 +98,64 @@ function circleAnnotation(container, label, title, x, y, dx, dy, radius, annotat
 
   container.append('g')
     .attr('class', 'annotation-group')
-    .attr('font-family', fontFamily)
-    .call(annotation().textWrap(annotationWidth).annotations(annotations));
+    .attr('font-family', 'Montserrat')
+    .call(annotation().textWrap(250).annotations(annotations));
 }
 
-function rectAnnotation(container, label, title, x, y, dx, dy, width, height, annotationWidth, fontSize, fontFamily) {
+function titleAnnotation(container, note, dx, dy, fontSize, boxSize) {
   const containerHeight = container.attr('height');
   const containerWidth = container.attr('width');
-  const xScale = scaleLinear().domain([0, 100]).range([0, containerWidth]);
-  const yScale = scaleLinear().domain([0, 100]).range([0, containerHeight]);
+  const xScale = scaleLinear()
+    .domain([0, 1])
+    .range([0, containerWidth]);
+  const yScale = scaleLinear()
+    .domain([0, 1])
+    .range([0, containerHeight]);
 
   const annotations = [{
     note: {
-      title: title,
-      label: label
+      title: note.title,
+      label: note.label
     },
-    type: annotationCalloutRect,
-    x: xScale(x), y: yScale(y),
+    type: annotationCallout,
+    x: xScale(note.x), y: yScale(note.y),
     dx: xScale(dx), dy: yScale(dy),
-    subject: {
-      width: -xScale(width),
-      height: -yScale(height)
-    }
   }];
 
   container.append('g')
     .attr('class', 'annotation-group')
-    .attr('font-family', fontFamily)
-    .call(annotation().textWrap(annotationWidth).annotations(annotations));
+    .attr('font-family', 'Montserrat')
+    .attr('font-size', fontSize)
+    .attr('text-anchor', 'center')
+    .call(annotation().textWrap(boxSize).annotations(annotations));
 }
 
-function brackAnnotation(container, label, title, x, y, dx, dy, y1, y2, annotationWidth, fontSize, fontFamily, flipX, flipY) {
-  const containerHeight = container.attr('height');
-  const containerWidth = container.attr('width');
-  const xScale = scaleLinear().domain([0, 100]).range([0, containerWidth]);
-  const yScale = scaleLinear().domain([0, 100]).range([0, containerHeight]);
 
-  const annotations = [{
-  note: {
-    title: title,
-    label: label
-  },
-  type: annotationXYThreshold,
-  x: xScale(x), y: yScale(y),
-  dx: (flipX) ? - xScale(dx) : xScale(dx), dy: (flipY) ? - yScale(dy): yScale(dy),
-  subject: {
-    y1: 0, 
-    y2: 500
-  }
-}];
+// function brackAnnotation(container, label, title, x, y, dx, dy, y1, y2, annotationWidth, fontSize, fontFamily) {
+//   const containerHeight = container.attr('height');
+//   const containerWidth = container.attr('width');
+//   const xScale = scaleLinear().domain([0, 100]).range([0, containerWidth]);
+//   const yScale = scaleLinear().domain([0, 100]).range([0, containerHeight]);
 
-  container.append('g')
-    .attr('class', 'annotation-group')
-    .attr('font-family', fontFamily)
-    .call(annotation().textWrap(annotationWidth).annotations(annotations));
-}
+//   const annotations = [{
+//   note: {
+//     title: title,
+//     label: label
+//   },
+//   type: annotationXYThreshold,
+//   x: xScale(x), y: yScale(y),
+//   dx: (flipX) ? - xScale(dx) : xScale(dx), dy: (flipY) ? - yScale(dy): yScale(dy),
+//   subject: {
+//     y1: 0, 
+//     y2: 500
+//   }
+// }];
+
+//   container.append('g')
+//     .attr('class', 'annotation-group')
+//     .attr('font-family', fontFamily)
+//     .call(annotation().textWrap(annotationWidth).annotations(annotations));
+// }
 
 function drawBoundingBox(container, data, params) {
   const xScale = params.xScale;
@@ -476,7 +491,7 @@ function createSeasonLegend(container, data, colors, season) {
   const legendContainer = container.append('g')
     .attr('height', height)
     .attr('width', width)
-    .attr('transform', `translate(${0.5 * (graphWidth - width)}, ${0.97 * graphHeight})`);
+    .attr('transform', `translate(${0.5 * (graphWidth - width)}, ${- 0.15 * graphHeight})`);
 
   const textFont = 'montserrat';
 
@@ -717,8 +732,8 @@ function drawBar(container, data, xLabel, yLabel, title, textFont) {
 
   const height = container.attr('height');
   const width = container.attr('width');
-  const graphHeight = 0.85 * height;
-  const graphWidth = 0.85 * width;
+  const graphHeight = 0.6 * height;
+  const graphWidth = 0.6 * width;
   const margin = 0.7 * Math.min(height - graphHeight, width - graphWidth);
   const airlines = data.map(d => d.airline);
 
@@ -734,7 +749,7 @@ function drawBar(container, data, xLabel, yLabel, title, textFont) {
   const graphContainer = container.append('g')
     .attr('width', graphWidth)
     .attr('height', graphHeight)
-    .attr('transform', `translate(${margin}, ${height - margin - graphHeight})`);
+    .attr('transform', `translate(${margin}, ${height - margin * 0.5 - graphHeight})`);
 
   graphContainer.append('g')
     .attr('transform', `translate(0, ${graphHeight})`)
@@ -775,14 +790,14 @@ function drawBar(container, data, xLabel, yLabel, title, textFont) {
   //   .text(title);
   container.append('text')
     .attr('x', width / 2)
-    .attr('y', height - margin / 8)
+    .attr('y', height - margin * 0.25)
     .attr('font-family', textFont)
     .attr('font-size', '40px')
     .attr('text-anchor', 'middle')
     .text(xLabel);
 
   container.append('text')
-    .attr('transform', `translate(${margin / 2}, ${height / 2})rotate(-90)`)
+    .attr('transform', `translate(${margin * 0.75}, ${height / 2})rotate(-90)`)
     .attr('font-family', textFont)
     .attr('font-size', '40px')
     .attr('text-anchor', 'middle')
@@ -808,27 +823,155 @@ function makeContainer(vis, width, height, x, y, border) {
   return container;
 }
 
-function drawAnnotations(radialContainer, radialSeasons, fullScatterContainer, zoomScatterContainer, barContainer){
+// lineAnnotation(container, annotation, dx, dy, flipX, flipY)
+// circleAnnotation(container, annotation, dx, dy, radius)
+
+function drawRadarAnnotations(radialContainer, radialSeasons) {
   const rHeight = radialContainer.attr('height');
   const rWidth = radialContainer.attr('width');
 
+  const seasonsAnn = makeContainer(radialSeasons, radialSeasons.attr('width'), radialSeasons.attr('height'), 0, 0);
+
+  const seasonWidth = parseInt(seasonsAnn.attr('width'), 10);
+  const seasonHeight = parseInt(seasonsAnn.attr('height'), 10);
+
+  const fallNote = {
+    label: 'Fall has the lowest percentage of delayed flights.',
+    title: '',
+    x: 0.36,
+    y: 0.5
+  }
+
+  console.log(fallNote.x);
+  console.log(fallNote.y);
+
+  const dayNote = {
+    label: 'The proportion of delays gradually increases throughout waking hours of the day.',
+    title: '',
+    x: 0.4,
+    y: 0.3
+  }
+
+  const winterNote = {
+    label: 'Winter has the most early morning delays.',
+    title: '',
+    x: 0.565,
+    y: 0.7
+  }
+
+  lineAnnotation(seasonsAnn, fallNote, .1, .05, true, false);
+  lineAnnotation(seasonsAnn, dayNote, .026, .1, false, false);
+  lineAnnotation(seasonsAnn, winterNote, .015, .015, false, false);
+
+  const radarTitle = makeContainer(radialContainer, rWidth * 0.33 , rHeight * 0.1, rWidth * 0.33 , rHeight * 0.8);
+  const radarExplain = {
+    label: 'Each circular line in the seasons graph represents one average day in the time period specified by the legend. The lines shooting out from the center each represent one hour in the 24-hour average day. Radius of the line represents the percent of delayed flights at that time of day. The fewer total flights there are at a given hour of day, the wider and less opaque the line is.',
+    title: '',
+    x: 0,
+    y: 0
+  };
+  titleAnnotation(radarTitle, radarExplain, 0, 0, 50, 1630);
+
+}
+
+function drawScatterAnnotations(fullScatterContainer, zoomScatterContainer) {
   const s1Height = fullScatterContainer.attr('height');
   const s1Width = fullScatterContainer.attr('width');
 
+  const sp1Ann = makeContainer(fullScatterContainer, s1Width,  s1Height, 10, 10, false);
+  const sp2Ann = makeContainer(zoomScatterContainer, s1Width,  0.1 * s1Height, 0.05 * s1Width, 0);
+
+  const largeNote = {
+    label: 'Larger airports have shorter delay times',
+    title: '',
+    x: 0.65,
+    y: 0.4
+  }
+  lineAnnotation(sp1Ann, largeNote, .05, .1, true, true);
+  // lineAnnotation(seasonsAnn, dayNote, .05, .1, false, false);
+  // lineAnnotation(seasonsAnn, winterNote, .015, .015, false, false);
+
+  const scatterNote = {
+    label: 'The leftmost scatterplot has the largest 150 IATA airports (where size is measured by total number of outbound flights). The color of each dot represents the median length of a delay at that airport. Red represents a longer median delay time, while blue represents a shorter median delay time. The rightmost graph is a zoomed-in view of the first graph that shows the largest 50 airports and labels them so that you can find the airports that you frequently fly from.',
+    title: '',
+    x: 0.15,
+    y: - 0.4
+  };
+
+  titleAnnotation(sp1Ann, scatterNote, 0, 0, 60, 1600);
+
+  const mdwNote = {
+    label: 'Midway has shorter delays than O\'Hare, but a higher percentage of delays', 
+    title: 'Midway',
+    x: 0.51,
+    y: 0.17
+  };
+
+  const ordNote = {
+    label: 'O\'Hare has longer delays than Midway, but a lower percentage of delays',
+    title: 'O\'Hare',
+    x: 0.74,
+    y: 0.41
+  };
+
+  const jfkNote = {
+    label: 'JFK has moderately long delays, and a lower percentage of delays than Newark',
+    title: 'JFK',
+    x: 0.53,
+    y: 0.53
+  };
+
+  const ewrNote = {
+    label: 'Newark has the shortest delays of any NY airport, but a higher percentage of delays',
+    title: 'Newark',
+    x: 0.55,
+    y: 0.36
+  };
+
+  const lgaNote = {
+    label: 'LaGuardia has the longest delays of any NY airport or any top 50 airport, but a lower percentage of delays than other NY airports',
+    title: 'LaGuardia',
+    x: 0.54,
+    y: 0.58
+  };
+
+  lineAnnotation(zoomScatterContainer, mdwNote, 0.2, 0.14, true, true);
+  lineAnnotation(zoomScatterContainer, ordNote, 0.05, 0.1, false, true);
+  lineAnnotation(zoomScatterContainer, jfkNote, 0.15, 0.25, true, true);
+  lineAnnotation(zoomScatterContainer, ewrNote, 0.05, 0.1, false, true);
+  lineAnnotation(zoomScatterContainer, lgaNote, 0.27, 0.16, true, false);
+
+}
+
+function drawBarAnnotations(barContainer) {
   const bHeight = barContainer.attr('height');
   const bWidth = barContainer.attr('width');
 
-  const seasonsAnn = makeContainer(radialSeasons, 0, 0, radialSeasons.attr('width'), radialSeasons.attr('height'));
-  const sp1AnnS = makeContainer(fullScatterContainer, 0.33 * s1Width,  0.1 * s1Height, 0.05 * s1Width, 0.1 * s1Height);
-  const sp1AnnM = makeContainer(fullScatterContainer, 0.33 * s1Width,  0.1 * s1Height, 0.4 * s1Width, 0.6 * s1Height);
-  const sp1AnnL = makeContainer(fullScatterContainer, 0.33 * s1Width,  0.1 * s1Height, 0.7 * s1Width, 0.1 * s1Height);
-  const sp2Ann = makeContainer(zoomScatterContainer, s1Width,  0.1 * s1Height, 0.05 * s1Width, 0);
-  const barAnn = makeContainer(barContainer, bWidth,  0.1 * bHeight, 0.05 * bWidth, 0, true);
-  // function lineAnnotation(container, label, title, x, y, dx, dy, annotationWidth, fontSize, fontFamily)
+  const barExplain = {
+    label: 'Each bar represents the percentage of delays for a particular airline. The bars are divided into two parts based on the cause for the delay. The bottom blue portion represents delays caused by the airline. The upper light yellow portion represents all other types of delays.',
+    title: '',
+    x: - 0.8,
+    y: 0.75,
+  };
 
-  // lineAnnotation(seasonsAnn, 'Fall has the lowest percentage of delayed flights.', '', - seasonsAnn.attr('width') / 10 , seasonsAnn.attr('height') / 3 , 25, 10, 250, 20, 'montserrat');
-  // brackAnnotation(seasonsAnn, 'The proportion of delays gradually increases throughout waking hours of the day.', '', 0, - seasonsAnn.attr('height') / 1.7, 0, 130, 0, 100, 200, 20, 'montserrat');
-  // lineAnnotation(seasonsAnn, 'Winter has the most early morning delays.', '', seasonsAnn.attr('width') / 5 , seasonsAnn.attr('height') / 1.5 , 25, 10, 250, 20, 'montserrat');
+  titleAnnotation(barContainer, barExplain, 0, 0, 50, 1730);
+
+  const barNote = {
+    label: 'Virgin Airlines has a proportionally low amount of airline-related delays.',
+    title: '',
+    x: 0.45,
+    y: 0.45,
+  };
+
+  lineAnnotation(barContainer, barNote, 0.05, .1, false, true);
+
+}
+
+
+function drawAnnotations(radialContainer, radialSeasons, fullScatterContainer, zoomScatterContainer, barContainer){
+
+
+ 
 
   // brackAnnotation(sp1AnnS, 'Smaller airports do not appear to have a strong tendency to have longer or shorter delays', '', 10, sp1AnnS.attr('height') / 2, 0, 0, 0, 20, 200, 20, 'montserrat');
   // brackAnnotation(sp1AnnM, 'Mid-sized airports have longer and more severe delays', '', 10, - sp1AnnM.attr('height') / 2, 0, 0, 10, 20, 200, 20, 'montserrat', false, true);
@@ -843,25 +986,40 @@ function drawAnnotations(radialContainer, radialSeasons, fullScatterContainer, z
 
 }
 
-function myVis(data) {
-  // The posters will all be 24 inches by 36 inches
-  // Your graphic can either be portrait or landscape, up to you
-  // the important thing is to make sure the aspect ratio is correct.
-  const width = 5000;
-  const height = 36 / 24 * width;
-  // const margin = 70;
+
+function drawRadarPlots(vis, data, width, height) {
   const labelFont = 'open sans';
-
-  // const list1 = [1, 1, 1, 1];
-  // const backgroundColor = '#EFF1ED';
-  const backgroundColor = '#f7f7f7';
-  // const backgroundColor = 'None';
-
   const seasonColors = ['#375E97', '#3F681C', '#FFBB00', '#FF300C'];
   const winterColors = ['#2A354E', '#375E97', '#008DFF'];
   const springColors = ['#26391C', '#3F681C', '#469E00'];
   const summerColors = ['#BE8E3B', '#FFBB00', '#FDEF00'];
   const autumnColors = ['#C30000', '#FF300C', '#FFA26C'];
+
+  const radialContainer = makeContainer(vis, width, 0.4 * height, 0, 0.1 * height, false);
+
+  const rHeight = radialContainer.attr('height');
+  const rWidth = radialContainer.attr('width');
+
+  const radialSeasons =
+    makeContainer(radialContainer, 0.7 * rWidth, 0.7 * rHeight, 0.15 * rWidth, 0.15 * rHeight, false);
+  const radialWinter = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0, 0, false);
+  const radialSpring = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0.6 * rWidth, 0, false);
+  const radialAutumn = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0, 0.5 * rHeight, false);
+  const radialSummer =
+    makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0.6 * rWidth, 0.5 * rHeight, false);
+
+  drawRadial(radialSeasons, data[3], 'percent', 8, seasonColors, 'season', labelFont);
+  drawRadial(radialWinter, data[0].slice(-1).concat(data[0].slice(0, 2)),
+   'percent', 8, winterColors, 'winter', labelFont);
+  drawRadial(radialSpring, data[0].slice(2, 5), 'percent', 8, springColors, 'spring', labelFont);
+  drawRadial(radialSummer, data[0].slice(5, 8), 'percent', 8, summerColors, 'summer', labelFont);
+  drawRadial(radialAutumn, data[0].slice(8, 11), 'percent', 8, autumnColors, 'autumn', labelFont);
+
+  drawRadarAnnotations(radialContainer, radialSeasons);
+}
+
+function drawScatterPlots(vis, data, width, height) {
+  const labelFont = 'open sans';
   const divergingColors = [
     '#3d5c8f',
     '#2985d6',
@@ -881,53 +1039,8 @@ function myVis(data) {
   const fullX = 0.05 * width;
   const fullY = 0.63 * height;
 
-  const vis = select('.vis-container')
-    .attr('width', width)
-    .attr('height', height);
-
-  vis.append('rect')
-    .attr('width', width)
-    .attr('height', height)
-    .attr('x', 0)
-    .attr('y', 0)
-    .attr('fill', backgroundColor);
-
-  vis.append('text')
-    .attr('x', 0.5 * width)
-    .attr('y', 0.03 * height)
-    .attr('font-family', 'montserrat')
-    .attr('font-weight', 'bold')
-    .attr('font-size', '150px')
-    .attr('text-anchor', 'middle')
-    .text('AVOIDING FLIGHT DELAYS');
-
-  const radialContainer = makeContainer(vis, width, 0.4 * height, 0, 0.06 * height, false);
-
-  const rHeight = radialContainer.attr('height');
-  const rWidth = radialContainer.attr('width');
-
-  const radialSeasons =
-    makeContainer(radialContainer, 0.7 * rWidth, 0.7 * rHeight, 0.15 * rWidth, 0.15 * rHeight, false);
-  const radialWinter = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0, 0, false);
-  const radialSpring = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0.6 * rWidth, 0, false);
-  const radialAutumn = makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0, 0.5 * rHeight, false);
-  const radialSummer =
-    makeContainer(radialContainer, 0.4 * rWidth, 0.5 * rHeight, 0.6 * rWidth, 0.5 * rHeight, false);
-
-  const fullScatterContainer = makeContainer(vis, 0.4 * width, 0.2 * height, fullX, fullY, false);
-  const zoomScatterContainer = makeContainer(vis, 0.4 * width, 0.2 * height, zoomX, zoomY, false);
-
-  const barContainer = makeContainer(vis, 0.4 * width, 0.2 * height, 0.5 * width, 0.77 * height, false);
-
-  drawRadial(radialSeasons, data[3], 'percent', 8, seasonColors, 'season', labelFont);
-  drawRadial(radialWinter, data[0].slice(-1).concat(data[0].slice(0, 2)),
-   'percent', 8, winterColors, 'winter', labelFont);
-  drawRadial(radialSpring, data[0].slice(2, 5), 'percent', 8, springColors, 'spring', labelFont);
-  drawRadial(radialSummer, data[0].slice(5, 8), 'percent', 8, summerColors, 'summer', labelFont);
-  drawRadial(radialAutumn, data[0].slice(8, 11), 'percent', 8, autumnColors, 'autumn', labelFont);
-
-  drawAnnotations(radialContainer, radialSeasons, fullScatterContainer, zoomScatterContainer, barContainer);
-
+  const fullScatterContainer = makeContainer(vis, 0.4 * width, 0.27 * height, fullX, fullY, false);
+  const zoomScatterContainer = makeContainer(vis, 0.4 * width, 0.27 * height, zoomX, zoomY, false);
 
   const fullParams = {
     xVar: 'total',
@@ -973,5 +1086,83 @@ function myVis(data) {
     .attr('stroke', 'black')
     .attr('stroke-width', '2px');
 
+  drawScatterAnnotations(fullScatterContainer, zoomScatterContainer);
+
+}
+
+function drawBarPlot(vis, data, width, height) {
+  const labelFont = 'open sans';
+  const barContainer = makeContainer(vis, 0.4 * width, 0.2 * height, 0.5 * width, 0.77 * height, false);
   drawBar(barContainer, data[2], 'Airlines', 'Percentage', 'Plot of Delays by Airlines', labelFont);
+  drawBarAnnotations(barContainer);
+}
+
+function myVis(data) {
+  // The posters will all be 24 inches by 36 inches
+  // Your graphic can either be portrait or landscape, up to you
+  // the important thing is to make sure the aspect ratio is correct.
+  const width = 5000;
+  const height = 36 / 24 * width;
+  // const margin = 70;
+
+  // const list1 = [1, 1, 1, 1];
+  // const backgroundColor = '#EFF1ED';
+  const backgroundColor = '#f7f7f7';
+  // const backgroundColor = 'None';
+
+  const vis = select('.vis-container')
+    .attr('width', width)
+    .attr('height', height);
+
+  vis.append('rect')
+    .attr('width', width)
+    .attr('height', height)
+    .attr('x', 0)
+    .attr('y', 0)
+    .attr('fill', backgroundColor);
+
+  vis.append('text')
+    .attr('x', 0.5 * width)
+    .attr('y', 0.03 * height)
+    .attr('font-family', 'montserrat')
+    .attr('font-weight', 'bold')
+    .attr('font-size', '150px')
+    .attr('text-anchor', 'middle')
+    .text('AVOIDING FLIGHT DELAYS');
+
+  const subtitle = makeContainer(vis, width * 0.33 , height * 0.1, width * 0.33 , height * 0.03);
+
+  const subNote = {
+    label: 'Flight delays are dependent on a number of factors. Here, we investigate three factors that affect airline delays: time, airport, and airline.',
+    title: '',
+    x: 0.33,
+    y: 0.05
+  }
+
+  titleAnnotation(vis, subNote, 0, 0, 80, 1730)
+
+  // const subText = [
+  //   {text: 'Flight delays are dependent on a number of factors. Here, we investigate three factors that affect airline delays: time, airport, and airline.'}
+  // ]
+
+  // new TextBox()
+  //   .data(subText)
+  //   .x(width * 0.33)
+  //   .y(height * 0.03)
+  //   .fontResize(true)
+  //   .width(width * 0.33)
+  //   .height(height * 0.1)
+  //   .render();
+  // vis.append('text')
+  //   .attr('x', 0.5 * width)
+  //   .attr('y', 0.06 * height)
+  //   .attr('font-family', 'montserrat')
+  //   .attr('font-size', '70px')
+  //   .attr('text-anchor', 'middle')
+  //   .text('Flight delays are dependent on a number of factors. Here, we investigate three factors that affect airline delays: time, airport, and airline.');
+
+  // drawAnnotations(radialContainer, radialSeasons, fullScatterContainer, zoomScatterContainer, barContainer);
+  drawRadarPlots(vis, data, width, height);
+  drawScatterPlots(vis, data, width, height);
+  drawBarPlot(vis, data, width, height);
 }
