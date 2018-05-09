@@ -2,3 +2,14 @@ body {
   align-items: center;
   display: flex;
   flex-direction: column; }
+
+:root {
+  --annotation-color: #E8336D; }
+
+.annotation path {
+  stroke: var(--annotation-color);
+  stroke-width: 3px; }
+
+.annotation text {
+  fill: var(--annotation-color);
+  font-size: 25px; }
