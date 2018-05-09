@@ -59,7 +59,7 @@ function lineAnnotation(container, note, dx, dy, flipX, flipY) {
     },
     type: annotationCallout,
     x: xScale(note.x), y: yScale(note.y),
-    dx: (flipX) ? - xScale(dx) : xScale(dx), dy: (flipY) ? - yScale(dy): yScale(dy),
+    dx: (flipX) ? - xScale(dx) : xScale(dx), dy: (flipY) ? - yScale(dy): yScale(dy)
   }];
 
   container.append('g')
@@ -392,28 +392,35 @@ function scatterPlot(container, data, params) {
     .attr('width', plotWidth)
     .attr('transform', `translate(${margin}, ${height - margin - plotHeight})`);
 
-  graphContainer.append('rect')
-    .attr('x', 0)
-    .attr('y', 0)
-    .attr('height', graphContainer.attr('height'))
-    .attr('width', graphContainer.attr('width'))
-    .attr('fill', 'none')
-    .attr('stroke', 'black');
+  // graphContainer.append('rect')
+  //   .attr('x', 0)
+  //   .attr('y', 0)
+  //   .attr('height', graphContainer.attr('height'))
+  //   .attr('width', graphContainer.attr('width'))
+  //   .attr('fill', 'none')
+  //   .attr('stroke', 'black');
 
   const bottomAxis = params.fullBorder ? axisTop : axisBottom;
   const leftAxis = params.fullBorder ? axisRight : axisLeft;
 
   graphContainer.append('g')
+    // .attr('font-size', '40px')
     .attr('transform', `translate(0, ${plotHeight})`)
     .call(bottomAxis(xScale)
       .tickFormat(d => {
         return (Math.log10(d) % 1) === 0 ? format(',.2r')(d) : '';
-      }));
+      })
+      .tickSize(10));
 
   graphContainer.append('g')
     .attr('transform', 'translate(0, 0)')
     .call(leftAxis(yScale)
-      .tickFormat(format('.0%')));
+      .tickFormat(format('.0%'))
+      .tickSize(10));
+
+  graphContainer.selectAll('.tick text')
+    .attr('font-size', '25px')
+    .attr('font-family', 'Montserrat');
 
   graphContainer.append('rect')
     .attr('x', 0)
@@ -493,7 +500,7 @@ function createSeasonLegend(container, data, colors, season) {
     .attr('width', width)
     .attr('transform', `translate(${0.5 * (graphWidth - width)}, ${- 0.15 * graphHeight})`);
 
-  const textFont = 'montserrat';
+  const textFont = 'Montserrat';
 
   // legendContainer.append('rect')
   //   .attr('height', height)
@@ -547,7 +554,7 @@ function createMonthLegend(container, data, colors, season) {
     .attr('width', width)
     .attr('transform', `translate(${legendX},${0})`);
 
-  const textFont = 'montserrat';
+  const textFont = 'Montserrat';
 
   const widthScale = scaleBand()
     .domain(data.map(d => d.month))
@@ -621,7 +628,7 @@ function drawRadial(container, data, rVar, numLevels, colors, season, textFont) 
     container.append('text')
       .attr('x', 0.5 * width)
       .attr('y', 0.03 * height)
-      .attr('font-family', 'montserrat')
+      .attr('font-family', 'Montserrat')
       .attr('font-weight', 'bold')
       .attr('font-size', '80px')
       .attr('text-anchor', 'middle')
@@ -735,13 +742,15 @@ function drawBar(container, data, xLabel, yLabel, title, textFont) {
   const graphHeight = 0.6 * height;
   const graphWidth = 0.6 * width;
   const margin = 0.7 * Math.min(height - graphHeight, width - graphWidth);
-  const airlines = data.map(d => d.airline);
+  // const airlines = data.map(d => d.airline);
+  const colors = ['#e0b506', '#307db6'];
 
   const xScale = scaleBand()
-    .domain(airlines)
+    .domain(data.map(d => d.iatacode))
     .range([0, graphWidth])
     .paddingInner(0.1)
     .paddingOuter(0.1);
+
   const yScale = scaleLinear()
     .domain([0, Math.max(...data.map(d => d.percent))])
     .range([graphHeight, 0]);
@@ -759,27 +768,61 @@ function drawBar(container, data, xLabel, yLabel, title, textFont) {
     .attr('transform', 'translate(0, 0)')
     .call(axisLeft(yScale));
 
-  const yellow = '#e0b506';
-
-  const blue = '#307db6';
+  graphContainer.selectAll('.tick text')
+    .attr('font-size', '20px')
+    .attr('font-family', 'Montserrat');
 
   graphContainer.selectAll('.bar')
     .data(data)
     .enter().append('rect')
     .attr('width', xScale.bandwidth())
     .attr('height', d => yScale(d.percenta) - yScale(d.percent))
-    .attr('x', d => xScale(d.airline))
+    .attr('x', d => xScale(d.iatacode))
     .attr('y', d => yScale(d.percent))
-    .attr('fill', blue);
+    .attr('fill', colors[1]);
 
   graphContainer.selectAll('.bar')
     .data(data)
     .enter().append('rect')
     .attr('width', xScale.bandwidth())
     .attr('height', d => graphHeight - yScale(d.percenta))
-    .attr('x', d => xScale(d.airline))
+    .attr('x', d => xScale(d.iatacode))
     .attr('y', d => yScale(d.percenta))
-    .attr('fill', yellow);
+    .attr('fill', colors[0]);
+
+  const legendWidth = 0.25 * width;
+  const legendHeight = 0.1 * height;
+  const legendScale = scaleBand()
+    .domain([...new Array(2)].map((d, i) => i))
+    .range([legendHeight, 0])
+    .paddingInner(0.1)
+    .paddingOuter(0.1);
+
+  const legendContainer = container.append('g')
+    .attr('width', legendWidth)
+    .attr('height', legendHeight)
+    .attr('transform', `translate(${0.85 * width}, ${0.7 * height})`);
+
+  legendContainer.selectAll('.legend-rect')
+    .data(colors)
+    .enter()
+    .append('rect')
+    .attr('x', 0.05 * legendWidth)
+    .attr('y', (d, i) => legendScale(i))
+    .attr('width', legendScale.bandwidth())
+    .attr('height', legendScale.bandwidth())
+    .attr('fill', d => d);
+
+  legendContainer.selectAll('.legend-text')
+    .data(colors)
+    .enter()
+    .append('text')
+    .attr('x', 0.1 * legendWidth + legendScale.bandwidth())
+    .attr('y', (d,i) => legendScale(i) + 0.7 * legendScale.bandwidth())
+    .attr('font-family', textFont)
+    .attr('font-size', `${0.7 * legendScale.bandwidth()}px`)
+    // .attr('font-size', '40px')
+    .text((d, i) => (i % 2) === 0 ? 'Total Delays' : 'Airline Delays');
 
   // container.append('text')
   //   .attr('x', width / 2)
@@ -1124,7 +1167,7 @@ function myVis(data) {
   vis.append('text')
     .attr('x', 0.5 * width)
     .attr('y', 0.03 * height)
-    .attr('font-family', 'montserrat')
+    .attr('font-family', 'Montserrat')
     .attr('font-weight', 'bold')
     .attr('font-size', '150px')
     .attr('text-anchor', 'middle')
@@ -1139,7 +1182,7 @@ function myVis(data) {
     y: 0.05
   }
 
-  titleAnnotation(vis, subNote, 0, 0, 80, 1730)
+  titleAnnotation(vis, subNote, 0, 0, 80, 1730);
 
   // const subText = [
   //   {text: 'Flight delays are dependent on a number of factors. Here, we investigate three factors that affect airline delays: time, airport, and airline.'}

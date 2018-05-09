@@ -1,6 +1,7 @@
 [
     {
         "airline": "United Air Lines",
+        "iatacode": "UA",
         "delayed": 256550.0,
         "total": 515723.0,
         "percent": 0.49745696817865404,
@@ -8,6 +9,7 @@
     },
     {
         "airline": "Southwest Airlines",
+        "iatacode": "WN",
         "delayed": 566807.0,
         "total": 1261855.0,
         "percent": 0.44918552448577687,
@@ -15,6 +17,7 @@
     },
     {
         "airline": "Spirit Air Lines",
+        "iatacode": "NK",
         "delayed": 52089.0,
         "total": 117379.0,
         "percent": 0.4437676245324973,
@@ -22,6 +25,7 @@
     },
     {
         "airline": "Frontier Airlines",
+        "iatacode": "F9",
         "delayed": 34893.0,
         "total": 90836.0,
         "percent": 0.3841318420009688,
@@ -29,6 +33,7 @@
     },
     {
         "airline": "JetBlue Airways",
+        "iatacode": "B6",
         "delayed": 102061.0,
         "total": 267048.0,
         "percent": 0.3821822294119409,
@@ -36,6 +41,7 @@
     },
     {
         "airline": "Virgin America",
+        "iatacode": "VX",
         "delayed": 23379.0,
         "total": 61903.0,
         "percent": 0.3776715183432144,
@@ -43,6 +49,7 @@
     },
     {
         "airline": "American Airlines",
+        "iatacode": "AA",
         "delayed": 245904.0,
         "total": 725984.0,
         "percent": 0.3387182086657557,
@@ -50,6 +57,7 @@
     },
     {
         "airline": "Delta Air Lines",
+        "iatacode": "DL",
         "delayed": 282463.0,
         "total": 875881.0,
         "percent": 0.32249015562616384,
@@ -57,6 +65,7 @@
     },
     {
         "airline": "American Eagle Airlines",
+        "iatacode": "MQ",
         "delayed": 93726.0,
         "total": 294632.0,
         "percent": 0.3181120855847294,
@@ -64,6 +73,7 @@
     },
     {
         "airline": "US Airways",
+        "iatacode": "US",
         "delayed": 62565.0,
         "total": 198715.0,
         "percent": 0.31484789774299876,
@@ -71,6 +81,7 @@
     },
     {
         "airline": "Atlantic Southeast Airlines",
+        "iatacode": "EV",
         "delayed": 169897.0,
         "total": 571977.0,
         "percent": 0.2970346709745322,
@@ -78,6 +89,7 @@
     },
     {
         "airline": "Skywest Airlines",
+        "iatacode": "OO",
         "delayed": 171572.0,
         "total": 588353.0,
         "percent": 0.2916140480289894,
@@ -85,6 +97,7 @@
     },
     {
         "airline": "Hawaiian Airlines",
+        "iatacode": "HA",
         "delayed": 20146.0,
         "total": 76272.0,
         "percent": 0.2641336270190896,
@@ -92,6 +105,7 @@
     },
     {
         "airline": "Alaska Airlines",
+        "iatacode": "AS",
         "delayed": 43566.0,
         "total": 172521.0,
         "percent": 0.25252577947032534,
