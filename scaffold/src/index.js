@@ -501,7 +501,8 @@ function drawRadial(container, data, params) {
   const graphHeight = 0.9 * height;
   const graphWidth = 0.9 * width;
   const rVar = params.rVar;
-  const maxVal = Math.ceil(10 * Math.max(...data.map(d => Math.max(...d[rVar])))) / 10;
+  // const maxVal = Math.ceil(10 * Math.max(...data.map(d => Math.max(...d[rVar])))) / 10;
+  const maxVal = 0.7;
 
   params.xOffset = graphWidth / 2;
   params.yOffset = graphHeight / 2;
