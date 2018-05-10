@@ -5,10 +5,8 @@
 // import from: https://github.com/d3/d3/blob/master/API.md
 import {select} from 'd3-selection';
 import {scaleBand, scaleLinear, scaleLog, scaleQuantile} from 'd3-scale';
-// import {histogram} from 'd3-array';
 import {axisBottom, axisLeft, axisTop, axisRight} from 'd3-axis';
 import {format} from 'd3-format';
-// import {area, arc, radialArea, curveBasis, curveCardinalClosed} from 'd3-shape';
 import {arc, radialArea, curveCardinalClosed} from 'd3-shape';
 import {annotation, annotationLabel, annotationCallout} from 'd3-svg-annotation';
 
@@ -163,63 +161,17 @@ function drawScatterLegend(container, data, params) {
   const legendWidth = params.fullBorder ? 0.30 * width : 0.35 * width;
   const legendHeight = 0.2 * height;
 
-  // // const bins = params.colorScale.quantiles();
   const xMin = Math.min(...data.map(d => d.median));
   const xMax = Math.max(...data.map(d => d.median));
-  // const lowerBounds = [xMin].concat(bins);
-  // const upperBounds = bins.concat([xMax]);
-  // const bounds = lowerBounds.concat([xMax]);
-
-  // const xScale = scaleLinear()
-  //   .domain([xMin, xMax])
-  //   .range([0, legendWidth]);
 
   const legendContainer = container.append('g')
     .attr('width', legendWidth)
     .attr('height', legendHeight)
     .attr('transform', `translate(${0.6 * width}, ${0.6 * height})`);
 
-  // const times = xScale.ticks(xMax - xMin);
-  // const histogramGenerator = histogram(xScale.domain())
-  //   .thresholds(times);
-  // const intervals = histogramGenerator(data.map(d => d.median));
-  // const counts = intervals.map(d => d.length);
-
-  // const histData = counts.map((c, i) => ({time: times[i], count: c}));
-
-  // const heightScale = scaleLinear()
-  //   .domain([0, Math.max(...counts)])
-  //   .range([0.95 * legendHeight, 0]);
-
   const percentScale = scaleLinear()
     .domain([0, params.colors.length])
     .range([0, legendWidth]);
-
-  // const areaGenerator = area()
-  //   .x(d => xScale(d.time))
-  //   .y1(d => heightScale(d.count))
-  //   .y0(heightScale(0))
-  //   .curve(curveBasis);
-
-  // legendContainer.append('clipPath')
-  //   .attr('id', `legend-area-clip${params.colors.length}`)
-  //   .append('path')
-  //   .attr('d', areaGenerator(histData));
-
-  // legendContainer.append('g')
-  //   .attr('width', legendWidth)
-  //   .attr('height', legendHeight)
-  //   .attr('transform', 'translate(0, 0)')
-  //   .attr('clip-path', `url(#legend-area-clip${params.colors.length})`)
-  //   .selectAll('.legend-rect')
-  //   .data(params.colors)
-  //   .enter().append('rect')
-  //   .attr('x', (d, i) => xScale(lowerBounds[i]))
-  //   .attr('y', 0)
-  //   .attr('width', (d, i) => xScale(upperBounds[i]) - xScale(lowerBounds[i]))
-  //   .attr('height', legendHeight)
-  //   .attr('fill', d => d)
-  //   .attr('opacity', 0.5);
 
   legendContainer.selectAll('.rect')
     .data(params.colors)
@@ -229,15 +181,6 @@ function drawScatterLegend(container, data, params) {
     .attr('width', (d, i) => legendWidth / params.colors.length)
     .attr('height', 0.05 * legendHeight)
     .attr('fill', d => d);
-
-  // legendContainer.selectAll('.rect')
-  //   .data(params.colors)
-  //   .enter().append('rect')
-  //   .attr('x', (d, i) => xScale(lowerBounds[i]))
-  //   .attr('y', 0.95 * legendHeight)
-  //   .attr('width', (d, i) => xScale(upperBounds[i]) - xScale(lowerBounds[i]))
-  //   .attr('height', 0.05 * legendHeight)
-  //   .attr('fill', d => d);
 
   legendContainer.selectAll('.legend-text')
     .data([...new Array(params.colors.length + 1)].map((d, i) => i / params.colors.length))
@@ -281,16 +224,6 @@ function drawScatterLegend(container, data, params) {
     .attr('font-size', '20px')
     .attr('text-anchor', 'middle')
     .text('Median Delay Times');
-
-  // legendContainer.selectAll('.legend-text')
-  //   .data(bounds)
-  //   .enter()
-  //   .append('text')
-  //   .attr('x', (d, i) => xScale(d))
-  //   .attr('y', 1.1 * legendHeight)
-  //   .attr('text-anchor', 'middle')
-  //   .attr('font-family', params.textFont)
-  //   .text(d => format(',.0f')(d));
 }
 
 function scatterAxis(graphContainer, data, params) {
@@ -1140,8 +1073,8 @@ function myVis(data) {
 
   const subNote = {
     label: [
-      'Of the 5,819,079 domestic (US) flights in 2015, 2,125,618 were delayed. Here, we ',
-      'examine the effect of departure time, departure airport, and flight carrier on the number of ',
+      'Of the 5,819,079 domestic (US) flights in 2015, 2,125,618 were delayed. We ',
+      'examined the effect of departure time, departure airport, and flight carrier on the number of ',
       'departure delays in 2015.'
     ].join(''),
     title: '',
